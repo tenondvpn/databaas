@@ -1,0 +1,134 @@
+.form-control{
+    margin-right: 0px!important;
+}
+
+#daily_summary{
+    font-size: 16px;
+    color: #33495F;
+    font-weight: 400;
+    font-family: 微软雅黑;
+}
+
+#proc_div a{
+    font-family: 'Microsoft YaHei';
+    font-weight: 400;
+    font-size: 18px;
+    color: #019F84;
+    line-height: 14px;
+    margin-right: 15px;
+}
+
+#create_pipe_btn,#create_proc_btn {
+    background-color:#01579b;
+    color: #FFFFFF;
+    font-family: 微软雅黑;
+    font-size: 18px;
+    margin-top: -2px;
+}
+
+.pipe_btn {
+    border-color: #01579b;
+    background-color:#01579b;
+    color: #FFFFFF;
+    font-family: 微软雅黑;
+    font-size: 15px;
+}
+
+
+
+/*
+#example_length{
+    position: absolute;
+    top: 517px;
+    z-index:1;
+}
+#example_info{
+    display:none;
+}*/
+
+
+font.oper-Font{
+    color: #019F84!important;
+    font-family: 微软雅黑;
+}
+font.apply_font{
+    font-family: 微软雅黑;
+}
+
+
+/*去掉a标签下划线*/
+a,td{
+    color: #33495F;
+    font-family: 微软雅黑;
+}
+a:focus, a:hover {
+    color: #01579b!important;
+    text-decoration:none!important;
+}
+
+.fa-arrow-up {
+    color: #01579b;
+}
+
+.fa-arrow-down {
+    color: blue;
+}
+
+
+/*combobox下拉框样式*/
+.dropdown-menu {
+    border-radius: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+    font-size: 13px;
+    text-align: left;
+}
+
+.dropdown-user {
+    left:auto!important;
+}
+
+
+#create_processor_form .radio-inline {
+    margin-left: 15px;
+    width:50px;
+}
+
+#create_processor_form select{
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+/*combobox css*/
+.combobox-container {
+    height:30px;
+}
+
+.combobox-container .add-on{
+    height:34px!important;
+    z-index:0;
+    margin-top:6px;
+}
+
+.combobox-container .input-group input[type=text]{
+    width:180px;
+    margin-top:6px;
+}
+
+.table-detail-permision th, .table-detail-permision td {
+    text-align: center;
+}
+
+.viewTable-css th {
+    font-weight:bold!important;
+}
+
+/*鼠标悬停小手效果*/
+.hover-p {
+    cursor: pointer;
+}
+
+.panel .dropdown-menu{
+    left:2px!important;
+    min-width: 131px;
+}
+

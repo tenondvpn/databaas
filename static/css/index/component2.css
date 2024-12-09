@@ -1,0 +1,59 @@
+
+/* ******************************************************
+	Circular Navigation Menu
+*********************************************************/
+
+.circleNavi i.fa {
+    background: #339833 none repeat scroll 0 0;
+    border-radius: 50%;
+    color: #fff;
+    display: block;
+    font-size: 14px;
+    height: 3em;
+    line-height: 3em;
+    text-align: center;
+    vertical-align: middle;
+    width: 3em;
+}
+
+.CircularNavigation button,
+.CircularNavigation li {
+  border-radius: 50%;
+  text-align: center;
+  width: 5em;
+  height: 5em;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  -webkit-transition: .2s linear;
+  transition: .2s linear;
+  border: none
+}
+
+.CircularNavigation button {
+  background:#339833;
+  color:#fff;
+  z-index: 5;
+  cursor: pointer;
+  font-size:1em;
+}
+
+li.slideout:nth-child(1) {
+  -webkit-transform: translateY(-10em);
+  transform: translateY(-10em)
+}
+
+li.slideout:nth-child(2) {
+  -webkit-transform: translateY(-8.6602540378em) translateX(5em);
+  transform: translateY(-8.6602540378em) translateX(5em)
+}
+
+li.slideout:nth-child(3) {
+  -webkit-transform: translateY(-5em) translateX(8.6602540378em);
+  transform: translateY(-5em) translateX(8.6602540378em)
+}
+
+li.slideout:nth-child(4) {
+  -webkit-transform: translateX(10em);
+  transform: translateX(10em)
+}

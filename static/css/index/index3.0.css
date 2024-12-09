@@ -1,0 +1,254 @@
+.navbar,
+.logo {
+    background-color: #00A7D0!important;
+}
+
+.wrapper {
+    min-height: 91%;
+    background-color: rgba(241, 241, 241, 1)!important;
+}
+
+.vertical-line {
+    border-left: 2px solid silver; 
+    min-height: 400px;
+    margin-left: 5%;
+    width: 10px;
+}
+
+.navbtn {
+    color: #fff;
+    display: block;
+    line-height: 40px;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    left: 5%;
+    top: 5%;
+}
+
+.ark-image {
+    background-repeat: no-repeat;
+    background-image: url('../../images/index/boat-grey.png');
+    background-position: center;
+}
+
+.circle {
+    width: 370px;
+    height: 370px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50%;
+    border-color: silver;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.sys-nav {
+    height: 90px!important;
+    width: 90px!important;
+    position: absolute;
+    border-radius: 50%;
+    background-color: #00A7D0;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.nav-active {
+    background-color:orange;
+    border: 7px solid rgba(0,0,0,0.1)
+}
+
+.sys-nav h5 {
+    font-size: 13px;
+    margin-top: 100%;
+    text-align: center;
+}
+
+.nav-active h5 {
+    margin-top: 108%;
+    text-align: center;
+}
+
+.sys-intro {
+    height: 200px!important;
+    width: 200px!important;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.sys-name {
+    font-size: 16px;
+    color: #999;
+}
+.sys-title {
+    font-size: 32px;
+    color: #0E6CCC;
+}
+.sys-keywords {
+    font-size: 16px;
+}
+.sys-keywords .keyword {
+    color: #00A7D0;
+    margin-right: 10px;
+}
+.sys-description {
+    padding: 10px 0;
+    font-size: 18px;
+    color: #868686;
+}
+.sys-link {
+    font-size: 16px;
+    color: #00A7D0!important;
+}
+
+.sys-nav:hover {
+    background-color: orange;
+}
+
+.ark-white {
+    background-image: url('../../images/index/boat-white.png');
+}
+.shudu-white {
+    background-image: url('../../images/index/shudu-white.png');
+}
+.log-collection-white {
+    background-image: url('../../images/index/log-collection-white.png');
+}
+.data-white {
+    background-image: url('../../images/index/data-white.png');
+}
+.supercmd-white {
+    background-image: url('../../images/index/supercmd-white.png');
+}
+.analysis-tool-white {
+    background-image: url('../../images/index/analysis-tool-white.png');
+}
+.horae-white {
+    background-image: url('../../images/index/horae-white.png');
+}
+.neptune-white {
+    background-image: url('../../images/index/neptune-white.png');
+}
+
+.ark-blue {
+    background-image: url('../../images/index/boat-blue.png');
+}
+.shudu-blue {
+    background-image: url('../../images/index/shudu-blue.png');
+}
+.log-collection-blue {
+    background-image: url('../../images/index/log-collection-blue.png');
+}
+.data-blue {
+    background-image: url('../../images/index/data-blue.png');
+}
+.supercmd-blue {
+    background-image: url('../../images/index/supercmd-blue.png');
+}
+.analysis-tool-blue {
+    background-image: url('../../images/index/analysis-tool-blue.png');
+}
+.horae-blue {
+    background-image: url('../../images/index/horae-blue.png');
+}
+.neptune-blue {
+    background-image: url('../../images/index/neptune-blue.png');
+}
+
+
+
+.footer {
+    background-color: rgba(241, 241, 241, 1);
+    color: #666;
+}
+.main_content {
+    width: 1068px;
+    margin: 0 auto;
+}
+.links_block {
+    color: #666;
+    background-color: white;
+    box-shadow: 0 2px 2px 0 #ccc;
+    margin: 10px 0 20px 0;
+}
+.links_block .links_block_head {
+    font-size: 15px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ccc;
+}
+.links_block .links_block_head .homepage_setting {
+    float: right;
+    cursor: pointer;
+    color: #999;
+    padding-top: 4px;
+}
+.links_block .links_block_head .homepage_setting a {
+    color: #999;
+}
+.links_block .links_block_body {
+    padding: 20px 30px;
+    line-height: 2em;
+}
+.links_block .links_block_body_all {
+    padding: 0px 30px;
+}
+.links_block .links_block_body_all .group_label img {
+    vertical-align: sub;
+}
+.links_block .links_block_body a {
+    color: #666;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+    display: inline-block;
+}
+.links_block .links_block_body .group_title {
+    font-size: 16px;
+    margin-left: 10px;
+    font-weight: 700;
+}
+.links_block .links_block_body .item_container {
+    padding-left: 10px;
+    margin-bottom: 10px;
+    height: 30px;
+}
+.links_block .links_block_body .group_item {
+    width: 20%;
+}
+.links_block .links_block_body>.row {
+    padding: 30px 0 10px 0;
+    margin: 0px 10px;
+}
+.links_block .links_block_body>.row:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
+.links_block .links_block_body .item_editting {
+    background-color: #FAFAFA;
+    border: 1px solid #DDD;
+}
+.links_block .links_block_body .item_op {
+    display: none;
+    border-left: 1px solid #ccc;
+    float: right;
+    width: 30px;
+    text-align: center;
+    background-color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.links_block .links_block_body .item_op_add {
+    color:#10a4d3;
+}
+.links_block .links_block_body .item_op_no {
+    color: #00CC99;
+    cursor: auto;
+}
+.links_block .links_block_body .group_label {
+    width: 11%;
+}
+.links_block .links_block_body .group_content {
+    width: 89%;
+}

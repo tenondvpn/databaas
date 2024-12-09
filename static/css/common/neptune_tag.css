@@ -1,0 +1,168 @@
+*{
+    padding:0;
+    margin: 0;
+    list-style: none;
+    text-decoration: none;
+    font-family: 'MicrosoftYaHei', 'Microsoft YaHei';
+    font-weight:normal;
+}
+#header{
+    width: 100%;
+    height: 60px;
+    margin:0 auto;
+    background: url("../../images/neptune/neptune_header.png") no-repeat;
+    background-size: 100% 60px;
+    position: relative;
+}
+#header .headertitle{
+    color:white;
+    font-size: 30px;
+    margin-top: 10px;
+    margin-left: 22px;
+    display:block;
+    float:left;
+}
+#navleft{
+    float:left;
+    margin-left:50px;
+}
+#navleft li{
+    float:left;
+    width: 140px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+}
+#navleft a{
+    font-weight: 400;
+    font-size: 16px;
+    color: #FFFFFF;
+
+}
+#navleft li:hover{
+    background: url("../../images/neptune/u15_mouseOver.png") no-repeat;
+}
+#navright{
+    margin-right:50px;
+    float:right;
+}
+#navright li{
+    float:left;
+    cursor: pointer;
+}
+#navright .iconli{
+    width:100px;
+    height:60px;
+    margin-right:20px;
+    position:relative;
+}
+.icon{
+    width:28px;
+    height:28px;
+    display:inline-block;
+    background:url("../../images/neptune/u316.png") no-repeat;
+    background-size:28px 28px;
+    margin-top:17px;
+    margin-left:29px;
+}
+.iconfont{
+    display:inline-block;
+    width:22px;
+    height:24px;
+    background:url('../../images/neptune/u318.png') no-repeat;
+    position:absolute;
+    left:47px;
+    top:11px;
+      font-weight: 500;
+  font-style: normal;
+  font-size: 10px;
+  color: #FFFFFF;
+  line-height: 18px;
+    text-align:center;
+
+}
+.iconli:hover{
+   background: url("../../images/neptune/u15_mouseOver.png") no-repeat;
+
+
+}
+
+#navright .sr-user{
+    margin-top:20px;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 16px;
+    color: #FFFFFF;
+    margin-right:5px;
+}
+#navright .sr-toggle{
+    width: 24px;
+    height: 60px;
+    background: url("../../images/neptune/chevron-indicator-a_u39.png");
+    -webkit-transform:rotate(180deg);
+}
+#toggle-select{
+    position: absolute;
+    right:42px;
+    top:57px;
+    width: 122px;
+    height:34px;
+    background: url("../../images/neptune/u26.png") no-repeat;
+    display: none;
+    z-index: 10;
+    background-size: 100% 100%;
+}
+#toggle-select li{
+    height:40px;
+    text-align: center;
+    line-height: 30px;
+    width: 108px;
+    margin-left:7px;
+}
+#toggle-select .toggle-top{
+    margin-top:5px;
+}
+#toggle-select li:hover{
+    background: url("../../images/neptune/u28_mouseOver.png");
+}
+#toggle-select li a{
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    color: #666666;
+}
+#toggle-select span{
+    position: absolute;
+    top:-6px;
+    left:50%;
+    margin-left:-10px;
+    background: url("../../images/neptune/u32.png") no-repeat;
+    width: 20px;
+    height: 9px;
+}
+
+.h-bg{
+    background:white;
+    color:#0099FF;
+
+}
+.li_hover:hover{
+    text-decoration:underline;
+    color:#0099FF;
+}
+.h_text{
+    cursor:text;
+}
+.nav-active{
+    background-color:white;
+}
+.nav-active a{
+    color:#09F!important;
+}
+
+.sr-user {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 108px;
+}

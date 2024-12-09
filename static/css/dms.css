@@ -1,0 +1,237 @@
+/*创建数据*/
+.all_form input[type=text],
+.all_form input[type=text],
+#projectId,#tables,#id_generation_cycle,
+.form-group textarea{
+    width:500px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+#createData_form label,
+#updateData_form label {
+    width:80px;
+    text-align:right;
+    margin-top:4px;
+}
+#createData_form fieldset{
+    width:800px;
+}
+#createData_form .form-control{
+    display:inline;
+    margin-right: 100px;
+}
+#createData_form legend{
+    width:650px;
+}
+#createData_form label.radio-inline label {
+    text-align:left;
+    margin-left: 20px;
+}
+
+#generation_cycle_id,
+#generation_cycle_delay{
+    width:200px;
+    margin-left: 10px;
+}
+
+#id_fluctuation{
+    width:100px;
+    margin-left: 10px;
+}
+
+
+
+#id_mail_check{
+    margin-left:10px;
+    margin-top:8px;
+}
+
+.textarea_label{
+    float:left;
+}
+
+.errorlist {
+    color: red;
+    margin-left: 120px;
+}
+
+.all_form label {
+    width:80px;
+    text-align:right;
+    
+}
+.all_form .form-control{
+    display:inline;
+    margin-right: 100px;
+}
+.all_form .form-group{
+    margin-top: 10px;
+}
+
+.errorlist{
+    list-style-type:none
+}
+.errorlist li{
+    color: red;
+}
+.bootstrap-switch{
+    margin-left:10px;
+}
+.viewTable-css tr th{
+    text-align:right;
+    font-size:15px;
+    font-family:微软雅黑;
+    width:130px;
+    font-weight:100;
+}
+.viewTable-css tr th {
+    line-height:45.4px;
+}
+.viewTable-css td{
+    word-break: break-all;
+    font-size:15px;
+    font-family:微软雅黑;
+    padding-left: 30px;
+}
+.meta-info {
+    position: absolute;
+    top: 20px;
+    right: 140px;
+    font-size: 15px!important;
+    text-decoration: none!important;
+}
+
+.part-info {
+    position: absolute;
+    top: 20px;
+    right: 240px;
+    font-size: 15px!important;
+    text-decoration: none!important;
+}
+
+.widget.box .widget-header {
+    border-bottom-color: #d9d9d9;
+    line-height: 35px;
+    padding: 0 12px;
+    margin-bottom: 0;
+}
+
+.widget .widget-header {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ececec;
+}
+
+.dt-widget-header {
+    line-height: 48px!important;
+}
+
+.a-title-font {
+    color: #a3adb5;
+    font-family: Adobe 黑体 Std;
+    font-size: 18px!important;
+}
+
+.widget {
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding: 0;
+}
+
+.widget.box .widget-content {
+    padding: 10px;
+    position: relative;
+    background-color: #fff;
+}
+
+.user-grid div {
+    display: inline-block;
+    min-width: 100px;
+    margin-left: 50px;
+    margin-top: 20px;
+    text-align: center;
+    min-height: 50px;
+    padding: 12px 5px 12px 5px;
+    background: #4bc5c3;
+    position: relative;
+    border-radius: 4px;
+}
+
+.user-grid div a {
+    text-decoration: none;
+    color: #fff!important;
+    font-size: 18px!important;
+}
+
+.user-grid div .close1 {
+    width: 17px;
+    height: 31px;
+    position: absolute;
+    right: 0px;
+    top: -6px;
+    cursor: pointer;
+}
+
+.modal-header {
+    background-color: #fff;
+    height: 50px;
+    padding: 15px 20px;
+}
+
+.aui_content {
+    display: inline-block;
+    text-align: left;
+    border: none 0;
+    height: 250px;
+    overflow-y: scroll;
+    width: 100%;
+}
+
+.aui_content label {
+    width: 235px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+tfoot input {
+    width: 100%;
+    padding: 3px;
+    box-sizing: border-box;
+}
+
+#flot-line-chart {
+    width: 95%;
+    height: 400px;
+    text-align: left;
+}
+
+#message_content{
+    height:150px;
+    overflow: auto;
+}
+
+#meta_content{
+    margin-left: 60px;
+}
+
+#part_content{
+    display: inline-block;
+    text-align: left;
+    border: none 0;
+    width: 100%;
+    height: 250px;
+    overflow-y: scroll;
+}
+
+/*权限申请列表*/
+#apply_table{
+    display: inline-block;
+    text-align: left;
+    border: none 0;
+    width: 100%;
+    height: 500px;
+    overflow-y: scroll;
+}
+
+
+
+

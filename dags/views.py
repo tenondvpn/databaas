@@ -1,0 +1,126 @@
+# coding=utf-8
+import sys
+
+sys.setrecursionlimit(10000)
+from django.shortcuts import render
+from horae.http_helper import *
+from django.contrib import auth
+from django.contrib.auth.models import User
+import django
+from django.contrib.auth import logout as auth_logout
+import pymysql
+from django.contrib.auth.decorators import login_required
+from horae.models import UserInfo
+
+def check_owl_user_valid(username, password):
+    payload = {"account": username, "password": password}
+    r = requests.post("https://owl.aidigger.com/api/v1/session", json=payload)
+    res_json = r.json()
+    if "next" in res_json:
+        return True
+
+    return False
+
+def get_owl_user_info(username):
+    try:
+        db = pymysql.connect("rm-bp1pyu5wq71ufm9a5.mysql.rds.aliyuncs.com", "owl", "owleigen123", "owl")
+        cursor = db.cursor()
+        cursor.execute("select code, id, realname, email, phone, avatar from profile where username='%s';" % username)
+        data = cursor.fetchone()
+        db.close()
+        return data
+    except Exception as ex:
+        return None
+
+@django.db.transaction.atomic
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        next = request.POST.get("next", "").strip()
+        auth_users = User.objects.filter(username=username)
+        if len(auth_users) <= 0:
+            first_name = ""
+            email = ""
+            avatar = ""
+            return JsonHttpResponse({'status': 1, 'msg': "用户不存在，请先注册.", 'next': next})
+
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return JsonHttpResponse({'status': 0, 'msg': "OK", 'next': next})
+        else:
+            first_name = ""
+            email = ""
+            User.objects.create_user(username, email, password, first_name=first_name)
+            user = auth.authenticate(username=username, password=password)
+            auth.login(request, user)
+            return JsonHttpResponse({'status': 0, 'msg': "OK", 'next': next})
+    else:
+        return render(request, 'login.html', {})
+
+@django.db.transaction.atomic
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get("username").strip()
+        password = request.POST.get("password")
+        email = request.POST.get("email").strip()
+        dingding = request.POST.get("dingding").strip()
+        next = request.POST.get("next", "").strip()
+        if '@' not in email:
+            return JsonHttpResponse({'status': 1, 'msg': "邮箱格式不正确", 'next': next})
+        
+        if username == "":
+            return JsonHttpResponse({'status': 1, 'msg': "用户名不能为空", 'next': next})
+
+        auth_users = User.objects.filter(username=username)
+        if len(auth_users) <= 0:
+            first_name = ""
+            avatar = ""
+            user = User.objects.create_user(username, email, password, first_name=first_name, last_name=avatar)
+            user_info = UserInfo(userid=user.id, email=email, dingding=dingding)
+            user_info.save()
+        else:
+            return JsonHttpResponse({'status': 1, 'msg': "用户已经存在，请直接登录.", 'next': '/login?next=' + next})
+
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return JsonHttpResponse({'status': 0, 'msg': "OK", 'next': next})
+        else:
+            first_name = ""
+            email = ""
+            User.objects.create_user(username, email, password, first_name=first_name)
+            user = auth.authenticate(username=username, password=password)
+            auth.login(request, user)
+            return JsonHttpResponse({'status': 0, 'msg': "OK", 'next': next})
+    else:
+        return render(request, 'register.html', {})
+    
+def logout(request):
+    auth_logout(request)
+    next = request.GET.get('next', '')
+    return JsonHttpResponse({'status': 0, 'msg': "OK", 'next': '/login?next=' + next})
+
+@login_required(login_url='/login/')
+def get_user_info(request):
+    user = request.user
+    auth_users = User.objects.filter(id=user.id)
+    if len(auth_users) <= 0:
+        return JsonHttpResponse({'status': 1, 'msg': "用户未登录，或者用户信息出错！"})
+
+    realname = auth_users[0].first_name
+    if realname is None or realname.strip() == "":
+        realname = auth_users[0].username
+
+    ret_map = {
+        "status": 0,
+        "msg": "OK",
+        "username": auth_users[0].username,
+        "realname": realname,
+        "id": user.id,
+        "email": auth_users[0].email,
+        "date_joined": auth_users[0].date_joined.strftime("%Y年%m月%d日 %H点")
+    }
+
+    return JsonHttpResponse(ret_map)

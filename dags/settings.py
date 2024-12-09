@@ -84,14 +84,14 @@ WSGI_APPLICATION = 'dags.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '10.109.112.6',
+        'HOST': '127.0.0.1',
         'PORT': 3306,
         'NAME': 'dags',
         'OPTIONS': {
             'init_command': 'SET default_storage_engine=INNODB;',
         },
         'USER': 'root',
-        'PASSWORD': 'dsd@zjlab',
+        'PASSWORD': 'Xf4aGbTaf!',
         'TEST_CHARSET': "utf8",
         'TEST_COLLATION': "utf8_general_ci",
         'CONN_MAX_AGE': 0

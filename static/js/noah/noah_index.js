@@ -1781,7 +1781,7 @@ function jsplumb_init() {
                         // create_edge(fromId, toId);
                         // is_create_edge_called = true;
                     // } else {
-                        $.post("/pipeline/link_task/", { Link: { prev_task_id: fromId, next_task_id: toId } }, function (result) {
+                        $.post("/pipeline/link_task/", { prev_task_id: fromId, next_task_id: toId }, function (result) {
                             if (result.status) {
                                 return;
                                 alert('连接失败！');

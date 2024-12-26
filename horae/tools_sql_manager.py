@@ -1754,28 +1754,6 @@ class SqlManager(object):
                 str(ex), traceback.format_exc()))
             return 1, str(ex)
 
-    def delete_task_info(self, owner_id, task_id):
-        try:
-            with django.db.transaction.atomic():
-                db_task = horae.models.Task.objects.get(id=task_id)
-                if self.check_pipeline_auth_valid(
-                        db_task.pl_id,
-                        owner_id) != tools_util.UserPermissionType.WRITE:
-                    return 1, "对不起，你没有权限删除这个DAG流的任务！"
-
-                edges = horae.models.Edge.objects.filter(prev_task_id=task_id)
-                edges.delete()
-                edges = horae.models.Edge.objects.filter(next_task_id=task_id)
-                edges.delete()
-                db_task.delete()
-                self.__graph_mgr.remove_node(str(task_id))
-
-                return 0, "OK"
-        except Exception as ex:
-            self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
-                str(ex), traceback.format_exc()))
-            return 1, str(ex)
-
     # def delete_task_info(self, owner_id, task_id):
     #     try:
     #         with django.db.transaction.atomic():
@@ -1783,63 +1761,12 @@ class SqlManager(object):
     #             if self.check_pipeline_auth_valid(
     #                     db_task.pl_id,
     #                     owner_id) != tools_util.UserPermissionType.WRITE:
-    #                 return 1, "对不起，你没有权限删除这个流程的任务！"
+    #                 return 1, "对不起，你没有权限删除这个DAG流的任务！"
 
-    #             next_task_ids = db_task.next_task_ids.split(',')
-    #             other_dep_tasks = []
-    #             for tmp_task_id in next_task_ids:
-    #                 if tmp_task_id.strip() == '':
-    #                     continue
-
-    #                 task = horae.models.Task.objects.get(id=int(tmp_task_id))
-    #                 if task.pl_id != db_task.pl_id:
-    #                     pipeline = horae.models.Pipeline.objects.get(id=task.pl_id)
-    #                     other_dep_tasks.append("流程：%s\t任务：%s" % (pipeline.name, task.name))
-    #             if len(other_dep_tasks) > 0:
-    #                 return 2, ("这个任务被其他流程的任务依赖，"
-    #                            "请先解除依赖关系再删除。\n%s" %
-    #                            '\n'.join(other_dep_tasks))
-
-    #             run_tasks = horae.models.Schedule.objects.filter(
-    #                 task_id=task_id,
-    #                 status__in=(
-    #                     tools_util.TaskState.TASK_READY,
-    #                     tools_util.TaskState.TASK_RUNNING,
-    #                     tools_util.TaskState.TASK_WAITING))
-    #             if len(run_tasks) > 0:
-    #                 return 1, "can't delete task, it is running!"
-
-    #             run_historys = horae.models.RunHistory.objects.filter(
-    #                 task_id=task_id)
-    #             for run_history in run_historys:
-    #                 run_history.delete()
-
-    #             schedules = horae.models.Schedule.objects.filter(
-    #                 task_id=task_id)
-    #             for schedule in schedules:
-    #                 schedule.delete()
-
-    #             ready_tasks = horae.models.ReadyTask.objects.filter(
-    #                 task_id=task_id)
-    #             for ready_task in ready_tasks:
-    #                 ready_task.delete()
-
-    #             ordered_tasks = horae.models.OrderdSchedule.objects.filter(
-    #                 task_id=task_id)
-    #             for ordered_task in ordered_tasks:
-    #                 ordered_task.delete()
-
-    #             for tmp_task_id in next_task_ids:
-    #                 if tmp_task_id.strip() == '':
-    #                     continue
-    #                 self.delete_edge(owner_id, task_id, int(tmp_task_id))
-
-    #             prev_task_ids = db_task.prev_task_ids.split(',')
-    #             for tmp_task_id in prev_task_ids:
-    #                 if tmp_task_id.strip() == '':
-    #                     continue
-    #                 self.delete_edge(owner_id, int(tmp_task_id), task_id)
-
+    #             edges = horae.models.Edge.objects.filter(prev_task_id=task_id)
+    #             edges.delete()
+    #             edges = horae.models.Edge.objects.filter(next_task_id=task_id)
+    #             edges.delete()
     #             db_task.delete()
     #             self.__graph_mgr.remove_node(str(task_id))
 
@@ -1848,6 +1775,84 @@ class SqlManager(object):
     #         self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
     #             str(ex), traceback.format_exc()))
     #         return 1, str(ex)
+
+    def delete_task_info(self, owner_id, task_id):
+        try:
+            with django.db.transaction.atomic():
+                db_task = horae.models.Task.objects.get(id=task_id)
+                if self.check_pipeline_auth_valid(
+                        db_task.pl_id,
+                        owner_id) != tools_util.UserPermissionType.WRITE:
+                    return 1, "对不起，你没有权限删除这个流程的任务！"
+
+                next_task_ids = db_task.next_task_ids.split(',')
+                other_dep_tasks = []
+                for tmp_task_id in next_task_ids:
+                    if tmp_task_id.strip() == '':
+                        continue
+
+                    task = horae.models.Task.objects.get(id=int(tmp_task_id))
+                    if task.pl_id != db_task.pl_id:
+                        pipeline = horae.models.Pipeline.objects.get(id=task.pl_id)
+                        other_dep_tasks.append("流程：%s\t任务：%s" % (pipeline.name, task.name))
+                if len(other_dep_tasks) > 0:
+                    return 2, ("这个任务被其他流程的任务依赖，"
+                               "请先解除依赖关系再删除。\n%s" %
+                               '\n'.join(other_dep_tasks))
+
+                run_tasks = horae.models.Schedule.objects.filter(
+                    task_id=task_id,
+                    status__in=(
+                        tools_util.TaskState.TASK_READY,
+                        tools_util.TaskState.TASK_RUNNING,
+                        tools_util.TaskState.TASK_WAITING))
+                if len(run_tasks) > 0:
+                    return 1, "can't delete task, it is running!"
+
+                edges = horae.models.Edge.objects.filter(prev_task_id=task_id)
+                edges.delete()
+                edges = horae.models.Edge.objects.filter(next_task_id=task_id)
+                edges.delete()
+                
+                run_historys = horae.models.RunHistory.objects.filter(
+                    task_id=task_id)
+                for run_history in run_historys:
+                    run_history.delete()
+
+                schedules = horae.models.Schedule.objects.filter(
+                    task_id=task_id)
+                for schedule in schedules:
+                    schedule.delete()
+
+                ready_tasks = horae.models.ReadyTask.objects.filter(
+                    task_id=task_id)
+                for ready_task in ready_tasks:
+                    ready_task.delete()
+
+                ordered_tasks = horae.models.OrderdSchedule.objects.filter(
+                    task_id=task_id)
+                for ordered_task in ordered_tasks:
+                    ordered_task.delete()
+
+                # for tmp_task_id in next_task_ids:
+                #     if tmp_task_id.strip() == '':
+                #         continue
+                #     self.delete_edge(owner_id, task_id, int(tmp_task_id))
+
+                # prev_task_ids = db_task.prev_task_ids.split(',')
+                # for tmp_task_id in prev_task_ids:
+                #     if tmp_task_id.strip() == '':
+                #         continue
+                #     self.delete_edge(owner_id, int(tmp_task_id), task_id)
+
+                db_task.delete()
+                self.__graph_mgr.remove_node(str(task_id))
+
+                return 0, "OK"
+        except Exception as ex:
+            self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
+                str(ex), traceback.format_exc()))
+            return 1, str(ex)
 
     def search_all_authed_processor(self, owner_id, word):
         try:

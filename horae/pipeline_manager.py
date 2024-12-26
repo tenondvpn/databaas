@@ -157,14 +157,14 @@ class PipelineManager(object):
             print("__watch_admin_ip_dir ip addr coming." + child + ', ' + self.__admin_ip + ', ' + field_list[1].strip())
 
     def is_lan(self, ip):
-        return False
-        # try:
-        #     res = ipaddress.ip_address(ip.strip()).is_private
-        #     print(ip + ":" + str(res))
-        #     return res
-        # except Exception as e:
-        #     print(ip + ": not valid")
-        #     return False
+        # return False
+        try:
+            res = ipaddress.ip_address(ip.strip()).is_private
+            print(ip + ":" + str(res))
+            return res
+        except Exception as e:
+            print(ip + ": not valid")
+            return False
         
     def get_project_tree(self, user_id, type=0):
         projects = self.__sql_manager.get_all_projects(type)

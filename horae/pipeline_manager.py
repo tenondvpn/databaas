@@ -1057,6 +1057,7 @@ class PipelineManager(object):
         if run_history is None:
             return self.__get_default_ret_map(1, 'error: has no ready_task info with'
                        ' schedule_id:%s' % schedule_id)
+        print(f"now get task run logs si lan {run_history.run_server} {self.is_lan(run_history.run_server)}, __kafka_servers: ${self.__kafka_servers}")
         if self.is_lan(run_history.run_server) and self.__kafka_servers != "":
             msg_id = int(round(time.time() * 100000))
             data = {}

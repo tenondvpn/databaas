@@ -1392,28 +1392,28 @@ function delete_edge(params) {
         $("body").addClass("modal-open");
     }
 
-    var url = "/pipeline/update_edge?prev_task_id=" + params.edge.source.id + "&next_task_id=" + params.edge.target.id;
-    $("#litter_modal_iframe iframe").attr('src', url);
-    $(".modal_iframe h4").html("修改连接");
-    $("#litter_modal_iframe").show();
-    $("#litter_modal_iframe").modal('show');
-    // if (confirm("删除该链接?")) {
-    //     var fromId = params.edge.source.id;
-    //     var toId = params.edge.target.id;
-    //     $.post("/pipeline/unlink_task/", {
-    //         Link: {
-    //             from: fromId,
-    //             to: toId
-    //         }
-    //     }, function (result) {
-    //         if (result.status) {
-    //             $('#messageModal .modal-body p').text('删除连接失败');
-    //             $('#messageModal').modal('show');
-    //         } else {
-    //             toolkit.removeEdge(params.edge);
-    //         }
-    //     }, "json");
-    // }
+    // var url = "/pipeline/update_edge?prev_task_id=" + params.edge.source.id + "&next_task_id=" + params.edge.target.id;
+    // $("#litter_modal_iframe iframe").attr('src', url);
+    // $(".modal_iframe h4").html("修改连接");
+    // $("#litter_modal_iframe").show();
+    // $("#litter_modal_iframe").modal('show');
+    if (confirm("删除该链接?")) {
+        var fromId = params.edge.source.id;
+        var toId = params.edge.target.id;
+        $.post("/pipeline/unlink_task/", {
+            Link: {
+                from: fromId,
+                to: toId
+            }
+        }, function (result) {
+            if (result.status) {
+                $('#messageModal .modal-body p').text('删除连接失败');
+                $('#messageModal').modal('show');
+            } else {
+                toolkit.removeEdge(params.edge);
+            }
+        }, "json");
+    }
 }
 
 function jsplumb_init() {
@@ -1778,27 +1778,27 @@ function jsplumb_init() {
                     var fromId = params.edge.source.id;
                     var toId = params.edge.target.id;
                     // if (params.edge.source.data.name == "StreamData") {
-                        create_edge(fromId, toId);
-                        is_create_edge_called = true;
+                        // create_edge(fromId, toId);
+                        // is_create_edge_called = true;
                     // } else {
-                    //     $.post("/pipeline/link_task/", { Link: { from: fromId, to: toId } }, function (result) {
-                    //         if (result.status) {
-                    //             return;
-                    //             alert('连接失败！');
-                    //             toolkit.removeEdge(params.edge);
-                    //         } else {
-                    //             var all_edges = toolkit.getAllEdges();
-                    //             var tmp_set = new Set();
-                    //             for (var i = 0; i < all_edges.length; ++i) {
-                    //                 var tmp_key = all_edges[i].source.id + ":" + all_edges[i].target.id;
-                    //                 if (tmp_set.has(tmp_key)) {
-                    //                     toolkit.removeEdge(all_edges[i]);
-                    //                 } else {
-                    //                     tmp_set.add(tmp_key);
-                    //                 }
-                    //             }
-                    //         }
-                    //     }, "json");
+                        $.post("/pipeline/link_task/", { Link: { from: fromId, to: toId } }, function (result) {
+                            if (result.status) {
+                                return;
+                                alert('连接失败！');
+                                toolkit.removeEdge(params.edge);
+                            } else {
+                                var all_edges = toolkit.getAllEdges();
+                                var tmp_set = new Set();
+                                for (var i = 0; i < all_edges.length; ++i) {
+                                    var tmp_key = all_edges[i].source.id + ":" + all_edges[i].target.id;
+                                    if (tmp_set.has(tmp_key)) {
+                                        toolkit.removeEdge(all_edges[i]);
+                                    } else {
+                                        tmp_set.add(tmp_key);
+                                    }
+                                }
+                            }
+                        }, "json");
                     // }
                 }
             },

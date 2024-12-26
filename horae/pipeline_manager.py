@@ -60,12 +60,12 @@ class KafkaRequestManager(threading.Thread):
             global_queue_lock.release()
 
     def run(self):
-        self.__log.info("KafkaRequestManager thread starting...")
+        print("KafkaRequestManager thread starting...")
         if self.__kafka_servers == "":
-            self.__log.info("KafkaRequestManager thread not starting...")
+            print("KafkaRequestManager thread not starting...")
             return
         
-        self.__log.info("KafkaRequestManager thread starting...")
+        print("KafkaRequestManager thread starting...")
         # 全局退出标示字段
         consumer = KafkaConsumer("all_message",
                          bootstrap_servers=self.__kafka_servers,

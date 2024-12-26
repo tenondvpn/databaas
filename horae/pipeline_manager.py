@@ -60,7 +60,9 @@ class KafkaRequestManager(threading.Thread):
             global_queue_lock.release()
 
     def run(self):
+        self.__log.info("KafkaRequestManager thread starting...")
         if self.__kafka_servers == "":
+            self.__log.info("KafkaRequestManager thread not starting...")
             return
         
         self.__log.info("KafkaRequestManager thread starting...")
@@ -122,10 +124,10 @@ class PipelineManager(object):
         self.__admin_port = None
         self.__node_http_port = int(config.get("tools", "node_port"))
         self.__kafka_manager = KafkaRequestManager(config, horae_logger)
-        print("__kafka_manager start.")
+        print(f"__kafka_manager start: {self.__kafka_servers}")
         self.__log.info("__kafka_manager start.")
         self.__kafka_manager.start()
-        print("__kafka_manager started.")
+        print("__kafka_manager started : {self.__kafka_servers}")
         self.__log.info("__kafka_manager started.")
         if self.__zk_manager.watch_children(
                 self.__admin_ip_dir,

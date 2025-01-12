@@ -1669,7 +1669,7 @@ function jsplumb_init() {
             edges: {
                 "default": {
                     anchor:["RightMiddle", "LeftMiddle"],
-                    paintStyle: { strokeWidth: 2, stroke: "rgb(212, 216, 224)", outlineWidth: 3, outlineStroke: "transparent" },	//	paint style for this edge type.
+                    paintStyle: { strokeWidth: 2, stroke: "rgb(100, 109, 126)", outlineWidth: 3, outlineStroke: "transparent" },	//	paint style for this edge type.
                     hoverPaintStyle: { strokeWidth: 2, stroke: "rgb(67,67,67)" }, // hover paint style for this edge type.
                     events: {
                         click: function (params) {
@@ -1735,7 +1735,7 @@ function jsplumb_init() {
             layout: {
                 "type": "Hierarchical",
                 "parameters": {
-                    "orientation": "vertical",
+                    "orientation": "horizontal",
                     "padding": [
                         50,
                         60
@@ -1743,8 +1743,8 @@ function jsplumb_init() {
                 }
             },
             jsPlumb: {
-                Anchor: "Left",
-                Endpoint: "Blank",
+                Anchor: "Bottom",
+                Endpoint: "Top",
                 Connector: ["Straight", {cssClass: "connectorClass", hoverClass: "connectorHoverClass"}],
                 PaintStyle: {strokeWidth: 1, stroke: '#89bcde'},
                 HoverPaintStyle: {stroke: "orange"},

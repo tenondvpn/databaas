@@ -1735,7 +1735,7 @@ function jsplumb_init() {
             layout: {
                 "type": "Hierarchical",
                 "parameters": {
-                    "orientation": "horizontal",
+                    "orientation": "vertical",
                     "padding": [
                         50,
                         60
@@ -1743,8 +1743,8 @@ function jsplumb_init() {
                 }
             },
             jsPlumb: {
-                Anchor: "Bottom",
-                Endpoint: "Top",
+                Anchor: "Left",
+                Endpoint: "Blank",
                 Connector: ["Straight", {cssClass: "connectorClass", hoverClass: "connectorHoverClass"}],
                 PaintStyle: {strokeWidth: 1, stroke: '#89bcde'},
                 HoverPaintStyle: {stroke: "orange"},

@@ -4,13 +4,15 @@ var global_rerun_id = 0;
 var tail_filename = null;
 
 var refresh_tail_kog = function () {
-    readLog(tail_filename, true);
+    if (tail_filename != null) {
+        readLog(tail_filename, true);
+    }
 };
 
 function readLog(filename, istail) {
-    tail_filename = null;
     if (istail == 0) {
         var url = '/pipeline/get_log_content/';
+        tail_filename = null;
     } else {
         var url = '/pipeline/get_tail/';
         tail_filename = filename;
@@ -66,6 +68,7 @@ function downloadLog(filename) {
 
 
 function getlogcontent(schedule_id, subpath, that) {
+    tail_filename = null;
     pathtotal = subpath;
     $('#nulldocument').css({
         'display': 'none'
@@ -292,6 +295,7 @@ function writeObj(obj) {
 }
 
 function get_log_list(rerun_id, schedule_id, index) {
+    tail_filename = null;
     global_rerun_id = rerun_id;
     $('.nulldocument').remove();
     var tmp_bread = document.getElementById('readdocument');

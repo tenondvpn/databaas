@@ -1,14 +1,20 @@
 var pathtotal = "";
 var click_that = null;
 var global_rerun_id = 0;
+var tail_filename = null;
 
+var refresh_tail_kog = function () {
+    readLog(tail_filename, true);
+};
 
 function readLog(filename, istail) {
+    tail_filename = null;
     if (istail == 0) {
         var url = '/pipeline/get_log_content/';
-    }
-    else {
+    } else {
         var url = '/pipeline/get_tail/';
+        tail_filename = filename;
+        setTimeout(refresh_tail_kog, 1000);
     }
 
     $.ajax({

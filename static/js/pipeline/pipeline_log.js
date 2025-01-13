@@ -16,7 +16,7 @@ function readLog(filename, istail) {
     } else {
         var url = '/pipeline/get_tail/';
         tail_filename = filename;
-        setTimeout(refresh_tail_kog, 3000);
+        setTimeout(refresh_tail_kog, 2000);
     }
 
     $.ajax({

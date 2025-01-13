@@ -191,23 +191,23 @@ function getlogcontent(schedule_id, subpath, that) {
             }
             for (var i = 0; i < tranceArr.length; i++) {
                 $("#navultrance").append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' onclick=readLog('" + tranceArr[i] + "',0)>" + tranceArr[i] + "</a>");
-                $("#navultrance").append("&nbsp;<a href='javascript:void(0)' title='下载' class='icon-download' onclick=downloadLog('" + tranceArr[i] + "')/>");
+                $("#navultrance").append("&nbsp;<a href='javascript:void(0)' title='下载' class='fa fa-arrow-down' onclick=downloadLog('" + tranceArr[i] + "')/>");
             }
             for (var i = 0; i < stdoutArr.length; i++) {
                 $("#navulstdout").append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' onclick=readLog('" + stdoutArr[i] + "',0)>" + stdoutArr[i] + "</a>");
-                $("#navulstdout").append("&nbsp;<a href='javascript:void(0)' title='下载' class='icon-download' onclick=downloadLog('" + stdoutArr[i] + "')/>");
+                $("#navulstdout").append("&nbsp;<a href='javascript:void(0)' title='下载' class='fa fa-arrow-down' onclick=downloadLog('" + stdoutArr[i] + "')/>");
             }
             for (var i = 0; i < confArr.length; i++) {
                 $("#navulconf").append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' onclick=readLog('" + confArr[i] + "',0)>" + confArr[i] + "</a>");
-                $("#navulconf").append("&nbsp;<a href='javascript:void(0)' title='下载' class='icon-download' onclick=downloadLog('" + confArr[i] + "')/>");
+                $("#navulconf").append("&nbsp;<a href='javascript:void(0)' title='下载' class='fa fa-arrow-down' onclick=downloadLog('" + confArr[i] + "')/>");
             }
             for (var i = 0; i < pyArr.length; i++) {
                 $("#navulpy").append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' onclick=readLog('" + pyArr[i] + "',0)>" + pyArr[i] + "</a>");
-                $("#navulpy").append("&nbsp;<a href='javascript:void(0)' title='下载' class='icon-download' onclick=downloadLog('" + pyArr[i] + "')/>");
+                $("#navulpy").append("&nbsp;<a href='javascript:void(0)' title='下载' class='fa fa-arrow-down' onclick=downloadLog('" + pyArr[i] + "')/>");
             }
             for (var i = 0; i < other.length; i++) {
                 $("#navulother").append("&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' onclick=readLog('" + other[i] + "',0)>" + other[i] + "</a>");
-                $("#navulother").append("&nbsp;<a href='javascript:void(0)' title='下载' class='icon-download' onclick=downloadLog('" + other[i] + "')/>");
+                $("#navulother").append("&nbsp;<a href='javascript:void(0)' title='下载' class='fa fa-arrow-down' onclick=downloadLog('" + other[i] + "')/>");
             }
             for (var i = 0; i < dirArr.length; i++) {
                 var dir = "'" + dirArr[i] + "'";

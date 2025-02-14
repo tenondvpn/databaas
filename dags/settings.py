@@ -23,14 +23,14 @@ CURR_DIR = os.path.basename(os.path.dirname(__file__))
 SECRET_KEY = 'ib3j-d5eu)h7judfpt5_%9hrwanho=*6$pcye#4w6h$av@eeg4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True 
 SITE_URL = 'http://10.10.14.120:8000/'
 ALLOWED_HOSTS = ['*']
 PROJECT_NAME="dags"
 SITE_ADMIN = ""
 # Application definition
 
-WORK_PACKAGE_DIR = "/home/merak/databaas/packages/"
+WORK_PACKAGE_DIR = "/root/databaas/packages"
 
 
 INSTALLED_APPS = [

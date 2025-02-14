@@ -73,8 +73,10 @@ class KafkaRequestManager(threading.Thread):
         while True:
             try:
                 data = consumer.poll(timeout_ms=100, max_records=1)  # 拉取消息，字典类型
+                print("success get consumer data.")
                 if data:
                     for key in data:
+                        print(f"get data key: {key}, value: {data[key][0].value}")
                         global_queue_lock.acquire()
                         try:
                             res_map = json.loads(data[key][0].value)

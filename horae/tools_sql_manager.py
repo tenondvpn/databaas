@@ -1537,13 +1537,16 @@ class SqlManager(object):
                 sort_order,
                 page_min,
                 page_max)
+            self.__log(f"now execute sql: {sql}")
+            print(f"now execute sql: {sql}")
             cursor.execute(sql)
+            self.__log(f"success execute sql: {sql}")
+            print(f"success execute sql: {sql}")
             rows = cursor.fetchall()
             sql = ConstantSql.SHOW_TASK_RUN_HISTORY_COUNT % (
                 pipeline_id_list,
                 where_content)
             cursor.execute(sql)
-            print(sql)
             count = cursor.fetchall()
             return count[0][0], rows
         except Exception as ex:

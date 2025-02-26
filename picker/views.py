@@ -320,12 +320,12 @@ def get_table_detail(request):
         db_name = request.POST.get('db')
         table_name = request.POST.get('table')
         show_create_res = ck_client.execute("show create table " + db_name + "." + table_name)
-        print(show_create_res);
+        print(show_create_res)
         res = {}
         res["create"] = show_create_res[0][0]
 
         show_fileds = ck_client.execute("desc " + db_name + "." + table_name)
-        print(show_fileds);
+        print(show_fileds)
 
         tmp_result = []
         for filed in show_fileds:

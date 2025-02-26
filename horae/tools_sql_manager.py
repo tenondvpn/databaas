@@ -1537,10 +1537,10 @@ class SqlManager(object):
                 sort_order,
                 page_min,
                 page_max)
-            self.__log(f"now execute sql: {sql}")
+            self.__log.info(f"now execute sql: {sql}")
             print(f"now execute sql: {sql}")
             cursor.execute(sql)
-            self.__log(f"success execute sql: {sql}")
+            self.__log.info(f"success execute sql: {sql}")
             print(f"success execute sql: {sql}")
             rows = cursor.fetchall()
             sql = ConstantSql.SHOW_TASK_RUN_HISTORY_COUNT % (

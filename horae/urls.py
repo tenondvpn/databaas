@@ -18,6 +18,7 @@ urlpatterns = (
     re_path(r'^copy_pipeline/$',views.copy_pipeline),
     re_path(r'^delete/(?P<pipe_id>\d+)/$', views.delete),
     re_path(r'^update_task/(?P<task_id>\d+)/$', views.update_task),
+    re_path(r'^task_md_result/(?P<task_id>\d+)/$', views.task_md_result),
     re_path(r'^update_block/(?P<hash>.*)/$', views.update_block),
     re_path(r'^get_pipelines/$',views.get_pipelines),
     re_path(r'^get_server_tags/$', views.get_server_tags),

@@ -1316,7 +1316,16 @@ function mm_remove_task() {
 }
 
 function mm_show_task_runhistory() {
+    if (!$("body").hasClass("modal-open")) {
+        $("body").addClass("modal-open");
+    }
 
+    var url = "/pipeline/task_md_result/" + node_data.id + "/";
+    $("#modal_iframe iframe").attr('src', url);
+    $("#modal_iframe").attr('task_id', node_data.id);
+    $(".modal_iframe h4").html("修改任务");
+    $("#modal_iframe").show();
+    $("#modal_iframe").modal('show');
 }
 
 function show_pipe_auth() {

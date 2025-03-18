@@ -544,6 +544,19 @@ def update_task(request, task_id):
 
 @login_required(login_url='/login/')
 @add_visit_record
+def task_md_result(request, task_id):
+    user = request.user
+    is_super = is_admin(user)
+    task = Task.objects.get(id=task_id)
+    quote_num = 0
+    return render(request, 'task_md_result.html',
+                  {'task': task, 'pipe_id': task.pl_id, 'page_title': '任务执行状态',
+                   'pipeline_model': 1, 'quote_num': quote_num, 'page_index': 2,
+                   'is_super': is_super, 'content': "##1\nhello world\n"
+                   })
+
+@login_required(login_url='/login/')
+@add_visit_record
 def show_block(request, hash):
     user = request.user
     print("get hash " + hash)

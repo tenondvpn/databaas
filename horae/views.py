@@ -560,7 +560,7 @@ def task_md_result(request, task_id):
             log_content = horae_interface.get_task_log_content(
                 schedule_id, file_name, 0, 102400, rerun_id)
             logger.info(f'get_task_log_content : {log_content}')
-            log_content = log_content.replace("\n", "\\\\n")
+            log_content = log_content.replace("\n", "\\n")
 
     quote_num = 0
     return render(request, 'task_md_result.html',

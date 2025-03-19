@@ -566,7 +566,8 @@ def task_md_result(request, task_id):
     return render(request, 'task_md_result.html',
                   {'page_title': '任务执行状态',
                    'pipeline_model': 1, 'quote_num': quote_num, 'page_index': 2,
-                   'is_super': is_super, 'content': log_content.strip()})
+                   'is_super': is_super, 'content': log_content.strip()},
+                   content_type='text/plain')
 
 @login_required(login_url='/login/')
 @add_visit_record

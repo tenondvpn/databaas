@@ -550,7 +550,6 @@ def task_md_result(request, task_id):
     latest_history =RunHistory.objects.filter(task_id=task_id).order_by("-start_time")[:1]
     task_with_status = {}
     log_content = "## 提示\\n 没有找到输出文件： result.md"
-    print(f'get latest history: {latest_history}')
     if latest_history is not None and len(latest_history) > 0:
         historys = RunHistory.objects.filter(task_id=task_id, run_time=latest_history[0].run_time)
         for history in historys:
@@ -558,14 +557,9 @@ def task_md_result(request, task_id):
             schedule_id = history.schedule_id
             file_name = "result.md"
             rerun_id = 0
-            try:
-                temp_str = horae_interface.get_task_log_content(
-                    schedule_id, file_name, 0, 102400, rerun_id)
-                content_json = json.loads(temp_str)
-                if content_json["status"] == 0:
-                    log_content = content_json["file_content"]
-            except Exception as ex:
-                pass
+            log_content = horae_interface.get_task_log_content(
+                schedule_id, file_name, 0, 102400, rerun_id)
+            logger.info(f'get_task_log_content : {log_content}')
 
     quote_num = 0
     return render(request, 'task_md_result.html',

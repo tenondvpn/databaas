@@ -8,8 +8,7 @@
   <div id="content"></div>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    document.getElementById('content').innerHTML =
-      marked.parse('# Marked in the browser\n\nRendered by **marked**.');
+    document.getElementById('content').innerHTML = marked.parse('{{log_content}}');
   </script>
 </body>
 </html>

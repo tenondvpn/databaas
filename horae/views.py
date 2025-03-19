@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 
 from horae.tools_util import StaticFunction
-from horae.models import Pipeline, Processor, Task, Edge
+from horae.models import Pipeline, Processor, Task, Edge, RunHistory
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
 from horae.horae_interface import *
 from horae import common_logger
@@ -547,13 +547,27 @@ def update_task(request, task_id):
 def task_md_result(request, task_id):
     user = request.user
     is_super = is_admin(user)
-    task = Task.objects.get(id=task_id)
+    latest_history =RunHistory.objects.filter(task_id=task_id).order_by("-start_time")[:1]
+    task_with_status = {}
+    log_content = ""
+    if latest_history is not None and len(latest_history) > 0:
+        historys = RunHistory.objects.filter(task_id=task_id, run_time=latest_history[0].run_time)
+        for history in historys:
+            task_with_status[history.task_id] = history.status
+            schedule_id = history.schedule_id
+            file_name = "result.md"
+            rerun_id = 0
+            try:
+                log_content = horae_interface.get_task_log_content(
+                    schedule_id, file_name, 0, 102400, rerun_id)
+            except Exception as ex:
+                pass
+
     quote_num = 0
     return render(request, 'task_md_result.html',
-                  {'task': task, 'pipe_id': task.pl_id, 'page_title': '任务执行状态',
+                  {'page_title': '任务执行状态',
                    'pipeline_model': 1, 'quote_num': quote_num, 'page_index': 2,
-                   'is_super': is_super, 'content': "##1\nhello world\n"
-                   })
+                   'is_super': is_super, 'content': log_content})
 
 @login_required(login_url='/login/')
 @add_visit_record

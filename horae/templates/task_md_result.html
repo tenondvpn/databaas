@@ -11,7 +11,7 @@
   <div id="content"></div>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    document.getElementById('content').innerHTML = marked.parse($("#log_content").val());
+    document.getElementById('content').innerHTML = marked.parse("{{ content }}");
   </script>
 </body>
 {% endblock %}

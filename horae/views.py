@@ -550,6 +550,7 @@ def task_md_result(request, task_id):
     latest_history =RunHistory.objects.filter(task_id=task_id).order_by("-start_time")[:1]
     task_with_status = {}
     log_content = "## 提示\\n 没有找到输出文件： result.md"
+    print(f'get latest history: {latest_history}')
     if latest_history is not None and len(latest_history) > 0:
         historys = RunHistory.objects.filter(task_id=task_id, run_time=latest_history[0].run_time)
         for history in historys:

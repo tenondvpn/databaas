@@ -558,8 +558,11 @@ def task_md_result(request, task_id):
             file_name = "result.md"
             rerun_id = 0
             try:
-                log_content = horae_interface.get_task_log_content(
+                temp_str = horae_interface.get_task_log_content(
                     schedule_id, file_name, 0, 102400, rerun_id)
+                content_json = json.loads(temp_str)
+                if content_json["status"] == 0:
+                    log_content = content_json["file_content"]
             except Exception as ex:
                 pass
 

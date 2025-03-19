@@ -1,11 +1,8 @@
-{% extends "base_iframe.html" %}
-{% block content %}
-{% load static %}
-{% load horae_filter %}
+<!doctype html>
+<html>
 <head>
   <meta charset="utf-8"/>
   <title>Marked in the browser</title>
-  <input type="hidden" id="log_content" name="variable" value="{{ log_content }}">
 </head>
 <body>
   <div id="content"></div>
@@ -14,4 +11,4 @@
     document.getElementById('content').innerHTML = marked.parse("{{ content }}");
   </script>
 </body>
-{% endblock %}
+</html>

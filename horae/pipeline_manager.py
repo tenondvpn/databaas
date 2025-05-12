@@ -73,7 +73,6 @@ class KafkaRequestManager(threading.Thread):
         while True:
             try:
                 data = consumer.poll(timeout_ms=100, max_records=1)  # 拉取消息，字典类型
-                print("success get consumer data.")
                 if data:
                     for key in data:
                         print(f"get data key: {key}, value: {data[key][0].value}")
@@ -1080,8 +1079,8 @@ class PipelineManager(object):
                 if res_data is not None:
                     self.__log.info("success get res data: %s" % res_data)
                     break
-                    
-                self.__log.info("waiting get res data: %s" % "0")
+                
+                self.__log.info(f"waiting get res data: {run_history.run_server} data: {data}")    
                 time.sleep(0.1)
                 try_times += 1
             if res_data is None: 

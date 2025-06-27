@@ -247,6 +247,9 @@ class PipelineManager(object):
         projects = self.__sql_manager.get_projects_with_parent_id(parent_id=tree_id, type=type)
         res_list = []
         for project in projects:
+            if user_id == 226 and project.id != 13:
+                continue
+
             res_list.append({"id": project.id, "text": project.name, "state": "closed", "is_project": 1})
 
         if int(tree_id) != 0:

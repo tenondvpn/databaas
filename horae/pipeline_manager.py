@@ -174,6 +174,9 @@ class PipelineManager(object):
             if project.parent_id not in tree_map:
                 tree_map[project.parent_id] = []
 
+            if user_id == 226 and project.id != 13:
+                continue
+
             tree_map[project.parent_id].append({"id": project.id, "text": project.name, "is_project": 1})
 
         ret_list = []

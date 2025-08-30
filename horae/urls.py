@@ -61,4 +61,7 @@ urlpatterns = (
     re_path(r'^liviz_index/$',views.liviz_index),
     re_path(r'^show_block/(?P<hash>.*)/$',views.show_block),
     re_path(r'^getDatas/$',views.get_datas),
+
+    re_path(r'^update_pipline_graph/(?P<pipe_id>\d+)/$', views.update_pipline_graph),
+
 )

@@ -2310,3 +2310,28 @@ def copy_task(request):
         except Exception as ex:
             logger.error('get graph  error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+
+@login_required(login_url='/login/')
+def update_pipline_graph(request, pipe_id):
+    pipeline = Pipeline.objects.get(id=pipe_id)
+    user = request.user
+
+    is_super = is_admin(user)
+    if request.method == 'POST':
+        try:
+            graph_str = request.POST.get('graph')
+            pipeline.graph = graph_str
+            pipeline.save()
+
+            ret_map = {}
+            ret_map["status"] = 0
+            ret_map["info"] = "OK"
+            ret_map["pl_id"] = pipe_id
+            status, msg = status_msg(json.dumps(ret_map))
+        except Exception as ex:
+            logger.error('update pipeline fail: <%s>' % str(ex))
+            return JsonHttpResponse(
+                {'status': 1, 'msg': str(ex)})
+
+        return JsonHttpResponse(
+            {'status': status, 'msg': msg})

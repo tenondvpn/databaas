@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^login/$', views.login),
     re_path(r'^register/$', views.register),
+    re_path(r'^rest_register/$', views.rest_register),
     re_path(r'^logout/$', views.logout),
     re_path(r'^get_user_info/$', views.get_user_info),
     re_path(r'^pipeline/', include('horae.urls')),

@@ -12,6 +12,26 @@ import pymysql
 from django.contrib.auth.decorators import login_required
 from horae.models import UserInfo
 
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def rest_register(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if not username or not password:
+        return Response({'message': '用户名和密码不能为空'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(username=username).exists():
+        return Response({'message': '该用户名已存在'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create_user(username=username, password=password)
+    return Response({'message': '注册成功'}, status=status.HTTP_201_CREATED)
+
 def check_owl_user_valid(username, password):
     payload = {"account": username, "password": password}
     r = requests.post("https://owl.aidigger.com/api/v1/session", json=payload)

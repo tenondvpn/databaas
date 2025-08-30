@@ -11,11 +11,16 @@ from django.contrib.auth import logout as auth_logout
 import pymysql
 from django.contrib.auth.decorators import login_required
 from horae.models import UserInfo
+from django.contrib.auth import authenticate
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import authentication_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -31,6 +36,27 @@ def rest_register(request):
 
     user = User.objects.create_user(username=username, password=password)
     return Response({'message': '注册成功'}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def rest_login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(username=username, password=password)
+
+    if user:
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'message': '登录成功'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': '用户名或密码错误'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def rest_logout(request):
+    request.user.auth_token.delete()
+    return Response({'message': '成功退出'}, status=status.HTTP_200_OK)
 
 def check_owl_user_valid(username, password):
     payload = {"account": username, "password": password}

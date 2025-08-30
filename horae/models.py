@@ -17,6 +17,7 @@ class Pipeline(models.Model):
     monitor_way = models.IntegerField(default=0)
     private = models.IntegerField(default=0)
     project_id = models.IntegerField(default=0, db_index=True, null=True)
+    graph = models.TextField(null=True)
 
 class Processor(models.Model):
     name = models.CharField(max_length=250, unique=True)

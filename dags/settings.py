@@ -78,7 +78,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'dags.urls'
-
+CORS_ALLOW_HEADERS = ['authorization', 'content-type']
+CORS_ALLOW_CREDENTIALS = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

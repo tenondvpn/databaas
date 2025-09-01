@@ -46,9 +46,9 @@ def rest_login(request):
     user = authenticate(username=username, password=password)
 
     if user:
-        request.user.auth_token.delete()
+        user.auth_token.delete()
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'message': '登录成功'}, status=status.HTTP_200_OK)
+        return Response({'token': token.key, 'message': '登录成功', 'created': created}, status=status.HTTP_200_OK)
     else:
         return Response({'message': '用户名或密码错误'}, status=status.HTTP_401_UNAUTHORIZED)
     

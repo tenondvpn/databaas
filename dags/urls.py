@@ -18,6 +18,10 @@ from django.urls import path, re_path, include
 #from django.conf.urls import url, include
 
 from dags import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,4 +37,7 @@ urlpatterns = [
     re_path(r'^picker/', include('picker.urls')),
     re_path(r'^pyplugin/', include('pyplugin.urls')),
     re_path(r'^dagschedule/', include('dagschedule.urls')),
+    re_path('rest_token/', TokenObtainPairView.as_view()),
+    re_path('rest_refresh/', TokenRefreshView.as_view())
+
 ]

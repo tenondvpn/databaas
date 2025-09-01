@@ -108,16 +108,9 @@ def search_pipeline(request):
 # @login_required(login_url='/login/')
 # @jwt_required()
 @api_view(['GET'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
-    print(request.META.get('HTTP_AUTHORIZATION'))
-    from rest_framework.authtoken.models import Token
-    try:
-        token, created = Token.objects.get(user=request.user)
-        print(token.payload)
-    except Exception as e:
-        print("Token无效:", str(e), request.user.id)
     user = request.user
 
     tree_id = 0

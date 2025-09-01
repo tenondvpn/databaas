@@ -46,6 +46,7 @@ def rest_login(request):
     user = authenticate(username=username, password=password)
 
     if user:
+        request.user.auth_token.delete()
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key, 'message': '登录成功'}, status=status.HTTP_200_OK)
     else:

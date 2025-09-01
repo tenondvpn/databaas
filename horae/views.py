@@ -13,7 +13,9 @@ from horae.http_decorators import add_visit_record
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-from rest_framework_simplejwt.decorators import jwt_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
@@ -102,7 +104,9 @@ def search_pipeline(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@jwt_required()
+# @jwt_required()
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
     user = request.user
 

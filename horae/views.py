@@ -109,7 +109,7 @@ def search_pipeline(request):
 # @jwt_required()
 @api_view(['GET'])
 # @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
     print(request.META.get('HTTP_AUTHORIZATION'))
     from rest_framework.authtoken.models import Token

@@ -15,6 +15,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import authentication_classes
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory
@@ -106,6 +108,7 @@ def search_pipeline(request):
 # @login_required(login_url='/login/')
 # @jwt_required()
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
     user = request.user

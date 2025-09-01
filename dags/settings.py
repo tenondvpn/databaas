@@ -78,7 +78,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'dags.urls'
-CORS_ALLOW_HEADERS = ['authorization', 'content-type']
+CORS_ALLOW_HEADERS = ['authorization','authentication', 'content-type']
 CORS_ALLOW_CREDENTIALS = True
 TEMPLATES = [
     {

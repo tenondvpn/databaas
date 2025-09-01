@@ -13,7 +13,7 @@ from horae.http_decorators import add_visit_record
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-from rest_framework_jwt.decorators import jwt_required
+from rest_framework_simplejwt.decorators import jwt_required
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory
 from horae.forms import PipelineForm, ProcessorForm, TaskForm

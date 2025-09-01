@@ -112,9 +112,9 @@ def search_pipeline(request):
 @permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
     print(request.META.get('HTTP_AUTHORIZATION'))
-    from rest_framework_simplejwt.tokens import AccessToken
+    from rest_framework.authtoken.models import Token
     try:
-        token = AccessToken("c16b9967ccead89f1d660e7d23a19e233f88d647")
+        token, created = Token.objects.get(user=request.user)
         print(token.payload)
     except Exception as e:
         print("Token无效:", str(e))

@@ -53,7 +53,7 @@ def rest_login(request):
     
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def rest_logout(request):
     request.user.auth_token.delete()
     return Response({'message': '成功退出'}, status=status.HTTP_200_OK)

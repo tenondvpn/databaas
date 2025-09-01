@@ -117,7 +117,7 @@ def get_project_tree_async(request):
         token, created = Token.objects.get(user=request.user)
         print(token.payload)
     except Exception as e:
-        print("Token无效:", str(e))
+        print("Token无效:", str(e), request.user.id)
     user = request.user
 
     tree_id = 0

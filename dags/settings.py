@@ -53,13 +53,18 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     )
 }
 
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': timedelta(days=1),
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True  # 自动刷新refresh token
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

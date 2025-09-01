@@ -107,7 +107,7 @@ def search_pipeline(request):
 
 # @login_required(login_url='/login/')
 # @jwt_required()
-# @api_view(['GET'])
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_project_tree_async(request):

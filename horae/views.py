@@ -13,7 +13,7 @@ from horae.http_decorators import add_visit_record
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-
+from rest_framework_jwt.decorators import jwt_required
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
@@ -101,7 +101,8 @@ def search_pipeline(request):
         logger.error('search_pipeline  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
+@jwt_required()
 def get_project_tree_async(request):
     user = request.user
 

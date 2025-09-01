@@ -106,7 +106,7 @@ def search_pipeline(request):
 # @login_required(login_url='/login/')
 # @jwt_required()
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])e z
+@permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
     user = request.user
 

@@ -328,10 +328,12 @@ class PipelineManager(object):
             task.prev_task_ids = ''
             task_dict[task.id] = task
 
+        res_edges = []
         edges = horae.models.Edge.objects.filter(pipeline_id=pipeline_id)
         for edge in edges:
             if edge.prev_task_id in task_dict:
                 task_dict[edge.prev_task_id].next_task_ids += str(edge.next_task_id) + ","
+                res_edges.append([str(edge.prev_task_id), str(edge.next_task_id)])
                  
         task_list = []
         task_id_list = set()
@@ -344,7 +346,6 @@ class PipelineManager(object):
             historys = horae.models.RunHistory.objects.filter(pl_id=pipeline_id, run_time=latest_history[0].run_time)
             for history in historys:
                 task_with_status[history.task_id] = history.status
-
 
         for task in tasks:
             task_map = self.__get_task_map(task)
@@ -360,6 +361,7 @@ class PipelineManager(object):
         ret_map["status"] = 0
         ret_map["info"] = "OK"
         ret_map["tasks"] = task_list
+        ret_map["edges"] = res_edges
         return json.dumps(ret_map)
 
     # def get_tasks_by_pipeline_id(self, pipeline_id):

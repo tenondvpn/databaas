@@ -187,12 +187,13 @@ def get_tasks(request):
         try:
             tasks = horae_interface.get_tasks_by_pipeline_id(int(pipeline_id))
             task_list = json.loads(tasks)['tasks']
+            edges = json.loads(tasks)['edges']
         except Exception as ex:
             logger.error('get tasks fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': str(ex)})
         return JsonHttpResponse(
-            {'status': 0, 'task_list': task_list})
+            {'status': 0, 'task_list': task_list, 'edges': edges})
 
 # @login_required(login_url='/login/')
 @api_view(['POST'])

@@ -52,7 +52,7 @@ FIVE_TIME = 3
 ALWAYS = 4
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def noah_index(request):
     return render(request, 'noah_index.html', {"pipe_id": -1})
@@ -61,13 +61,13 @@ def liviz_index(request):
     return render(request, 'liviz_js.html', {"pipe_id": -1})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def pindex(request):
     return render(request, 'pindex.html', {"pipe_id": -1})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def detail(request, pipe_id):
@@ -77,7 +77,7 @@ def port_filter(request):
     return render(request, 'port_filter.html')
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_project_tree(request):
     user = request.user
@@ -94,7 +94,7 @@ def get_project_tree(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_pipeline(request):
     user = request.user
@@ -116,7 +116,7 @@ def search_pipeline(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_project_tree_async(request):
     user = request.user
@@ -160,7 +160,7 @@ def get_pipeline_info(pipe_id):
     return pipeline_info
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_pipeline_detail(request):
     user = request.user
@@ -177,7 +177,7 @@ def get_pipeline_detail(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_tasks(request):
     if request.method == 'POST':
@@ -195,7 +195,7 @@ def get_tasks(request):
             {'status': 0, 'task_list': task_list})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def unlink_task(request):
     if request.method == 'POST':
@@ -214,7 +214,7 @@ def unlink_task(request):
             {'status': status, 'msg': msg})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def link_task(request):
     if request.method == 'POST':
@@ -364,7 +364,7 @@ def update(request, pipe_id):
                    'pipeline_model': 1, 'page_index': 2})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def copy_pipeline(request):
     if request.method == 'POST':
@@ -388,7 +388,7 @@ def copy_pipeline(request):
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def delete(request, pipe_id):
@@ -421,7 +421,7 @@ def server_tag_db(server_tag):
     return server_tag
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_datas(request):
     if request.method == 'POST':
@@ -455,7 +455,7 @@ def get_datas(request):
                 {'status':0,'data_list':data_list})
     
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def update_task(request, task_id):
@@ -575,7 +575,7 @@ def update_task(request, task_id):
                    })
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def task_md_result(request, task_id):
@@ -603,7 +603,7 @@ def task_md_result(request, task_id):
                    'is_super': is_super, 'content': log_content.strip()})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def show_block(request, hash):
@@ -613,7 +613,7 @@ def show_block(request, hash):
                   {'block_hash': hash, 'type': 0})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def update_block(request, hash):
@@ -754,7 +754,7 @@ def create_task_choose_proc(request):
                    })
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_processor_tree_async(request):
     user = request.user
@@ -789,7 +789,7 @@ def get_processor_tree_async(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_shared_processor_tree_async(request):
     user = request.user
@@ -811,7 +811,7 @@ def get_shared_processor_tree_async(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_processor(request):
     try:
@@ -879,7 +879,7 @@ def private_str(private):
 
 # 浏览历史，画图表
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def view_processor_history(request, proc_id):
@@ -894,7 +894,7 @@ def view_processor_history(request, proc_id):
             {'status': 0, 'msg': '获取成功', 'history_list': history_list})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def create_task(request, pipe_id):
@@ -1016,7 +1016,7 @@ def is_corrent_config(config):
     return res
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def create(request):
@@ -1082,7 +1082,7 @@ def create(request):
                   {'form': form, 'page_title': '创建指数', 'pipeline_model': 1, 'page_index': 2, 'is_super': is_super})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_list(request):
     if request.method == 'POST':
@@ -1104,7 +1104,7 @@ def get_user_list(request):
             {'status': 0, 'user_list': user_list, 'msg': '获取成功！'})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_pipeline_with_project_tree(request):
     user = request.user
@@ -1119,13 +1119,13 @@ def get_pipeline_with_project_tree(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def processor_detail_with_id(request, proc_id):
     return render(request, 'processor_detail.html', {'proc_id': proc_id})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def processor_detail(request):
     user = request.user
@@ -1139,7 +1139,7 @@ def processor_detail(request):
                    'page_index': 4})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_processor(request):
     user = request.user
@@ -1162,7 +1162,7 @@ def search_processor(request):
 
 # 引用信息
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def view_quote(request, proc_id):
     if request.method == 'POST':
@@ -1194,7 +1194,7 @@ def get_upload_cmd(request):
         return JsonHttpResponse({'cmd': cmd})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def update_processor(request, processor_id):
@@ -1266,7 +1266,7 @@ def update_processor(request, processor_id):
 
 # 执行状态
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def history(request):
     user = request.user
@@ -1296,7 +1296,7 @@ def history(request):
 
 # DDE数据
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def futures_index(request, pipe_id):
     user = request.user
@@ -1305,7 +1305,7 @@ def futures_index(request, pipe_id):
     
 # DDE数据
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def futures_datas(request):
     if request.method == 'POST':
@@ -1398,7 +1398,7 @@ def list_history_condition(request):
 
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def history_list(request, order_info):
@@ -1442,7 +1442,7 @@ def history_list(request, order_info):
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def get_task_information(request, id):
@@ -1457,7 +1457,7 @@ def get_task_information(request, id):
                    'page_index': 3})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def run_tasks(request):
@@ -1481,7 +1481,7 @@ def run_tasks(request):
             {'status': status, 'msg': msg})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def historypipe(request, pipe_id):
@@ -1496,7 +1496,7 @@ def historypipe(request, pipe_id):
                    'runtime': '', 'pipeline_model': 1, 'page_index': 3})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def in_historypipe(request, pipe_id):
@@ -1511,7 +1511,7 @@ def in_historypipe(request, pipe_id):
                    'runtime': '', 'pipeline_model': 1, 'page_index': 3})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def create_processor(request):
@@ -1579,7 +1579,7 @@ def create_processor(request):
                                                      'pipeline_model': 1, 'page_index': 4, 'is_super': is_super})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_proc_project_tree(request):
     user = request.user
@@ -1597,7 +1597,7 @@ def get_proc_project_tree(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def add_new_project(request):
     if request.method == 'POST':
@@ -1625,7 +1625,7 @@ def add_new_project(request):
 
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def public_processor(request):
@@ -1660,7 +1660,7 @@ def public_processor(request):
 
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def upload_package_with_local(request):
     if request.method == 'POST':
@@ -1714,7 +1714,7 @@ def upload_package_with_local(request):
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_params(request):
     if request.method == 'POST':
@@ -1744,7 +1744,7 @@ def get_params(request):
             {'status': 0, 'config': config_str, 'template': template})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def delete_task(request, pipe_id):
@@ -1776,7 +1776,7 @@ def get_proc_with_project_tree(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def delete_processor(request, proc_id):
     if request.method == 'POST':
@@ -1792,7 +1792,7 @@ def delete_processor(request, proc_id):
         return JsonHttpResponse({'status': status, 'msg': msg})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def delete_proc_version(request):
     user = request.user
@@ -1807,7 +1807,7 @@ def delete_proc_version(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def delete_project(request):
     if request.method == 'POST':
@@ -1825,7 +1825,7 @@ def delete_project(request):
             return JsonHttpResponse({'status': 1, 'msg': "删除项目失败"})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_message(request):
     if request.method == 'POST':
@@ -1848,7 +1848,7 @@ def get_message(request):
         return JsonHttpResponse({'prev': previnfo, 'infomessage': info, 'check': boolcheck})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_status_graph(request):
     user = request.user
@@ -1862,7 +1862,7 @@ def get_status_graph(request):
                    })
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_graph(request):
     if request.method == 'POST':
@@ -1882,7 +1882,7 @@ def get_graph(request):
         return JsonHttpResponse({'res': list})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_log_list(request):
     if request.method == "POST":
@@ -1907,7 +1907,7 @@ def get_all_log_list(request):
         return JsonHttpResponse({'list': list_log_arr, 'status': stat, 'info': info})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_log_content(request):
     if request.method == 'POST':
@@ -1931,7 +1931,7 @@ def get_log_content(request):
                 {'filecontent': "系统出错：" + str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_tail(request):
     if request.method == 'POST':
@@ -1980,7 +1980,7 @@ def file_iterator(schedule_id, file_name, chunk_size=512, rerun_id=0):
         yield str(ex)
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def big_file_download(request, args):
     arg_list = args.split('&')
@@ -1996,7 +1996,7 @@ def big_file_download(request, args):
     return response
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def run_one_task(request):
     if request.method == 'POST':
@@ -2018,7 +2018,7 @@ def run_one_task(request):
             {'status': status, 'msg': info})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def run_all_pipeline(request):
     if request.method == 'POST':
@@ -2039,7 +2039,7 @@ def run_all_pipeline(request):
             {'status': status, 'msg': info})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def stop_task(request):
     if request.method == 'POST':
@@ -2059,7 +2059,7 @@ def stop_task(request):
             {'status': status, 'msg': result['info']})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def run_task_with_all_successors(request):
     if request.method == 'POST':
@@ -2080,7 +2080,7 @@ def run_task_with_all_successors(request):
             {'status': status, 'msg': info})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def set_task_success(request):
     try:
@@ -2095,7 +2095,7 @@ def set_task_success(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def run_some_task(request):
     if request.method == 'POST':
@@ -2122,7 +2122,7 @@ def run_some_task(request):
             {'status': status, 'msg': info})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_retry_history_list(request):
     if request.method == 'POST':
@@ -2138,7 +2138,7 @@ def get_retry_history_list(request):
 
 # 指数上线
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def on_line(request):
     if request.method == 'POST':
@@ -2249,7 +2249,7 @@ def upload_processor(request):
         return JsonHttpResponse({"status": 1, "msg": "error"})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def create_edge(request):
@@ -2284,7 +2284,7 @@ def create_edge(request):
                        })
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def update_edge(request):
@@ -2407,7 +2407,7 @@ def update_edge(request):
 #             return JsonHttpResponse({'status': 1, 'msg': '数据流不存在'})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def copy_pipeline(request):
     if request.method == 'POST':
@@ -2431,7 +2431,7 @@ def copy_pipeline(request):
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def copy_task(request):
     if request.method == 'POST':
@@ -2450,7 +2450,7 @@ def copy_task(request):
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
+#@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def update_pipline_graph(request, pipe_id):
     pipeline = Pipeline.objects.get(id=pipe_id)

@@ -357,11 +357,14 @@ class PipelineManager(object):
 
             task_list.append(task_map)
 
+        pipe_info = horae.models.Pipeline.objects.get(id=pipeline_id)
         ret_map = {}
         ret_map["status"] = 0
         ret_map["info"] = "OK"
+        ret_map["pipe_id"] = pipeline_id
         ret_map["tasks"] = task_list
         ret_map["edges"] = res_edges
+        ret_map["pipe_usr_graph"] = pipe_info.graph
         return json.dumps(ret_map)
 
     # def get_tasks_by_pipeline_id(self, pipeline_id):

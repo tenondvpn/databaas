@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 PROJECT_NAME="dags"
 SITE_ADMIN = ""
 # Application definition
-
+APPEND_SLASH=False
 WORK_PACKAGE_DIR = "/root/databaas/packages"
 
 

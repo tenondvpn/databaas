@@ -186,14 +186,17 @@ def get_tasks(request):
         pipeline_id = request.POST.get("pipeline_id")
         try:
             tasks = horae_interface.get_tasks_by_pipeline_id(int(pipeline_id))
-            task_list = json.loads(tasks)['tasks']
-            edges = json.loads(tasks)['edges']
+            json_obj = json.loads(tasks)
+            task_list = json_obj['tasks']
+            edges = json_obj['edges']
+            pipe_id = json_obj["pipe_id"]
+            pipe_usr_graph = json_obj["pipe_usr_graph"]
         except Exception as ex:
             logger.error('get tasks fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': str(ex)})
         return JsonHttpResponse(
-            {'status': 0, 'task_list': task_list, 'edges': edges})
+            {'status': 0, 'task_list': task_list, 'edges': edges, "pipe_id": pipe_id, "pipe_usr_graph": pipe_usr_graph})
 
 # @login_required(login_url='/login/')
 @api_view(['POST'])

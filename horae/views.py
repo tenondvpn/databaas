@@ -26,6 +26,7 @@ from horae import common_logger
 from common.util import is_admin
 from horae import no_block_sys_cmd
 from clickhouse_driver import Client
+from horae import zk_manager
 
 horae_interface = HoraeInterface()
 ck_client = Client(host='localhost', user='default', password='')
@@ -39,6 +40,11 @@ logger = common_logger.get_logger(
 config = configparser.ConfigParser()
 config.read("./conf/tools.conf")
 local_package_path = config.get("tools", "package_path").strip()
+config = configparser.ConfigParser()
+config.read("./conf/tools.conf")
+g_zk_manager = zk_manager.ZookeeperManager(
+    hosts=config.get("zk", "hosts"),
+    logger=logger)
 
 UPLOAD_FILES_PATH = 'upload_files/file/'
 # WORK_PATH = '/home/admin/doc/rh_ark_tools/upload_files/file/'
@@ -2479,3 +2485,20 @@ def update_pipline_graph(request, pipe_id):
 
         return JsonHttpResponse(
             {'status': status, 'msg': msg})
+
+def get_power_nodes(request):
+    try:
+        type = request.GET.get('type')
+        children = g_zk_manager.get_children('/dags/schedule_platform/online/' + type)
+        ret_map = {}
+        ret_map["status"] = 0
+        ret_map["info"] = "OK"
+        ret_map["tags"] = children
+        status, msg = status_msg(json.dumps(ret_map))
+    except Exception as ex:
+        logger.error('update pipeline fail: <%s>' % str(ex))
+        return JsonHttpResponse(
+            {'status': 1, 'msg': str(ex)})
+
+    return JsonHttpResponse(
+        {'status': status, 'msg': msg})

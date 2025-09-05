@@ -2490,10 +2490,18 @@ def get_power_nodes(request):
     try:
         type = request.GET.get('type')
         children = g_zk_manager.get_children('/dags/schedule_platform/online/' + type)
+        child_map = {}
+        for item in children:
+            item_split = item.split(':')
+            if item_split[0] not in child_map:
+                child_map[item_split[0]] = []
+
+            child_map[item_split[0]].append(item_split[1])
+
         ret_map = {}
         ret_map["status"] = 0
         ret_map["info"] = "OK"
-        ret_map["tags"] = children
+        ret_map["tags"] = child_map
         return JsonHttpResponse(ret_map)
     except Exception as ex:
         logger.error('update pipeline fail: <%s>' % str(ex))

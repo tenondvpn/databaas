@@ -2494,11 +2494,8 @@ def get_power_nodes(request):
         ret_map["status"] = 0
         ret_map["info"] = "OK"
         ret_map["tags"] = children
-        status, msg = status_msg(json.dumps(ret_map))
+        return JsonHttpResponse(ret_map)
     except Exception as ex:
         logger.error('update pipeline fail: <%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
-
-    return JsonHttpResponse(
-        {'status': status, 'msg': msg})

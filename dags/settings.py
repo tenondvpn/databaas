@@ -60,8 +60,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # 访问 token 有效期
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),   # 刷新 token 有效期
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),  # 访问 token 有效期
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),   # 刷新 token 有效期
 }
 
 

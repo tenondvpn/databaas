@@ -36,7 +36,7 @@ def rest_register(request):
     if User.objects.filter(username=username).exists():
         return Response({'message': '该用户名已存在'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(username=username, password=password, email=email, phone=phone)
+    user = User.objects.create_user(username=username, password=password, email=email)
     return Response({'message': '注册成功'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])

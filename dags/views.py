@@ -27,6 +27,8 @@ from rest_framework.authentication import TokenAuthentication
 def rest_register(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    email = request.data.get('email')
+    phone = request.data.get('phone')
 
     if not username or not password:
         return Response({'message': '用户名和密码不能为空'}, status=status.HTTP_400_BAD_REQUEST)
@@ -34,7 +36,7 @@ def rest_register(request):
     if User.objects.filter(username=username).exists():
         return Response({'message': '该用户名已存在'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(username=username, password=password)
+    user = User.objects.create_user(username=username, password=password, email=email, phone=phone)
     return Response({'message': '注册成功'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])

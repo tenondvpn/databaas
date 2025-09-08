@@ -34,9 +34,17 @@ def rest_register(request):
         return Response({'message': '用户名和密码不能为空'}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(username=username).exists():
-        return Response({'message': '该用户名已存在'}, status=status.HTTP_400_BAD_REQUEST)
-
+        user = authenticate(username=username, password=password)
+        if user:
+            user.auth_token.delete()
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key, 'message': '登录成功', 'created': created}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': '用户名或密码错误'}, status=status.HTTP_401_UNAUTHORIZED)
+        
     user = User.objects.create_user(username=username, password=password, email=email)
+    user.auth_token.delete()
+    token, created = Token.objects.get_or_create(user=user)
     return Response({'message': '注册成功'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])

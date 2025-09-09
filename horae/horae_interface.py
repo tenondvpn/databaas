@@ -93,7 +93,7 @@ class HoraeInterface(tools_util.Singleton):
                         % (user_id, word, ret, use_time))
         return ret
 
-    def get_project_tree_async(self, user_id, tree_id, type):
+    def get_project_tree_async(self, user_id, tree_id, type, get_pipeline=True):
         """
             获取流程分类树，异步获取
 

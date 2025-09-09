@@ -135,8 +135,12 @@ def get_project_tree_async(request):
     if "type" in request.GET:
         type = int(request.GET.get('type'))
 
+    get_pipe = True
+    if "get_pipe" in request.GET:
+        get_pipe = request.GET.get('get_pipe')
+
     try:
-        result = horae_interface.get_project_tree_async(user.id, tree_id, type)
+        result = horae_interface.get_project_tree_async(user.id, tree_id, type, get_pipe)
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('get_project_tree_async  error:<%s>' % str(ex))

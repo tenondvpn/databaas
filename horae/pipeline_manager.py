@@ -243,7 +243,7 @@ class PipelineManager(object):
 
         return ret_list
 
-    def get_project_tree_async(self, user_id, tree_id, type):
+    def get_project_tree_async(self, user_id, tree_id, type, get_pipeline=True):
         projects = self.__sql_manager.get_projects_with_parent_id(parent_id=tree_id, type=type)
         res_list = []
         for project in projects:
@@ -252,7 +252,7 @@ class PipelineManager(object):
 
             res_list.append({"id": project.id, "text": project.name, "state": "closed", "is_project": 1})
 
-        if int(tree_id) != 0:
+        if int(tree_id) != 0 and get_pipeline:
             pipelines = self.__sql_manager.get_pipelines_with_project_id(project_id=tree_id)
             for pipeline in pipelines:
                 res_list.append({

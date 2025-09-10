@@ -26,6 +26,7 @@ class JsonHttpResponse(HttpResponse):
     def __init__(self,ret):
         content_type = "application/json"
         try:
+            print(ret)
             ret = json.dumps(ret, ensure_ascii=False)
             HttpResponse.__init__(self,ret,content_type)
         except Exception as ex:

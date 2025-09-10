@@ -137,8 +137,13 @@ def get_project_tree_async(request):
 
     get_pipe = True
     if "get_pipe" in request.GET:
-        get_pipe = request.GET.get('get_pipe')
-
+        int_get_pipe = int(request.GET.get('get_pipe'))
+        if int_get_pipe == 0:
+            get_pipe = False
+        else:
+            get_pipe = True
+        
+    print(f"get pipe: {get_pipe}")
     try:
         result = horae_interface.get_project_tree_async(user.id, tree_id, type, get_pipe)
         return JsonHttpResponse(result)
@@ -1078,8 +1083,11 @@ def create(request):
                                                              user.id, principal, monitor_way, tag, description,
                                                              life_cycle, 0, project_group)
                 status, msg = status_msg(result)
+                print(status)
+                print(msg)
                 if status != 0:
-                    raise Exception(msg)
+                    return JsonHttpResponse(
+                        {'status': status, 'msg': str(msg), 'send_mail': send_mail, 'send_sms': send_sms})
             except Exception as ex:
                 logger.error('create pipeline fail: <%s>, trace:[%s]' % (str(ex), traceback.format_exc()))
                 return JsonHttpResponse(
@@ -1089,7 +1097,14 @@ def create(request):
             return JsonHttpResponse(
                 {'status': status, 'msg': msg, 'pipeline_id': pipeline_id, 'send_mail': send_mail, 'send_sms': send_sms})
         else:
-            return JsonHttpResponse({'status': 1, 'msg': form.errors.items()})
+            all_errors = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    all_errors.append(f"{field}: {error}")
+            
+            error_string = "\n".join(all_errors)
+            print("form error:", form.errors)
+            return JsonHttpResponse({'status': 1, 'msg': error_string})
     else:
         form = PipelineForm()
     return render(request, 'create_pipeline.html',

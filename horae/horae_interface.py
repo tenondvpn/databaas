@@ -111,7 +111,7 @@ class HoraeInterface(tools_util.Singleton):
                 No.
         """
         beign_time = time.time()
-        ret = self.__pipeline_mgr.get_project_tree_async(user_id, tree_id, type)
+        ret = self.__pipeline_mgr.get_project_tree_async(user_id, tree_id, type, get_pipeline)
         use_time = time.time() - beign_time
         self.__log.info("get_project_tree_async user_id: %s, tree_id: %s,"
                         " type: %s, ret: %s[use_time:%s]"

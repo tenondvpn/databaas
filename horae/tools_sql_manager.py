@@ -10,6 +10,7 @@ Authors: xielei
 import traceback
 import random
 import copy
+import time
 
 import django.db
 import horae.models
@@ -941,7 +942,20 @@ class SqlManager(object):
                     for next_id in next_task_id_list:
                         if next_id.strip() == '':
                             continue
-                        self.add_edge(owner_id, new_task.id, int(next_id.strip()))
+
+                        edge = horae.models.Edge(
+                            prev_task_id=int(new_task.id),
+                            next_task_id=int(next_id.strip()),
+                            stream_type=0,
+                            file_name='',
+                            rcm_context='',
+                            rcm_topic='',
+                            rcm_partition=0,
+                            dispatch_tag=0,
+                            pipeline_id=task.pl_id,
+                            last_update_time_us=int(round(time.time() * 1000000))
+                        )
+                        self.add_edge(owner_id, new_task.id, int(next_id.strip()), edge)
                         add_edge_list.append((new_task.id, int(next_id.strip())))
 
                 if prev_task_ids is not None:
@@ -949,7 +963,20 @@ class SqlManager(object):
                     for prev_id in prev_task_id_list:
                         if prev_id.strip() == '':
                             continue
-                        self.add_edge(owner_id, int(prev_id.strip()), new_task.id)
+
+                        edge = horae.models.Edge(
+                            prev_task_id=int(prev_id.strip()),
+                            next_task_id=new_task.id,
+                            stream_type=0,
+                            file_name='',
+                            rcm_context='',
+                            rcm_topic='',
+                            rcm_partition=0,
+                            dispatch_tag=0,
+                            pipeline_id=task.pl_id,
+                            last_update_time_us=int(round(time.time() * 1000000))
+                        )
+                        self.add_edge(owner_id, int(prev_id.strip()), new_task.id, edge)
                         add_edge_list.append((int(prev_id.strip()), new_task.id))
 
                 self.__graph_mgr.add_node(str(new_task.id))
@@ -1023,85 +1050,6 @@ class SqlManager(object):
                 str(ex), traceback.format_exc()))
             return 1, str(ex)
         
-    # def delete_pipeline(self, owner_id, pipeline_id):
-    #     try:
-    #         with django.db.transaction.atomic():
-    #             pipeline = horae.models.Pipeline.objects.get(
-    #                 id=pipeline_id)
-    #             if self.check_pipeline_auth_valid(
-    #                     pipeline_id,
-    #                     owner_id) != tools_util.UserPermissionType.WRITE:
-    #                 return 1, "对不起，你没有权限删除这个流程!"
-
-    #             run_tasks = horae.models.Schedule.objects.filter(
-    #                 pl_id=pipeline_id,
-    #                 status__in=(
-    #                     tools_util.TaskState.TASK_READY,
-    #                     tools_util.TaskState.TASK_RUNNING,
-    #                     tools_util.TaskState.TASK_WAITING))
-    #             if len(run_tasks) > 0:
-    #                 return 1, "can't delete pipeline, there has task running!"
-
-    #             tasks = horae.models.Task.objects.filter(
-    #                 pl_id=pipeline_id)
-    #             for task in tasks:
-    #                 next_task_ids = task.next_task_ids.split(',')
-    #                 other_dep_tasks = []
-    #                 for tmp_task_id in next_task_ids:
-    #                     if tmp_task_id.strip() == '':
-    #                         continue
-
-    #                     tmp_tasks = horae.models.Task.objects.filter(id=int(tmp_task_id))
-    #                     if len(tmp_tasks) <= 0:
-    #                         continue
-
-    #                     tmp_task = horae.models.Task.objects.get(id=int(tmp_task_id))
-    #                     if tmp_task.pl_id != task.pl_id:
-    #                         pipeline = horae.models.Pipeline.objects.get(id=tmp_task.pl_id)
-    #                         other_dep_tasks.append("流程：%s\t任务：%s" % (pipeline.name, tmp_task.name))
-    #                 if len(other_dep_tasks) > 0:
-    #                     return 2, ("这个流程的任务被其他流程的任务依赖,"
-    #                                "请先解除依赖关系再删除。\n%s" %
-    #                                '\n'.join(other_dep_tasks))
-
-    #             delete_task_id_list = []
-    #             for task in tasks:
-    #                 delete_task_id_list.append(str(task.id))
-    #                 task.delete()
-    #             pipeline.delete()
-
-    #             for remove_node in delete_task_id_list:
-    #                 self.__graph_mgr.remove_node(remove_node)
-    #             perm_historys = models.PermHistory.objects.filter(
-    #                 resource_type=tools_util.CONSTANTS.PIPELINE,
-    #                 resource_id=pipeline_id)
-    #             for perm_his in perm_historys:
-    #                 perm_his.delete()
-
-    #             run_histories = horae.models.RunHistory.objects.filter(
-    #                 pl_id=pipeline_id)
-    #             for run_history in run_histories:
-    #                 run_history.delete()
-
-    #             schedules = horae.models.Schedule.objects.filter(
-    #                 pl_id=pipeline_id)
-    #             for schedule in schedules:
-    #                 schedule.delete()
-
-    #             ready_tasks = horae.models.ReadyTask.objects.filter(
-    #                 pl_id=pipeline_id)
-    #             for ready_task in ready_tasks:
-    #                 ready_task.delete()
-
-    #             ordered_tasks = horae.models.OrderdSchedule.objects.filter(
-    #                 pl_id=pipeline_id)
-    #             for ordered_task in ordered_tasks:
-    #                 ordered_task.delete()
-    #             return 0, "OK"
-    #     except Exception as ex:
-    #         self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
-    #             str(ex), traceback.format_exc()))
-    #         return 1, str(ex)
 
     def update_tasks(self, owner_id, task, old_task, template):
         added_edges = []
@@ -1150,7 +1098,19 @@ class SqlManager(object):
                             removed_edges.append((str(task.id), id.strip()))
                     for id in new_id_strip_list:
                         if id not in old_id_strip_list:
-                            self.add_edge(owner_id, task.id, int(id.strip()))
+                            edge = horae.models.Edge(
+                                prev_task_id=task.id,
+                                next_task_id=int(id.strip()),
+                                stream_type=0,
+                                file_name='',
+                                rcm_context='',
+                                rcm_topic='',
+                                rcm_partition=0,
+                                dispatch_tag=0,
+                                pipeline_id=task.pl_id,
+                                last_update_time_us=int(round(time.time() * 1000000))
+                            )
+                            self.add_edge(owner_id, task.id, int(id.strip()), edge)
                             if not self.__graph_mgr.add_edge(str(task.id), id):
                                 raise Exception("add edge failed!")
                             added_edges.append((str(task.id), id))
@@ -1183,7 +1143,19 @@ class SqlManager(object):
 
                     for id in new_id_strip_list:
                         if id not in old_id_strip_list:
-                            self.add_edge(owner_id, int(id.strip()), task.id)
+                            edge = horae.models.Edge(
+                                prev_task_id=int(id.strip()),
+                                next_task_id=task.id,
+                                stream_type=0,
+                                file_name='',
+                                rcm_context='',
+                                rcm_topic='',
+                                rcm_partition=0,
+                                dispatch_tag=0,
+                                pipeline_id=task.pl_id,
+                                last_update_time_us=int(round(time.time() * 1000000))
+                            )
+                            self.add_edge(owner_id, int(id.strip()), task.id, edge)
                             if not self.__graph_mgr.add_edge(id, str(task.id)):
                                 raise Exception("add edge failed!")
                             added_edges.append((id, str(task.id)))
@@ -1756,28 +1728,6 @@ class SqlManager(object):
             self.__log.error("execute failed![ex:%s][trace:%s]!" % (
                 str(ex), traceback.format_exc()))
             return 1, str(ex)
-
-    # def delete_task_info(self, owner_id, task_id):
-    #     try:
-    #         with django.db.transaction.atomic():
-    #             db_task = horae.models.Task.objects.get(id=task_id)
-    #             if self.check_pipeline_auth_valid(
-    #                     db_task.pl_id,
-    #                     owner_id) != tools_util.UserPermissionType.WRITE:
-    #                 return 1, "对不起，你没有权限删除这个DAG流的任务！"
-
-    #             edges = horae.models.Edge.objects.filter(prev_task_id=task_id)
-    #             edges.delete()
-    #             edges = horae.models.Edge.objects.filter(next_task_id=task_id)
-    #             edges.delete()
-    #             db_task.delete()
-    #             self.__graph_mgr.remove_node(str(task_id))
-
-    #             return 0, "OK"
-    #     except Exception as ex:
-    #         self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
-    #             str(ex), traceback.format_exc()))
-    #         return 1, str(ex)
 
     def delete_task_info(self, owner_id, task_id):
         try:

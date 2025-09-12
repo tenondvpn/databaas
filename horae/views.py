@@ -360,8 +360,14 @@ def update(request, pipe_id):
             return JsonHttpResponse(
                 {'status': status, 'msg': msg, 'send_mail': send_mail, 'send_sms': send_sms})
         else:
-            return JsonHttpResponse({'status': 1,
-                                     'msg': form.errors.items()})
+            all_errors = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    all_errors.append(f"{field}: {error}")
+            
+            error_string = "\n".join(all_errors)
+            print("form error:", form.errors)
+            return JsonHttpResponse({'status': 1, 'msg': error_string})
     else:
         user = request.user
 

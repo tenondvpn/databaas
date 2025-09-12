@@ -67,11 +67,15 @@ class PipelineForm(ModelForm):
     send_mail = forms.BooleanField(label='邮件',required=False,
             initial=True)
     send_sms = forms.BooleanField(label='钉钉',required=False) 
-
+    monitor_way = forms.IntegerField(
+            label='报警方式',
+            widget = forms.TextInput(attrs={'class':'form-control',
+                'type':'hidden'}),
+            required = False)
     class Meta: 
         model = Pipeline
         fields = ('name' , 'ct_time','principal','tag','description',
-                'send_mail','send_sms','life_cycle')
+                'send_mail','send_sms','life_cycle', 'monitor_way')
 
 
 class ProcessorForm(ModelForm):

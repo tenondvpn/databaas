@@ -305,6 +305,8 @@ def check_life_cycle(life_cycle):
     max_time_str = max_time.strftime("%Y%m%d")
     return max_time_str >= life_cycle
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def update(request, pipe_id):
     pipeline = Pipeline.objects.get(id=pipe_id)
     user = request.user

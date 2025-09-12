@@ -323,6 +323,7 @@ def update(request, pipe_id):
                 project_group = form.cleaned_data['project_id']
                 life_cycle = form.cleaned_data['life_cycle']
                 description = form.cleaned_data['description']
+                monitor_way = form.cleaned_data['monitor_way']
 
                 check_result = check_life_cycle(life_cycle)
                 if not check_result:
@@ -337,7 +338,7 @@ def update(request, pipe_id):
                     project_group = 0
 
                 #报警方式0邮件，1钉钉，2二者都报
-                monitor_way = -1
+                # monitor_way = -1
                 if send_mail:
                     if send_sms:
                         monitor_way = 2
@@ -345,8 +346,8 @@ def update(request, pipe_id):
                         monitor_way = 0
                 elif send_sms:
                     monitor_way = 1
-                else:
-                    monitor_way = -1
+                # else:
+                #     monitor_way = -1
 
                 result = horae_interface.update_pipeline(int(pipe_id), user.id,
                                                          life_cycle, name, ct_time, principal, monitor_way,

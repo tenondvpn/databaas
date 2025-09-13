@@ -511,29 +511,26 @@ def get_task_detail(request, task_id):
             pass
 
         edges = Edge.objects.filter(next_task_id=task.id)
-        rely_tasks = ''
+        rely_tasks = {}
         prev_task_ids = ''
         for edge in edges:
             prev_task_ids += edge.prev_task_id + ","
 
         if prev_task_ids != '':
             rely_tasks = get_rely_tasks(prev_task_ids)
-            # dict转json串
-            rely_tasks = json.dumps(rely_tasks)
 
-        server_tag = Task.objects.get(id=int(task_id)).server_tag
+        server_tag = task.server_tag
         # 获取公式上传包
         proc_name = processor['name']
         user = request.user
         username = user.username
         password = '<font color=red>${password}</font>'
         cmd = upload_cmd(request, username, password, proc_name)
-        pipeline = Pipeline.objects.get(id=pipe_id)
+        pipeline = get_pipeline_info(pipe_id)
         res_map = {'status': 0, 'task': task_info,
-                    'config': config_str, 'pipe_id': pipe_id, 'pipe_name': pipeline.name,
+                    'config': config_str, 'pipeline': pipeline,
                     'processor': processor, 'rely_tasks': rely_tasks,
-                    'server_tag': server_tag, 'cmd': cmd, 'page_title': '修改任务',
-                    'pipeline_model': 1, 'quote_num': 0, 'page_index': 2,
+                    'server_tag': server_tag, 'cmd': cmd,
                     'is_super': is_super, 'version_list': history_list
                     }
         return JsonHttpResponse(res_map)
@@ -785,8 +782,8 @@ def get_rely_tasks(prev_task_ids):
     rely_task_list = prev_task_ids.split(',')
     if len(rely_task_list) > 0 and prev_task_ids != '':
         for task_id in rely_task_list:
-            if get_task_info(task_id) != '':
-                rely_tasks[task_id] = get_task_info(task_id)['pl_id']
+            if task_id != '':
+                rely_tasks[task_id] = get_task_info(task_id)
     return rely_tasks
 
 def upload_cmd(request, username, password, proc_name):

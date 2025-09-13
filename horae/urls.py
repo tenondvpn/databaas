@@ -12,6 +12,7 @@ urlpatterns = (
     re_path(r'^get_project_tree_async/$', views.get_project_tree_async),
     re_path(r'^get_pipeline_detail/$', views.get_pipeline_detail),
     re_path(r'^get_tasks/$', views.get_tasks),
+    re_path(r'^get_task_detail/$', views.get_task_detail),
     re_path(r'^unlink_task/$', views.unlink_task),
     re_path(r'^link_task/$', views.link_task),
     re_path(r'^update/(?P<pipe_id>\d+)/$', views.update),

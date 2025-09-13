@@ -514,7 +514,7 @@ def get_task_detail(request, task_id):
         rely_tasks = {}
         prev_task_ids = ''
         for edge in edges:
-            prev_task_ids += "" + edge.prev_task_id + ","
+            prev_task_ids += str(edge.prev_task_id) + ","
 
         if prev_task_ids != '':
             rely_tasks = get_rely_tasks(prev_task_ids)

@@ -482,12 +482,11 @@ def get_datas(request):
         return JsonHttpResponse(
                 {'status':0,'data_list':data_list})
     
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def get_task_detail(request, task_id):
     user = request.user
-
     is_super = is_admin(user)
     try:
         task = Task.objects.get(id=task_id)

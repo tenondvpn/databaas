@@ -1082,10 +1082,11 @@ class SqlManager(object):
                         except:
                             continue
                         new_id_strip_list.append(id.strip())
+
                     old_id_strip_list = []
                     for old_edge in old_next_edges:
                         old_id_strip_list.append(str(old_edge.next_task_id))
-                        if id.strip() not in new_id_strip_list:
+                        if str(old_edge.next_task_id) not in new_id_strip_list:
                             self.delete_edge(owner_id, task.id, old_edge.next_task_id)
                             self.__graph_mgr.remove_edge(
                                 str(task.id),
@@ -1124,10 +1125,11 @@ class SqlManager(object):
                             continue
 
                         new_id_strip_list.append(id.strip())
+                        
                     old_id_strip_list = []
                     for prev_edge in old_prev_edges:
                         old_id_strip_list.append(str(prev_edge.prev_task_id))
-                        if id.strip() not in new_id_strip_list:
+                        if str(prev_edge.prev_task_id) not in new_id_strip_list:
                             self.delete_edge(owner_id, prev_edge.prev_task_id, task.id)
                             self.__graph_mgr.remove_edge(
                                 str(prev_edge.prev_task_id),

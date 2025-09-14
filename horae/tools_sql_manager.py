@@ -983,6 +983,8 @@ class SqlManager(object):
                 new_task = horae.models.Task.objects.get(
                     name=task.name,
                     pl_id=task.pl_id)
+                new_task.prev_task_ids = prev_task_ids
+                new_task.next_task_ids = next_task_ids
                 return 0, new_task
         except Exception as ex:
             self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (

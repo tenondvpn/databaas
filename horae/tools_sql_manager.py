@@ -1071,7 +1071,7 @@ class SqlManager(object):
                 if task.prev_task_ids == 'null':
                     task.prev_task_ids = ','
                 if new_next_task_ids is not None:
-                    old_next_edges = horae.models.Edge.objects.filter(next_task_id=task.id)
+                    old_next_edges = horae.models.Edge.objects.filter(prev_task_id=task.id)
                     new_id_list = new_next_task_ids.split(',')
                     new_id_strip_list = []
                     for id in new_id_list:
@@ -1113,7 +1113,7 @@ class SqlManager(object):
                             added_edges.append((str(task.id), id))
 
                 if new_prev_task_ids is not None:
-                    old_prev_edges = horae.models.Edge.objects.filter(prev_task_id=task.id)
+                    old_prev_edges = horae.models.Edge.objects.filter(next_task_id=task.id)
                     new_id_list = new_prev_task_ids.split(',')
                     new_id_strip_list = []
                     for id in new_id_list:
@@ -1125,7 +1125,7 @@ class SqlManager(object):
                             continue
 
                         new_id_strip_list.append(id.strip())
-                        
+
                     old_id_strip_list = []
                     for prev_edge in old_prev_edges:
                         old_id_strip_list.append(str(prev_edge.prev_task_id))

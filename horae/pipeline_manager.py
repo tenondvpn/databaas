@@ -568,8 +568,6 @@ class PipelineManager(object):
         ret_map["task"] = task_map
         return json.dumps(ret_map)
 
-        return self.__get_default_ret_map(status, info)
-
     def get_task_info(self, task_id):
         task = self.__sql_manager.get_task_info(task_id)
         if task is None:

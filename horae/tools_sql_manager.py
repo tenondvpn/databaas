@@ -1058,9 +1058,6 @@ class SqlManager(object):
             with django.db.transaction.atomic():
                 db_task = horae.models.Task.objects.get(id=task.id)
                 task.pl_id = db_task.pl_id
-                old_next_ids = db_task.next_task_ids
-                old_prev_ids = db_task.prev_task_ids
-
                 if self.check_pipeline_auth_valid(
                         task.pl_id,
                         owner_id) != tools_util.UserPermissionType.WRITE:
@@ -1074,6 +1071,7 @@ class SqlManager(object):
                 if task.prev_task_ids == 'null':
                     task.prev_task_ids = ','
                 if new_next_task_ids is not None:
+                    old_next_edges = horae.models.Edge.objects.filter(next_task_id=task.id)
                     new_id_list = new_next_task_ids.split(',')
                     new_id_strip_list = []
                     for id in new_id_list:
@@ -1084,18 +1082,16 @@ class SqlManager(object):
                         except:
                             continue
                         new_id_strip_list.append(id.strip())
-                    old_id_list = old_next_ids.split(',')
                     old_id_strip_list = []
-                    for id in old_id_list:
-                        if id.strip() == '' or id.strip() == 'null':
-                            continue
-                        old_id_strip_list.append(id.strip())
+                    for old_edge in old_next_edges:
+                        old_id_strip_list.append(str(old_edge.next_task_id))
                         if id.strip() not in new_id_strip_list:
-                            self.delete_edge(owner_id, task.id, int(id.strip()))
+                            self.delete_edge(owner_id, task.id, old_edge.next_task_id)
                             self.__graph_mgr.remove_edge(
                                 str(task.id),
-                                id.strip())
-                            removed_edges.append((str(task.id), id.strip()))
+                                str(old_edge.next_task_id))
+                            removed_edges.append((str(task.id), str(old_edge.next_task_id)))
+
                     for id in new_id_strip_list:
                         if id not in old_id_strip_list:
                             edge = horae.models.Edge(
@@ -1114,9 +1110,9 @@ class SqlManager(object):
                             if not self.__graph_mgr.add_edge(str(task.id), id):
                                 raise Exception("add edge failed!")
                             added_edges.append((str(task.id), id))
-                    task.next_task_ids = ','.join(new_id_strip_list)
 
                 if new_prev_task_ids is not None:
+                    old_prev_edges = horae.models.Edge.objects.filter(prev_task_id=task.id)
                     new_id_list = new_prev_task_ids.split(',')
                     new_id_strip_list = []
                     for id in new_id_list:
@@ -1128,18 +1124,15 @@ class SqlManager(object):
                             continue
 
                         new_id_strip_list.append(id.strip())
-                    old_id_list = old_prev_ids.split(',')
                     old_id_strip_list = []
-                    for id in old_id_list:
-                        if id.strip() == '' or id.strip() == 'null':
-                            continue
-                        old_id_strip_list.append(id.strip())
+                    for prev_edge in old_prev_edges:
+                        old_id_strip_list.append(str(prev_edge.prev_task_id))
                         if id.strip() not in new_id_strip_list:
-                            self.delete_edge(owner_id, int(id.strip()), task.id)
+                            self.delete_edge(owner_id, prev_edge.prev_task_id, task.id)
                             self.__graph_mgr.remove_edge(
-                                id.strip(),
+                                str(prev_edge.prev_task_id),
                                 str(task.id))
-                            removed_edges.append((id.strip(), str(task.id)))
+                            removed_edges.append((str(prev_edge.prev_task_id), str(task.id)))
 
                     for id in new_id_strip_list:
                         if id not in old_id_strip_list:
@@ -1159,7 +1152,7 @@ class SqlManager(object):
                             if not self.__graph_mgr.add_edge(id, str(task.id)):
                                 raise Exception("add edge failed!")
                             added_edges.append((id, str(task.id)))
-                    task.prev_task_ids = ','.join(new_id_strip_list)
+                            
                 status, info = 0, "OK"
                 # if old_task is not None:
                 #    status, info = self.__update_task_by_check_old_status(

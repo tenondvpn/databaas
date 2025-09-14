@@ -416,8 +416,10 @@ class PipelineManager(object):
         processor = self.__sql_manager.get_proessor_info(task.pid)
         if processor is not None:
             task_map["proc_name"] = processor.name
+            task_map["proc_type"] = processor.type
         else:
             task_map["proc_name"] = ''
+            task_map["proc_type"] = 1
 
         return task_map
 

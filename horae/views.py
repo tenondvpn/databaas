@@ -1489,6 +1489,38 @@ def list_history_condition(request):
     print(condition)
     return condition, int(draw), page_min, page_max
 
+def run_history_condition(request):
+    condition = {}
+
+    draw = request.POST.get('draw')
+    # 分页
+    start = request.POST.get('start')
+    length = request.POST.get('length')
+    page_min = int(start)
+    page_max = int(start) + int(length)
+
+    run_time = request.POST.get('search_run_time')
+    pl_name = request.POST.get('search_pl_name')
+    task_name = request.POST.get('search_task_name')
+    status = request.POST.get('search_status')
+    start_time = request.POST.get('search_start_time')
+    if run_time != '':
+        run_time.encode()
+        condition['run_time'] = search_equal(run_time)
+    if pl_name != '':
+        pl_name.encode()
+        condition['pl_name'] = search_equal(pl_name)
+    if task_name != '':
+        task_name.encode()
+        condition['task_name'] = search_equal(task_name)
+    if status != '':
+        condition['status'] = status
+    if start_time != '':
+        start_time.encode()
+        condition['start_time'] = search_equal(start_time)
+    print(condition)
+    return condition, int(draw), page_min, page_max
+
 
 # @login_required(login_url='/login/')
 @api_view(['GET'])
@@ -1532,6 +1564,26 @@ def history_list(request, order_info):
 
     result['data'] = pipe_list
 
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@add_visit_record
+def run_history(request):
+    user = request.user
+    condition, draw, page_min, page_max = run_history_condition(request)
+    order_name = request.POST.get('order_name')
+    order_type = request.POST.get('order_type')
+    pipelines = horae_interface.show_run_history(
+        0, user.id, page_min, page_max, order_name, order_type, condition)
+    pipelines = json.loads(pipelines)
+    pipe_list = pipelines["runhistory_list"]
+    pipe_count = pipelines["count"]
+    pipeline_total_count = pipe_count
+    pipeline_filter_count = pipeline_total_count
+    result = {"draw": draw, "recordsTotal": pipeline_total_count,
+              "recordsFiltered": pipeline_filter_count}
+    result['data'] = pipe_list
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 # @login_required(login_url='/login/')

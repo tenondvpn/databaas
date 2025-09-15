@@ -1566,7 +1566,7 @@ def history_list(request, order_info):
 
     return HttpResponse(json.dumps(result), content_type='application/json')
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def run_history(request):

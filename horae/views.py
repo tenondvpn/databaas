@@ -1514,7 +1514,7 @@ def run_history_condition(request):
         task_name.encode()
         condition['task_name'] = search_equal(task_name)
     if status != '':
-        condition['status'] = status
+        condition['status'] = 'in (' + status + ')'
     if start_time != '':
         start_time.encode()
         condition['start_time'] = search_equal(start_time)

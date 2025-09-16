@@ -75,6 +75,7 @@ class RunHistoryManager(object):
             if str(value).startswith('=') \
                     or str(value).startswith('>') \
                     or str(value).startswith('<') \
+                    or str(value).startswith('in (') \
                     or str(value).startswith('!'):
                 content_list.append("%s %s" % (key, value))
                 continue

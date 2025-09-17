@@ -1544,7 +1544,7 @@ def run_history_condition(request):
     if use_time != '':
         oper = '>'
         oper_val = '0'
-        if (use_time.startsWith('>=') or use_time.startsWith('<=') or use_time.startsWith('!=') or use_time.startsWith('==')):
+        if (use_time.startswith('>=') or use_time.startswith('<=') or use_time.startswith('!=') or use_time.startswith('==')):
             oper = use_time[0:2]
             oper_val = use_time[2:]
         else:

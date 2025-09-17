@@ -1446,21 +1446,27 @@ def futures_datas(request):
 def search_equal(str):
     if str.startswith('='):
         str = "='" + str[1:] + "'"
+        return str
 
     if str.startswith('>='):
         str = ">='" + str[2:] + "'"
+        return str
 
     if str.startswith('<='):
         str = "<='" + str[2:] + "'"
+        return str
 
     if str.startswith('!='):
         str = "!='" + str[2:] + "'"
+        return str
 
     if str.startswith('>'):
         str = ">'" + str[1:] + "'"
+        return str
 
     if str.startswith('<'):
         str = "<'" + str[1:] + "'"
+        return str
 
     return str
 

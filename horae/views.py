@@ -1526,6 +1526,7 @@ def run_history_condition(request):
     task_name = request.POST.get('search_task_name')
     status = request.POST.get('search_status')
     start_time = request.POST.get('search_start_time')
+    use_time = request.POST.get('search_use_time')
     if run_time != '':
         run_time.encode()
         condition['run_time'] = search_equal(run_time)
@@ -1540,6 +1541,9 @@ def run_history_condition(request):
     if start_time != '':
         start_time.encode()
         condition['start_time'] = search_equal(start_time)
+    if use_time != '':
+        condition[' '] = 'TIMESTAMPDIFF(SECOND, start_time, end_time) > ' + use_time
+
     print(condition)
     return condition, int(draw), page_min, page_max
 

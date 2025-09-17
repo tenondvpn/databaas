@@ -1433,6 +1433,7 @@ class PipelineManager(object):
             str(task_id),
             node_list)
         node_list.append(str(task_id))
+        print("run successors:", node_list)
         req_json_list = []
         run_task_set = set()
         for tmp_task_id in node_list:

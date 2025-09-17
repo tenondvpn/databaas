@@ -14,6 +14,7 @@ import traceback
 
 import networkx as nx
 from horae import tools_util
+import horae.models
 import django.db
 
 class GraphGroup(threading.Thread):
@@ -273,17 +274,22 @@ class GraphGroup(threading.Thread):
         self.__sub_graph_list = []
 
         for task_key in task_map:
-            # 将节点及其下游节点放入图中
-            next_tag_list = task_map[task_key][2].replace(
-                    ' ', 
-                    '').split(",")
-            for next_task_key in next_tag_list:
-                if next_task_key not in task_map:
-                    continue
+            # # 将节点及其下游节点放入图中
+            # next_tag_list = task_map[task_key][2].replace(
+            #         ' ', 
+            #         '').split(",")
+            # for next_task_key in next_tag_list:
+            #     if next_task_key not in task_map:
+            #         continue
 
-                if next_task_key != '' and next_task_key != '0':
-                    self.__graph.add_edge(task_key, next_task_key)
+            #     if next_task_key != '' and next_task_key != '0':
+            #         self.__graph.add_edge(task_key, next_task_key)
             self.__graph.add_node(task_key)
+
+        edges = horae.models.Edge.objects.all()
+        for edge in edges:
+            self.__graph.add_edge(str(edge.prev_task_id), str(edge.next_task_id))
+            
         self.__get_sub_graphs(self.__sub_graph_list)
         self.__graph_lock.release()
         return True

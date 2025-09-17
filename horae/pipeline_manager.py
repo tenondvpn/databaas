@@ -177,6 +177,7 @@ class PipelineManager(object):
             if user_id == 233 and project.id != 13:
                 continue
 
+            # tree_map[project.parent_id].append({"id": project.id, lable "text": project.name, "is_project": 1})
             tree_map[project.parent_id].append({"id": project.id, "label": project.name, "value": project.name,  "isLeaf": False, "children": []})
 
         ret_list = []
@@ -194,7 +195,7 @@ class PipelineManager(object):
         for item in tree_map[parent]:
             item["children"] = []
             res = self.rec_get_children(item["id"], tree_map, item["children"], remove_empty_child_node)
-            if item["is_project"] and remove_empty_child_node and not res:
+            if remove_empty_child_node and not res:
                 continue
 
             ret_children.append(item)

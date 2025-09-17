@@ -177,7 +177,7 @@ class PipelineManager(object):
             if user_id == 233 and project.id != 13:
                 continue
 
-            tree_map[project.parent_id].append({"id": project.id, "label": project.name, "value": project.name,  "text": project.name, "is_project": 1})
+            tree_map[project.parent_id].append({"id": project.id, "label": project.name, "value": project.name,  "isLeaf": False, "children": []})
 
         ret_list = []
         for item in tree_map[0]:

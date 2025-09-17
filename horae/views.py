@@ -1450,17 +1450,17 @@ def search_equal(str):
     if str.startswith('>='):
         str = ">='" + str[2:] + "'"
 
-    if str.startswith('>'):
-        str = ">'" + str[1:] + "'"
-
-    if str.startswith('<'):
-        str = "<'" + str[1:] + "'"
-
     if str.startswith('<='):
         str = "<='" + str[2:] + "'"
 
     if str.startswith('!='):
         str = "!='" + str[2:] + "'"
+
+    if str.startswith('>'):
+        str = ">'" + str[1:] + "'"
+
+    if str.startswith('<'):
+        str = "<'" + str[1:] + "'"
 
     return str
 

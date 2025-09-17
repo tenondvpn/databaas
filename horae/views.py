@@ -1542,7 +1542,16 @@ def run_history_condition(request):
         start_time.encode()
         condition['start_time'] = search_equal(start_time)
     if use_time != '':
-        condition[' '] = 'TIMESTAMPDIFF(SECOND, start_time, end_time) > ' + use_time
+        oper = '>'
+        oper_val = '0'
+        if (use_time.startsWith('>=') or use_time.startsWith('<=') or use_time.startsWith('!=') or use_time.startsWith('==')):
+            oper = use_time[0:2]
+            oper_val = use_time[2:]
+        else:
+            oper = use_time[0:1]
+            oper_val = use_time[1:]
+
+        condition[' '] = 'TIMESTAMPDIFF(SECOND, start_time, end_time) ' + oper + ' ' + oper_val
 
     print(condition)
     return condition, int(draw), page_min, page_max

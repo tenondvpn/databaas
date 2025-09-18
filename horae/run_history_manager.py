@@ -575,6 +575,10 @@ class RunHistoryManager(object):
             his_map["schedule_id"] = history[6]
             his_map["pl_name"] = history[7]
             his_map["task_name"] = history[8]
+            proccessor_info = self.__sql_manager.get_proessor_info(history[13])
+            his_map["proc_id"] = proccessor_info.id
+            his_map["proc_type"] = proccessor_info.type
+
             next_task_id_list = []
             edges = horae.models.Edge.objects.filter(prev_task_id=history[0])
             for edge in edges:
@@ -606,12 +610,12 @@ class RunHistoryManager(object):
                     user_list.append((manager.username, manager.email))
                 his_map["manager_list"] = user_list
 
-            proccessor_info = self.__sql_manager.get_proessor_info(task[2])
             his_map["begin_time"] = ''
             his_map["status"] = tools_util.TaskState.TASK_SUCCEED
             his_map["schedule_id"] = -1
             his_map["pl_name"] = task[8]
             his_map["task_name"] = task[6]
+            proccessor_info = self.__sql_manager.get_proessor_info(task[2])
             his_map["proc_id"] = proccessor_info.id
             his_map["proc_type"] = proccessor_info.type
             next_task_ids = task[3].split(',')

@@ -1072,47 +1072,47 @@ class SqlManager(object):
 
                 if task.prev_task_ids == 'null':
                     task.prev_task_ids = ','
-                if new_next_task_ids is not None:
-                    old_next_edges = horae.models.Edge.objects.filter(prev_task_id=task.id)
-                    new_id_list = new_next_task_ids.split(',')
-                    new_id_strip_list = []
-                    for id in new_id_list:
-                        if id.strip() == '' or id.strip() == 'null':
-                            continue
-                        try:
-                            int(id)
-                        except:
-                            continue
-                        new_id_strip_list.append(id.strip())
+                # if new_next_task_ids is not None:
+                #     old_next_edges = horae.models.Edge.objects.filter(prev_task_id=task.id)
+                #     new_id_list = new_next_task_ids.split(',')
+                #     new_id_strip_list = []
+                #     for id in new_id_list:
+                #         if id.strip() == '' or id.strip() == 'null':
+                #             continue
+                #         try:
+                #             int(id)
+                #         except:
+                #             continue
+                #         new_id_strip_list.append(id.strip())
 
-                    old_id_strip_list = []
-                    for old_edge in old_next_edges:
-                        old_id_strip_list.append(str(old_edge.next_task_id))
-                        if str(old_edge.next_task_id) not in new_id_strip_list:
-                            self.delete_edge(owner_id, task.id, old_edge.next_task_id)
-                            self.__graph_mgr.remove_edge(
-                                str(task.id),
-                                str(old_edge.next_task_id))
-                            removed_edges.append((str(task.id), str(old_edge.next_task_id)))
+                #     old_id_strip_list = []
+                #     for old_edge in old_next_edges:
+                #         old_id_strip_list.append(str(old_edge.next_task_id))
+                #         if str(old_edge.next_task_id) not in new_id_strip_list:
+                #             self.delete_edge(owner_id, task.id, old_edge.next_task_id)
+                #             self.__graph_mgr.remove_edge(
+                #                 str(task.id),
+                #                 str(old_edge.next_task_id))
+                #             removed_edges.append((str(task.id), str(old_edge.next_task_id)))
 
-                    for id in new_id_strip_list:
-                        if id not in old_id_strip_list:
-                            edge = horae.models.Edge(
-                                prev_task_id=task.id,
-                                next_task_id=int(id.strip()),
-                                stream_type=0,
-                                file_name='',
-                                rcm_context='',
-                                rcm_topic='',
-                                rcm_partition=0,
-                                dispatch_tag=0,
-                                pipeline_id=task.pl_id,
-                                last_update_time_us=int(round(time.time() * 1000000))
-                            )
-                            self.add_edge(owner_id, task.id, int(id.strip()), edge)
-                            if not self.__graph_mgr.add_edge(str(task.id), id):
-                                raise Exception("add edge failed!")
-                            added_edges.append((str(task.id), id))
+                #     for id in new_id_strip_list:
+                #         if id not in old_id_strip_list:
+                #             edge = horae.models.Edge(
+                #                 prev_task_id=task.id,
+                #                 next_task_id=int(id.strip()),
+                #                 stream_type=0,
+                #                 file_name='',
+                #                 rcm_context='',
+                #                 rcm_topic='',
+                #                 rcm_partition=0,
+                #                 dispatch_tag=0,
+                #                 pipeline_id=task.pl_id,
+                #                 last_update_time_us=int(round(time.time() * 1000000))
+                #             )
+                #             self.add_edge(owner_id, task.id, int(id.strip()), edge)
+                #             if not self.__graph_mgr.add_edge(str(task.id), id):
+                #                 raise Exception("add edge failed!")
+                #             added_edges.append((str(task.id), id))
 
                 if new_prev_task_ids is not None:
                     old_prev_edges = horae.models.Edge.objects.filter(next_task_id=task.id)

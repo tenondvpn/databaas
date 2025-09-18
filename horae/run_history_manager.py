@@ -575,6 +575,7 @@ class RunHistoryManager(object):
             his_map["schedule_id"] = history[6]
             his_map["pl_name"] = history[7]
             his_map["task_name"] = history[8]
+            his_map["task_desc"] = history[14]
             proccessor_info = self.__sql_manager.get_proessor_info(history[13])
             his_map["proc_id"] = proccessor_info.id
             his_map["proc_type"] = proccessor_info.type
@@ -615,6 +616,7 @@ class RunHistoryManager(object):
             his_map["schedule_id"] = -1
             his_map["pl_name"] = task[8]
             his_map["task_name"] = task[6]
+            his_map["task_desc"] = task[9]
             proccessor_info = self.__sql_manager.get_proessor_info(task[2])
             his_map["proc_id"] = proccessor_info.id
             his_map["proc_type"] = proccessor_info.type

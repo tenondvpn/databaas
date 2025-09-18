@@ -93,7 +93,7 @@ class ConstantSql(object):
     GET_TASK_BY_PIPELINE_ID = (
         "select c.task_id, c.run_time, c.pl_id, c.start_time, "
         "c.end_time, c.status, c.schedule_id, c.pl_name, d.task_name, "
-        "d.next_task_ids, d.prev_task_ids, c.cpu, c.mem, d.pid from( "
+        "d.next_task_ids, d.prev_task_ids, c.cpu, c.mem, d.pid, d.description from( "
         "    select a.task_id, a.run_time, a.pl_id, a.start_time, "
         "    a.end_time, a.status, a.schedule_id, a.cpu, a.mem, "
         "    b.name as pl_name from ( "
@@ -104,15 +104,15 @@ class ConstantSql(object):
         "        select id, name from horae_pipeline "
         "    )b on a.pl_id = b.id "
         ")c left outer join ( "
-        "    select id, name as task_name, next_task_ids, prev_task_ids, pid "
+        "    select id, name as task_name, next_task_ids, prev_task_ids, pid, description "
         "    from horae_task "
         ")d on c.task_id = d.id ;")
 
     GET_TASK_INFO_WITH_PIPELINE_NAME = (
         "select a.id, a.pl_id, a.pid, a.next_task_ids, a.prev_task_ids, "
-        "a.over_time, a.name, a.retry_count, b.name as pipeline_name from ( "
+        "a.over_time, a.name, a.retry_count, b.name as pipeline_name, a.description from ( "
         "   select id, pl_id, pid, next_task_ids, prev_task_ids, over_time, "
-        "   name, retry_count from horae_task where id in(%s) "
+        "   name, retry_count, description from horae_task where id in(%s) "
         ") a  left outer join ( "
         "   select id, name from horae_pipeline "
         ") b on a.pl_id = b.id;")

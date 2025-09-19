@@ -2160,8 +2160,8 @@ def file_iterator(schedule_id, file_name, chunk_size=512, rerun_id=0):
         yield str(ex)
 
 # @login_required(login_url='/login/')
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
 def big_file_download(request, args):
     arg_list = args.split('&')
     schedule_id = int(arg_list[0])

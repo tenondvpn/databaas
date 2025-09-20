@@ -19,7 +19,7 @@ from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from horae.tools_util import StaticFunction
-from horae.models import Pipeline, Processor, Task, Edge, RunHistory
+from horae.models import Pipeline, Processor, Task, Edge, RunHistory, Project
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
 from horae.horae_interface import *
 from horae import common_logger
@@ -1776,6 +1776,27 @@ def get_proc_project_tree(request):
             str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
+# @login_required(login_url='/login/')
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_project(request):
+    if request.method == 'POST':
+        user = request.user
+        project_name = request.POST.get('project_name')
+        description = request.POST.get('description')
+        id = request.POST.get('id')
+        try:
+            project = Project.objects.get(id=id)
+            if (project.owner_id != user.id and is_admin(user.id) != 1):
+                return JsonHttpResponse({'status': 1, 'msg': "修改项目失败，你不是创建者！"})
+            
+            project.name = project_name
+            project.description = description
+            project.save()
+            return JsonHttpResponse({'status': 0, 'msg': 'ok'})
+        except Exception as ex:
+            logger.error('create project failed:<%s>' % str(ex))
+            return JsonHttpResponse({'status': 1, 'msg': "修改项目失败"})
 # @login_required(login_url='/login/')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

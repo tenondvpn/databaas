@@ -36,6 +36,7 @@ urlpatterns = (
     re_path(r'^get_params/$', views.get_params),
     re_path(r'^delete_task/(?P<pipe_id>\d+)/$', views.delete_task),
     re_path(r'^add_new_project/$', views.add_new_project),
+    re_path(r'^update_project/$', views.update_project),
     re_path(r'^get_message/$', views.get_message),
     re_path(r'^get_status_graph/$', views.get_status_graph),
     re_path(r'^get_graph/$', views.get_graph),

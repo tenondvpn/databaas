@@ -22,6 +22,9 @@ from rest_framework.decorators import authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+def exchange(request):
+    return render(request, 'vue2/index.html', {})
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def rest_register(request):

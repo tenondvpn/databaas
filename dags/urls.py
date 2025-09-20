@@ -26,6 +26,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^login/$', views.login),
+    re_path(r'^exchange/$', views.exchange),
     re_path(r'^register/$', views.register),
     re_path(r'^rest_register/$', views.rest_register),
     re_path(r'^rest_login/$', views.rest_login),

@@ -250,6 +250,7 @@ class ProcessorManager(object):
                     "id": "%s-%s" % (tree_id, proc.id),
                     "text": proc.name,
                     "state": "open",
+                    "type": proc.type,
                     "is_project": 0,
                     "iconCls": "icon-file"
                 })
@@ -284,6 +285,7 @@ class ProcessorManager(object):
                     "text": proc.name,
                     "state": "open",
                     "is_project": 0,
+                    "type": proc.type,
                     "iconCls": "icon-file"
                 })
 

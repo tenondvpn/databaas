@@ -247,7 +247,7 @@ class ProcessorManager(object):
             processors = self.__sql_manager.get_processor_with_project_id(project_id=tree_id)
             for proc in processors:
                 res_list.append({
-                    "id": "%s-%s" % (tree_id, proc.id),
+                    "id": "%s_%s" % (tree_id, proc.id),
                     "text": proc.name,
                     "state": "open",
                     "type": proc.type,
@@ -281,7 +281,7 @@ class ProcessorManager(object):
 
             for proc in processors:
                 res_list.append({
-                    "id": "%s-%s" % (tree_id, proc.id),
+                    "id": "%s_%s" % (tree_id, proc.id),
                     "text": proc.name,
                     "state": "open",
                     "is_project": 0,

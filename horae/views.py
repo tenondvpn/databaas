@@ -597,8 +597,14 @@ def update_task(request, task_id):
             return JsonHttpResponse(
                 {'status': status, 'msg': msg, 'task': task})
         else:
+            all_errors = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    all_errors.append(f"{field}: {error}")
+            
+            error_string = "\n".join(all_errors)
             return JsonHttpResponse({'status': 1,
-                                     'msg': form.errors.items()})
+                                     'msg': error_string})
     else:
         print("get upload history succ 0: ")
         form = TaskForm(instance=task)
@@ -842,7 +848,6 @@ def create_task_choose_proc(request):
 @permission_classes([IsAuthenticated])
 def get_processor_tree_async(request):
     user = request.user
-
     tree_id = 0
     if "id" in request.GET:
         tree_id = int(request.GET.get("id"))
@@ -1069,7 +1074,13 @@ def create_task(request, pipe_id):
             return JsonHttpResponse(
                 {'status': status, 'msg': msg, 'task': task})
         else:
-            return JsonHttpResponse({'status': 1, 'msg': form.errors.items()})
+            all_errors = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    all_errors.append(f"{field}: {error}")
+            
+            error_string = "\n".join(all_errors)
+            return JsonHttpResponse({'status': 1, 'msg': error_string})
     else:
         form = TaskForm()
     pipeline = Pipeline.objects.get(id=pipe_id)
@@ -1338,8 +1349,14 @@ def update_processor(request, processor_id):
             return JsonHttpResponse(
                 {'status': status, 'msg': msg})
         else:
+            all_errors = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    all_errors.append(f"{field}: {error}")
+            
+            error_string = "\n".join(all_errors)
             return JsonHttpResponse({'status': 1,
-                                     'msg': form.errors.items()})
+                                     'msg': error_string})
     else:
         form = ProcessorForm(instance=processor)
         processor_info = get_processor_info(processor_id)
@@ -1752,7 +1769,13 @@ def create_processor(request):
             return JsonHttpResponse(
                 {'status': status, 'msg': msg})
         else:
-            return JsonHttpResponse({'status': 1, 'msg': form.errors.items()})
+            all_errors = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    all_errors.append(f"{field}: {error}")
+            
+            error_string = "\n".join(all_errors)
+            return JsonHttpResponse({'status': 1, 'msg': error_string})
     else:
         form = ProcessorForm()
     return render(request, 'create_processor.html', {'form': form, 'page_title': '创建公式',

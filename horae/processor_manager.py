@@ -191,7 +191,7 @@ class ProcessorManager(object):
         root_map = {"id": type, "text": tools_util.global_processor_top_type_map[type], "is_project": 1, "children": ret_list}
         return [root_map]
 
-    def get_shared_processor_tree_async(self, user_id, tree_id):
+    def get_shared_processor_tree_async(self, user_id, tree_id, just_project):
         if tree_id != -2:
             return []
 

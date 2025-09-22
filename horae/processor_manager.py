@@ -65,6 +65,7 @@ class ProcessorManager(object):
         proc_map["owner_id"] = processor.owner_id
         proc_map["private"] = processor.private
         proc_map["tag"] = processor.tag
+        proc_map["project_id"] = processor.project_id
         proc_map["tpl_files"] = processor.tpl_files
         read_id_list, write_id_list = self.__sql_manager.get_owner_id_list(
                 processor.id,

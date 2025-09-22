@@ -635,7 +635,7 @@ class HoraeInterface(tools_util.Singleton):
                 "ret: %s[use_time:%s]" % (owner_id, task_id, ret, use_time))
         return ret
 
-    def get_processor_tree_async(self, user_id, tree_id, just_project):
+    def get_processor_tree_async(self, user_id, tree_id):
         """
             获取流程分类树，异步获取
 
@@ -653,7 +653,7 @@ class HoraeInterface(tools_util.Singleton):
                 No.
         """
         beign_time = time.time()
-        ret = self.__processor_mgr.get_processor_tree_async(user_id, tree_id, just_project)
+        ret = self.__processor_mgr.get_processor_tree_async(user_id, tree_id)
         use_time = time.time() - beign_time
         self.__log.info("get_project_tree_async user_id: %s, tree_id: %s,"
                         " ret: %s[use_time:%s]"

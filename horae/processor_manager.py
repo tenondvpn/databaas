@@ -352,7 +352,7 @@ class ProcessorManager(object):
             self.__shell_cmd.run_once("mv %s %s/%s.tar.gz" % (file_name, self.__work_package_dir, save_id))
             self.__log.error("type: %d, upload work pacakge success! %s %s/%s.tar.gz" % (type, file_name, self.__work_package_dir, save_id))
         else:
-            self.__log.error("not upload type: %d work pacakge success! %s %s/%s.tar.gz" % (type, file_name, self.__work_package_dir, save_id))
+            self.__log.error("not upload type: %d work pacakge success! %s %s/%s.tar.gz" % (type, file_name, self.__work_package_dir, 0))
 
         '''
         file_object = self.__oss_package_dir + "/" + save_id + ".tar.gz"

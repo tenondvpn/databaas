@@ -1287,6 +1287,8 @@ def get_processor_quote_list(proc_id):
     return quote_list
 
 # 获取上传包命令
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def get_upload_cmd(request):
     if request.method == 'POST':
         proc_name = request.POST.get("proc_name")

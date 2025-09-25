@@ -2151,11 +2151,12 @@ def get_package_list(request):
             __no_block_cmd.run_once("cd " + root_path + " && tar -zxvf " + processor_id + "-" + upload_id + ".tar.gz")
 
         try:
-            list = linux_file_cmd.LinuxFileCommand.ls_dir(root_path + subpath)
+            cmd = linux_file_cmd.LinuxFileCommand()
+            list = cmd.ls_dir(root_path + subpath)
         except Exception as ex:
             logger.error('get log list error:<%s>, trace: %s' % (
                 str(ex), traceback.format_exc()))
-            return JsonHttpResponse({'list': "error"})
+            return JsonHttpResponse({'status': 1, 'msg': str(ex), 'list': []})
         return JsonHttpResponse({'list': list, 'status': 0, 'msg': 'ok'})
 
 # @login_required(login_url='/login/')

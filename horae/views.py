@@ -2183,6 +2183,32 @@ def get_log_content(request):
             return JsonHttpResponse(
                 {'filecontent': "系统出错：" + str(ex)})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_package_content(request):
+    if request.method == 'POST':
+        user = request.user
+
+        processor_id = request.POST.get('processor_id')
+        upload_id = request.POST.get('upload_id')
+        subpath = request.POST.get('subpath')
+        root_path = settings.WORK_PACKAGE_DIR + "/" + processor_id + "-" + upload_id + "/"
+        if not os.path.exists(root_path):
+            os.mkdir(root_path)
+            file_path = settings.WORK_PACKAGE_DIR + "/" + processor_id + "-" + upload_id + ".tar.gz"
+            __no_block_cmd.run_once("cp -rf " + file_path + " " + root_path)
+            __no_block_cmd.run_once("cd " + root_path + " && tar -zxvf " + processor_id + "-" + upload_id + ".tar.gz")
+
+        try:
+            file_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
+                root_path + subpath, 0, 1024 * 1024)
+            return JsonHttpResponse({
+                'file_content': file_content, 'status': 0, 'len': len(file_content)})
+        except Exception as ex:
+            logger.error('get log list error:<%s>, trace: %s' % (
+                str(ex), traceback.format_exc()))
+            return JsonHttpResponse({'status': 1, 'msg': str(ex), 'list': []})
+        
 # @login_required(login_url='/login/')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

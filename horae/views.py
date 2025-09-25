@@ -2213,7 +2213,7 @@ def download_package(request, args):
     arg_list = args.split('&')
     processor_id = int(arg_list[0])
     upload_id = int(arg_list[1])
-    root_path = settings.WORK_PACKAGE_DIR + "/" + processor_id + "-" + upload_id + "/"
+    root_path = settings.WORK_PACKAGE_DIR + "/" + str(processor_id) + "-" + str(upload_id) + "/"
     file_name = root_path + arg_list[2]
     down_load_name = file_name.split('/')[-1]
 

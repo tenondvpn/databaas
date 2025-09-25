@@ -28,7 +28,7 @@ from horae import no_block_sys_cmd
 from clickhouse_driver import Client
 from horae import zk_manager
 from dags import settings
-import linux_file_cmd
+from horae import linux_file_cmd
 
 horae_interface = HoraeInterface()
 ck_client = Client(host='localhost', user='default', password='')

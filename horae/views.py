@@ -27,6 +27,8 @@ from common.util import is_admin
 from horae import no_block_sys_cmd
 from clickhouse_driver import Client
 from horae import zk_manager
+from dags import settings
+import linux_file_cmd
 
 horae_interface = HoraeInterface()
 ck_client = Client(host='localhost', user='default', password='')
@@ -2131,6 +2133,30 @@ def get_all_log_list(request):
                 str(ex), traceback.format_exc()))
             return JsonHttpResponse({'list': "error"})
         return JsonHttpResponse({'list': list_log_arr, 'status': stat, 'info': info})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_package_list(request):
+    if request.method == "POST":
+        user = request.user
+        processor_id = request.POST.get('processor_id')
+        upload_id = request.POST.get('upload_id')
+        subpath = request.POST.get('subpath')
+        root_path = settings.WORK_PACKAGE_DIR + "/" + processor_id + "-" + upload_id + "/"
+
+        if not os.path.exists(root_path):
+            os.mkdir(root_path)
+            file_path = settings.WORK_PACKAGE_DIR + "/" + processor_id + "-" + upload_id + ".tar.gz"
+            __no_block_cmd.run_once("cp -rf " + file_path + " " + root_path)
+            __no_block_cmd.run_once("cd " + root_path + " && tar -zxvf " + processor_id + "-" + upload_id + ".tar.gz")
+
+        try:
+            list = linux_file_cmd.LinuxFileCommand.ls_dir(root_path + subpath)
+        except Exception as ex:
+            logger.error('get log list error:<%s>, trace: %s' % (
+                str(ex), traceback.format_exc()))
+            return JsonHttpResponse({'list': "error"})
+        return JsonHttpResponse({'list': list, 'status': 0, 'msg': 'ok'})
 
 # @login_required(login_url='/login/')
 @api_view(['POST'])

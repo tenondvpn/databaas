@@ -67,5 +67,6 @@ urlpatterns = (
     re_path(r'^update_pipline_graph/(?P<pipe_id>\d+)/$', views.update_pipline_graph),
     re_path(r'^get_power_nodes/$', views.get_power_nodes),
     re_path(r'^run_history/$', views.run_history),
+    re_path(r'^get_package_list/$', views.get_package_list),
 
 )

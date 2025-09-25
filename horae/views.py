@@ -2214,9 +2214,9 @@ def download_package(request, args):
     processor_id = int(arg_list[0])
     upload_id = int(arg_list[1])
     root_path = settings.WORK_PACKAGE_DIR + "/" + str(processor_id) + "-" + str(upload_id) + "/"
-    file_name = root_path + arg_list[2]
+    file_name = root_path + arg_list[2].replace(';', '/')
     down_load_name = file_name.split('/')[-1]
-
+    print(f"downoad file: {file_name}")
     response = StreamingHttpResponse(package_file_iterator(file_name))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{0}"'.format(down_load_name)

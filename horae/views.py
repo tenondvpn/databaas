@@ -2249,7 +2249,7 @@ def package_file_iterator(file_name):
         index = 0
         downed_len = 0
         while True:
-            log_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
+            status, log_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
                 file_name, 
                 downed_len, 
                 1024 * 1024,

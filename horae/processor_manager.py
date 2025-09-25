@@ -37,14 +37,18 @@ class ProcessorManager(object):
         config = configparser.ConfigParser()
         config.read("./conf/tools.conf")
         self.__package_path = config.get("tools", "package_path").strip()
-        oss_id = config.get("tools", "oss_id").strip()
-        oss_key = config.get("tools", "oss_key").strip()
-        oss_host = config.get("tools", "oss_host").strip()
-        self.__oss_dbname = config.get("tools", "oss_dbname").strip()
-        self.__oss_package_dir = config.get("tools", "oss_prefix").strip()
+        self.__bucket = None
+        self.__oss_package_dir = None
+        try:
+            oss_id = config.get("tools", "oss_id").strip()
+            oss_key = config.get("tools", "oss_key").strip()
+            oss_host = config.get("tools", "oss_host").strip()
+            self.__oss_dbname = config.get("tools", "oss_dbname").strip()
+            self.__oss_package_dir = config.get("tools", "oss_prefix").strip()
+        except:
+            pass
         # self.__auth = oss2.Auth(oss_id, oss_key)
         # self.__bucket = oss2.Bucket(self.__auth, oss_host, self.__oss_dbname)
-        self.__bucket = None
 
     def get_processor_info(self, processor_id):
         processor = self.__sql_manager.get_proessor_info(processor_id)

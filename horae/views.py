@@ -2200,7 +2200,7 @@ def get_package_content(request):
             __no_block_cmd.run_once("cd " + root_path + " && tar -zxvf " + processor_id + "-" + upload_id + ".tar.gz")
 
         try:
-            file_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
+            retstatus, file_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
                 root_path + subpath, 0, 1024 * 1024)
             return JsonHttpResponse({
                 'file_content': file_content, 'status': 0, 'len': len(file_content)})

@@ -1863,9 +1863,10 @@ class SqlManager(object):
 
         version_info = horae.models.UploadHistory.objects.get(id=version_id)
         version_info.delete()
-        res = oss_bucket.delete_object(oss_obj)
-        if res.status != 204:
-            raise Exception("删除oss对象[%s]失败！" % oss_obj)
+        if oss_bucket:
+            res = oss_bucket.delete_object(oss_obj)
+            if res.status != 204:
+                raise Exception("删除oss对象[%s]失败！" % oss_obj)
 
         return 0, "OK"
 

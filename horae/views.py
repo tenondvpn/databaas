@@ -2208,7 +2208,20 @@ def get_package_content(request):
             logger.error('get log list error:<%s>, trace: %s' % (
                 str(ex), traceback.format_exc()))
             return JsonHttpResponse({'status': 1, 'msg': str(ex), 'list': []})
-        
+
+def download_package(request, args):
+    arg_list = args.split('&')
+    processor_id = int(arg_list[0])
+    upload_id = int(arg_list[1])
+    root_path = settings.WORK_PACKAGE_DIR + "/" + processor_id + "-" + upload_id + "/"
+    file_name = root_path + arg_list[2]
+    down_load_name = file_name.split('/')[-1]
+
+    response = StreamingHttpResponse(package_file_iterator(file_name))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{0}"'.format(down_load_name)
+    return response
+      
 # @login_required(login_url='/login/')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -2230,6 +2243,29 @@ def get_tail(request):
             logger.error('get graph  error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
         return JsonHttpResponse({'res': list})
+
+def package_file_iterator(file_name):
+    try:
+        index = 0
+        downed_len = 0
+        while True:
+            log_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
+                file_name, 
+                downed_len, 
+                1024 * 1024,
+                'rb')
+            index += 1
+            content_len = len(log_content)
+            downed_len += content_len
+
+            if content_len <= 0:
+                break
+            yield log_content
+
+            if index > 1024:
+                break
+    except Exception as ex:
+        yield str(ex)
 
 def file_iterator(schedule_id, file_name, chunk_size=512, rerun_id=0):
     try:

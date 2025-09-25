@@ -111,6 +111,7 @@ class ProcessorManager(object):
             tmp_map["update_time"] = history[7].strftime("%Y-%m-%d %H:%M:%S")
             tmp_map["name"] = history[8]
             tmp_map["type"] = history[9]
+            tmp_map["git_url"] = history[10]
             history_list.append(tmp_map)
         ret_map = {}
         ret_map["status"] = 0

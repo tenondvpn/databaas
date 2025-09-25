@@ -32,9 +32,9 @@ class ConstantSql(object):
 
     GET_PACKAGE_HISTORYS = (
         "select a.id, a.upload_time, a.upload_user_id, "
-        "b.username, a.version, a.status, a.description, a.update_time, a.name, a.type from ( "
+        "b.username, a.version, a.status, a.description, a.update_time, a.name, a.type, a.git_url from ( "
         "    select id, status, upload_time, upload_user_id, "
-        "    version, description, update_time, name, type from horae_uploadhistory "
+        "    version, description, update_time, name, type, git_url from horae_uploadhistory "
         "    where processor_id = %s  "
         ")a left outer join ( "
         "    select id, username from auth_user "

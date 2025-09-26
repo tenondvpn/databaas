@@ -66,8 +66,7 @@ def rest_login(request):
         return Response({'message': '用户名或密码错误'}, status=status.HTTP_401_UNAUTHORIZED)
     
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def rest_logout(request):
     request.user.auth_token.delete()
     return Response({'message': '成功退出'}, status=status.HTTP_200_OK)

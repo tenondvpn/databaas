@@ -2335,7 +2335,7 @@ def deploy_solidity(request):
             source_code,
             function_types,
             tmp_function_args,
-            -1,
+            nonce=-1,
             prepayment=prepayment,
             check_tx_valid=True,
             is_library=create_library,
@@ -2346,8 +2346,8 @@ def deploy_solidity(request):
     
         return JsonHttpResponse({'status': 0, 'msg': 'ok', 'id': contract_address})
     except Exception as ex:
-        logger.error('compile solidity error:<%s>' % str(ex))
-        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+        logger.error('compile solidity error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
 
 # @login_required(login_url='/login/')
 @api_view(['POST'])

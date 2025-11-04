@@ -7,7 +7,7 @@ import os
 import time
 import json
 
-import linux_file_cmd
+from horae import linux_file_cmd
 from eth_keys import keys, datatypes
 from secp256k1 import PrivateKey, PublicKey
 from eth_utils import decode_hex, encode_hex

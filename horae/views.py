@@ -18,7 +18,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
-import solcx
 
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory, Project
@@ -31,6 +30,19 @@ from clickhouse_driver import Client
 from horae import zk_manager
 from dags import settings
 from horae import linux_file_cmd
+
+import json
+import shardora_api
+import sys
+import binascii
+import time
+from eth_utils import decode_hex, encode_hex
+from eth_abi import encode
+from web3 import Web3
+from eth_abi import decode
+import json
+import argparse
+import solcx
 
 horae_interface = HoraeInterface()
 ck_client = Client(host='localhost', user='default', password='')
@@ -2240,6 +2252,103 @@ def compile_solidity(request):
             logger.error('compile solidity error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
       
+def deploy_solidity(request):
+    if request.method != 'POST':
+        return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})
+    
+    try:
+        source_code = request.POST.get('bytecode')
+        private_key = None
+        private_str = request.POST.get('private_key')
+        if private_str is not None and private_str != "":
+            private_key = decode_hex(private_str)
+
+        create_library = False
+        code_type = int(request.POST.get('code_type'))
+        if code_type != 0:
+            create_library = True
+
+        to = None
+        amount = 0
+        prepayment = 0
+        function_types = []
+        function_args = []
+        function_types_str = request.POST.get('function_types')
+        if function_types_str is not None and function_types_str != "":
+            function_types = function_types_str.split(',')
+
+        function_args_str = request.POST.get('function_args')
+        if function_args_str is not None and function_args_str != "":
+            function_args = function_args_str.split(',')
+
+        if len(function_types) != len(function_args):
+            print(f"invalid function types {function_types} and function args {function_args}")
+            return JsonHttpResponse({'status': 1, 'msg': 'function types and args len not match'})
+
+        tmp_function_args = []
+        for i in range(len(function_types)):
+            arg_type = function_types[i]
+            if not arg_type.endswith('[]'):
+                if arg_type.startswith('bytes') or arg_type == 'address':
+                    tmp_function_args.append(decode_hex(function_args[i]))
+                elif arg_type == 'string':
+                    tmp_function_args.append(function_args[i])
+                elif arg_type == 'bool':
+                    if function_args[i].lower() == 'false' or function_args[i] == "0":
+                        tmp_function_args.append(False)
+                    else:
+                        tmp_function_args.append(True)
+                else:
+                    tmp_function_args.append(int(function_args[i]))
+            else:
+                if arg_type.startswith('bytes') or arg_type.startswith('address'):
+                    items = function_args[i].split('-')
+                    tmp_arr = []
+                    for item in items:
+                        tmp_arr.append(decode_hex(item))
+
+                    tmp_function_args.append(tmp_arr)
+                elif arg_type.startswith('string'):
+                    items = function_args[i].split('-')
+                    tmp_function_args.append(items)
+                elif arg_type.startswith('bool'):
+                    items = function_args[i].split('-')
+                    tmp_arr = []
+                    for item in items:
+                        if item.lower() == 'false' or item == "0":
+                            tmp_arr.append(False)
+                        else:
+                            tmp_arr.append(True)
+
+                    tmp_function_args.append(tmp_arr)
+                else:
+                    items = function_args[i].split('-')
+                    tmp_arr = []
+                    for item in items:
+                        tmp_arr.append(int(item))
+                            
+                    tmp_function_args.append(tmp_arr)
+
+        contract_address = shardora_api.deploy_contract_with_bytes(
+            private_key,
+            amount,
+            source_code,
+            function_types,
+            tmp_function_args,
+            -1,
+            prepayment=prepayment,
+            check_tx_valid=True,
+            is_library=create_library,
+            contract_address=to)
+        if contract_address is None:
+            print(f"contract create failed!")
+            return JsonHttpResponse({'status': 1, 'msg': 'create contract failed'})
+    
+        return JsonHttpResponse({'status': 0, 'msg': 'ok', 'id': contract_address})
+    except Exception as ex:
+        logger.error('compile solidity error:<%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+
 # @login_required(login_url='/login/')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

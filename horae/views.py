@@ -18,6 +18,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
+import solcx
+
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory, Project
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
@@ -2221,6 +2223,22 @@ def download_package(request, args):
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{0}"'.format(down_load_name)
     return response
+
+def compile_solidity(request):
+    if request.method == 'POST':
+        source_code = request.POST.get('source_code')
+        try:
+            compiled_sol = solcx.compile_source(
+                source_code,
+                output_values=['abi', 'bin'],
+            )
+            contract_id, contract_interface = compiled_sol.popitem()
+            abi = contract_interface['abi']
+            bytecode = contract_interface['bin']
+            return JsonHttpResponse({'status': 0, 'abi': json.dumps(abi), 'bytecode': bytecode})
+        except Exception as ex:
+            logger.error('compile solidity error:<%s>' % str(ex))
+            return JsonHttpResponse({'status': 1, 'msg': str(ex)})
       
 # @login_required(login_url='/login/')
 @api_view(['POST'])

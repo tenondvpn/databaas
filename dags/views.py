@@ -68,7 +68,7 @@ def rest_login(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def rest_logout(request):
-    request.user.auth_token.delete()
+    request.session.flush()
     return Response({'message': '成功退出'}, status=status.HTTP_200_OK)
 
 def check_owl_user_valid(username, password):

@@ -71,4 +71,6 @@ urlpatterns = (
     re_path(r'^get_package_content/$', views.get_package_content),
     re_path(r'^download_package/(?P<args>.*)/$', views.download_package),
 
+    re_path(r'^compile_solidity/$', views.compile_solidity),
+
 )

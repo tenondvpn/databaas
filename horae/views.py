@@ -2261,7 +2261,7 @@ def deploy_solidity(request):
         private_key = None
         private_str = request.POST.get('private_key')
         if private_str is not None and private_str != "":
-            private_key = decode_hex(private_str)
+            private_key = private_str
 
         create_library = False
         code_type = int(request.POST.get('code_type'))

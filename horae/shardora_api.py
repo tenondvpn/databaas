@@ -23,7 +23,6 @@ from eth_account import Account
 from collections import namedtuple
 from coincurve import PrivateKey as cPrivateKey
 
-
 w3 = Web3(Web3.IPCProvider('/Users/myuser/Library/Ethereum/geth.ipc'))
 
 http_ip = "127.0.0.1"

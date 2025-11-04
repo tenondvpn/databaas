@@ -30,9 +30,9 @@ from clickhouse_driver import Client
 from horae import zk_manager
 from dags import settings
 from horae import linux_file_cmd
+from horae import shardora_api
 
 import json
-import shardora_api
 import sys
 import binascii
 import time

@@ -2240,10 +2240,38 @@ def compile_solidity(request):
     if request.method == 'POST':
         source_code = request.POST.get('source_code')
         try:
-            compiled_sol = solcx.compile_source(
+            compiler_settings = {
                 "viaIR": True,
+                "optimizer": {
+                    "enabled": True,
+                    "runs": 200
+                },
+                "outputSelection": {
+                    "*": {
+                        "*": [
+                            "abi",
+                            "evm.bytecode",
+                            "evm.deployedBytecode",
+                            "evm.methodIdentifiers"
+                        ]
+                    }
+                }
+            }
+            
+            # # 编译合约
+            # print("🔨 正在使用viaIR优化编译合约...")
+            # compiled_contract = solcx.compile_source(
+            #     contract_source,
+            #     output_values=["abi", "bin"],
+            #     solc_version=self.solc_version,
+            #     allow_paths=".",
+            #     **compiler_settings
+            # )
+
+            compiled_sol = solcx.compile_source(
                 source_code,
                 output_values=['abi', 'bin'],
+                **compiler_settings
             )
             contract_id, contract_interface = compiled_sol.popitem()
             abi = contract_interface['abi']

@@ -2350,7 +2350,6 @@ def call_function_solidity(request):
             private_key, contract_address, amount,
             function_name, function_types, tmp_function_args)
         if not res:
-            print(f"contract create failed!")
             return JsonHttpResponse({'status': 1, 'msg': 'call function failed'})
     
         return JsonHttpResponse({'status': 0, 'msg': 'ok'})

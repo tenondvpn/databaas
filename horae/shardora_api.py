@@ -398,13 +398,13 @@ def query_contract_function(
     return res
 
 def check_addr_nonce_valid(addr, in_nonce):
-    for i in range(0, 30):
+    for i in range(0, 20):
         add_info = get_account_info(addr)
         if add_info is not None and int(add_info['nonce']) >= in_nonce:
             print(f"get address info: {add_info}")
             return True
         
-        time.sleep(3)
+        time.sleep(1)
 
     return False
 

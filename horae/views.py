@@ -2241,7 +2241,7 @@ def compile_solidity(request):
         source_code = request.POST.get('source_code')
         try:
             compiler_settings = {
-                "viaIR": True,
+                "via-ir": True,
             }
             
             # # 编译合约

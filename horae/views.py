@@ -2241,6 +2241,7 @@ def compile_solidity(request):
         source_code = request.POST.get('source_code')
         try:
             compiled_sol = solcx.compile_source(
+                "viaIR": True,
                 source_code,
                 output_values=['abi', 'bin'],
             )

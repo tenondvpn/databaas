@@ -2374,8 +2374,8 @@ def deploy_solidity(request):
             create_library = True
 
         to = None
-        amount = 0
-        prepayment = 0
+        amount = int(request.POST.get('amount'))
+        prepayment = int(request.POST.get('gas_prepayment'))
         function_types = []
         function_args = []
         function_types_str = request.POST.get('function_types')

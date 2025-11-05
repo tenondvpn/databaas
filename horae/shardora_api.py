@@ -366,7 +366,7 @@ def call_contract_function(
     func_param = (keccak256_str(f"{function}({','.join(types_list)})")[:8] + 
         encode_hex(encode(types_list, params_list))[2:])
 
-    # print(f"func_param: {func_param}")
+    print(f"func_param: {func_param}")
     return transfer(str_prikey=private_key, to=contract_address, amount=amount, step=8, input=func_param)
 
 def query_contract_function(

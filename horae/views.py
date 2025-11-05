@@ -2236,6 +2236,24 @@ def download_package(request, args):
     response['Content-Disposition'] = 'attachment;filename="{0}"'.format(down_load_name)
     return response
 
+def install_solc_versions():
+    """安装多个solc版本"""
+    try:
+        import solcx
+        # 定义要安装的版本
+        versions = ["0.8.30"]
+        for version in versions:
+            try:
+                solcx.install_solc(version)
+            except Exception as e:
+                return False
+        
+        # 设置默认版本
+        solcx.set_solc_version("0.8.30")
+        
+    except Exception as e:
+        return False
+
 def compile_solidity(request):
     if request.method == 'POST':
         source_code = request.POST.get('source_code')
@@ -2244,7 +2262,7 @@ def compile_solidity(request):
                 "viaIR": True,
             }
             
-            # solcx.set_solc_version('0.8.31')
+            install_solc_versions()
             compiled_sol = solcx.compile_source(
                 source_code,
                 output_values=['abi', 'bin'],

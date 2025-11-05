@@ -2244,7 +2244,7 @@ def compile_solidity(request):
                 "viaIR": True,
             }
             
-            solcx.set_solc_version('0.8.31')
+            # solcx.set_solc_version('0.8.31')
             compiled_sol = solcx.compile_source(
                 source_code,
                 output_values=['abi', 'bin'],

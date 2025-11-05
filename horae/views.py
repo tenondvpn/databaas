@@ -2241,19 +2241,10 @@ def compile_solidity(request):
         source_code = request.POST.get('source_code')
         try:
             compiler_settings = {
-                "via-ir": True,
+                "viaIR": True,
             }
             
-            # # 编译合约
-            # print("🔨 正在使用viaIR优化编译合约...")
-            # compiled_contract = solcx.compile_source(
-            #     contract_source,
-            #     output_values=["abi", "bin"],
-            #     solc_version=self.solc_version,
-            #     allow_paths=".",
-            #     **compiler_settings
-            # )
-
+            solcx.set_solc_version('0.8.31')
             compiled_sol = solcx.compile_source(
                 source_code,
                 output_values=['abi', 'bin'],

@@ -2242,20 +2242,6 @@ def compile_solidity(request):
         try:
             compiler_settings = {
                 "viaIR": True,
-                "optimizer": {
-                    "enabled": True,
-                    "runs": 200
-                },
-                "outputSelection": {
-                    "*": {
-                        "*": [
-                            "abi",
-                            "evm.bytecode",
-                            "evm.deployedBytecode",
-                            "evm.methodIdentifiers"
-                        ]
-                    }
-                }
             }
             
             # # 编译合约

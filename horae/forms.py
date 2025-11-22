@@ -72,10 +72,15 @@ class PipelineForm(ModelForm):
             widget = forms.TextInput(attrs={'class':'form-control',
                 'type':'hidden'}),
             required = False)
+    type = forms.IntegerField(
+            label='流程类型',
+            widget = forms.TextInput(attrs={'class':'form-control',
+                'type':'hidden'}),
+            required = False)
     class Meta: 
         model = Pipeline
         fields = ('name' , 'ct_time','principal','tag','description',
-                'send_mail','send_sms','life_cycle', 'monitor_way')
+                'send_mail','send_sms','life_cycle', 'monitor_way', 'type')
 
 
 class ProcessorForm(ModelForm):

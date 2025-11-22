@@ -1153,6 +1153,12 @@ def create(request):
                 life_cycle = form.cleaned_data['life_cycle']
                 description = form.cleaned_data['description']
                 monitor_way = form.cleaned_data['monitor_way']
+                type = 0
+                try:
+                    type = form.cleaned_data['type']
+                except:
+                    pass
+                
 
                 check_result = check_life_cycle(life_cycle)
                 if not check_result:
@@ -1176,7 +1182,7 @@ def create(request):
 
                 result = horae_interface.create_new_pipeline(name, ct_time,
                                                              user.id, principal, monitor_way, tag, description,
-                                                             life_cycle, 0, project_group)
+                                                             life_cycle, 0, project_group,type=type)
                 status, msg = status_msg(result)
                 print(status)
                 print(msg)

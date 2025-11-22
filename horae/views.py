@@ -868,6 +868,10 @@ def get_processor_tree_async(request):
     if "id" in request.GET:
         tree_id = int(request.GET.get("id"))
 
+    type = None
+    if 'type' in request.GET:
+        type = int(request.GET.get("type"))
+        
     if tree_id == 0:
         return JsonHttpResponse([
                 {"is_project": 1,

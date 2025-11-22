@@ -135,8 +135,8 @@ class SqlManager(object):
 
         return horae.models.Project.objects.filter(owner_id=owner_id, parent_id=parent_id, type=type)
 
-    def get_pipelines_with_project_id(self, project_id):
-        return horae.models.Pipeline.objects.filter(project_id=project_id)
+    def get_pipelines_with_project_id(self, project_id, type):
+        return horae.models.Pipeline.objects.filter(project_id=project_id, type=type)
 
     def get_pipeline_info(self, pipeline_id):
         try:

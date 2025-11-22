@@ -254,7 +254,7 @@ class PipelineManager(object):
             res_list.append({"id": project.id, "text": project.name, "state": "closed", "is_project": 1})
 
         if int(tree_id) != 0 and get_pipeline:
-            pipelines = self.__sql_manager.get_pipelines_with_project_id(project_id=tree_id)
+            pipelines = self.__sql_manager.get_pipelines_with_project_id(project_id=tree_id, type=type)
             for pipeline in pipelines:
                 res_list.append({
                     "id": "%s-%s" % (tree_id, pipeline.id),

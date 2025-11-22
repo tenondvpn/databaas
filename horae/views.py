@@ -1182,7 +1182,7 @@ def create(request):
 
                 result = horae_interface.create_new_pipeline(name, ct_time,
                                                              user.id, principal, monitor_way, tag, description,
-                                                             life_cycle, 0, project_group,type=type)
+                                                             life_cycle, type, project_group)
                 status, msg = status_msg(result)
                 print(status)
                 print(msg)

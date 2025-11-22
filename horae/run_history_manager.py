@@ -41,7 +41,8 @@ class RunHistoryManager(object):
             page_max,
             order_field,
             sort_order,
-            search_list):
+            search_list,
+            type):
         try:
             where_content = ''
             if search_list is not None and len(search_list) > 0:
@@ -55,7 +56,8 @@ class RunHistoryManager(object):
                     page_max,
                     order_field,
                     sort_order,
-                    where_content)
+                    where_content,
+                    type)
         except Exception as ex:
             self.__log.error("error ex: %s, trace: %s" % (
                     str(ex), traceback.format_exc()))
@@ -100,14 +102,16 @@ class RunHistoryManager(object):
             page_max,
             order_field,
             sort_order,
-            where_content):
+            where_content,
+            type):
         count, run_historys = self.__sql_manager.show_task_history(
                 owner_id,
                 page_min,
                 page_max,
                 order_field,
                 sort_order,
-                where_content)
+                where_content,
+                type)
         return self.__get_orignal_history_ret(count, run_historys)
 
     def __get_orignal_history_ret(self, count, run_historys):

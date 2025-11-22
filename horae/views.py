@@ -1644,8 +1644,14 @@ def run_history(request):
     condition, draw, page_min, page_max = run_history_condition(request)
     order_name = request.POST.get('order_name')
     order_type = request.POST.get('order_type')
+    get_type = None
+    try:
+        get_type = request.POST.get('type')
+    except:
+        get_type = None
+
     pipelines = horae_interface.show_run_history(
-        0, user.id, page_min, page_max, order_name, order_type, condition)
+        0, user.id, page_min, page_max, order_name, order_type, condition, type=get_type)
     pipelines = json.loads(pipelines)
     pipe_list = pipelines["runhistory_list"]
     pipe_count = pipelines["count"]

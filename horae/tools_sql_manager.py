@@ -1468,12 +1468,17 @@ class SqlManager(object):
             page_max,
             order_field,
             sort_order,
-            where_content):
+            where_content,
+            type=None):
         try:
             tmp_list = []
             cursor = django.db.connection.cursor()
             is_super = is_admin(owner_id)
-            pipelines = horae.models.Pipeline.objects.all().values("id")
+            if type is not None:
+                pipelines = horae.models.Pipeline.objects.filter(type=type).values("id")
+            else:
+                pipelines = horae.models.Pipeline.objects.all().values("id")
+
             for pipeline in pipelines:
                 tmp_list.append(str(pipeline["id"]))
             '''

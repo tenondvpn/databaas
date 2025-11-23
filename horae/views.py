@@ -342,6 +342,11 @@ def update(request, pipe_id):
                 life_cycle = form.cleaned_data['life_cycle']
                 description = form.cleaned_data['description']
                 monitor_way = form.cleaned_data['monitor_way']
+                type = 0
+                try:
+                    type = form.cleaned_data['type']
+                except:
+                    pass
 
                 check_result = check_life_cycle(life_cycle)
                 if not check_result:
@@ -369,7 +374,7 @@ def update(request, pipe_id):
 
                 result = horae_interface.update_pipeline(int(pipe_id), user.id,
                                                          life_cycle, name, ct_time, principal, monitor_way,
-                                                         tag, description, 0, project_group)
+                                                         tag, description, type, project_group)
                 status, msg = status_msg(result)
             except Exception as ex:
                 logger.error('update pipeline fail: <%s>' % str(ex))

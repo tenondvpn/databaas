@@ -43,7 +43,7 @@ def rest_register(request):
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key, 'message': '登录成功', 'created': created}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': '用户名或密码错误'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': '用户名或密码错误: ' + username}, status=status.HTTP_401_UNAUTHORIZED)
         
     user = User.objects.create_user(username=username, password=password, email=email)
     user.auth_token.delete()

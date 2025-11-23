@@ -196,11 +196,11 @@ class ProcessorManager(object):
         root_map = {"id": type, "text": tools_util.global_processor_top_type_map[type], "is_project": 1, "children": ret_list}
         return [root_map]
 
-    def get_shared_processor_tree_async(self, user_id, tree_id, just_project):
+    def get_shared_processor_tree_async(self, user_id, tree_id, type):
         if tree_id != -2:
             return []
 
-        projects = horae.models.Project.objects.filter(type=1)
+        projects = horae.models.Project.objects.filter(type=type)
         tree_map = {}
         for project in projects:
             if project.parent_id not in tree_map:
@@ -237,12 +237,12 @@ class ProcessorManager(object):
 
         return ret_list
 
-    def get_standard_processor_tree_async(self, user_id, tree_id):
+    def get_standard_processor_tree_async(self, user_id, tree_id,type=1):
         if tree_id != tools_util.PROCESSOR_TOP_TYPE.PUBLIC_PROC:
             return []
 
         is_super = is_admin(user_id)
-        projects = self.__sql_manager.get_projects_with_parent_id(parent_id=tree_id, type=1)
+        projects = self.__sql_manager.get_projects_with_parent_id(parent_id=tree_id, type=type)
         res_list = []
         for project in projects:
             res_list.append({"id": project.id, "text": project.name, "state": "closed",
@@ -267,12 +267,12 @@ class ProcessorManager(object):
         status, info = self.__sql_manager.public_processor(processor_id, project_id)
         return self.__get_default_ret_map(status, info)
 
-    def get_processor_tree_async(self, user_id, tree_id):
+    def get_processor_tree_async(self, user_id, tree_id, type=1):
         is_super = is_admin(user_id)
         if tree_id == -1 and not is_super:
-            projects = self.__sql_manager.get_projects_with_parent_id(owner_id=user_id, parent_id=tree_id, type=1)
+            projects = self.__sql_manager.get_projects_with_parent_id(owner_id=user_id, parent_id=tree_id, type=type)
         else:
-            projects = self.__sql_manager.get_projects_with_parent_id(parent_id=tree_id, type=1)
+            projects = self.__sql_manager.get_projects_with_parent_id(parent_id=tree_id, type=type)
 
         res_list = []
         for project in projects:

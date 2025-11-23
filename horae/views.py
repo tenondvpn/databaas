@@ -868,7 +868,7 @@ def get_processor_tree_async(request):
     if "id" in request.GET:
         tree_id = int(request.GET.get("id"))
 
-    type = None
+    type = 1
     if 'type' in request.GET:
         type = int(request.GET.get("type"))
         
@@ -886,11 +886,11 @@ def get_processor_tree_async(request):
 
     try:
         if tree_id == -2:
-            result = horae_interface.get_shared_processor_tree_async(user.id, tree_id)
+            result = horae_interface.get_shared_processor_tree_async(user.id, tree_id,type)
         elif tree_id == -3:
-            result = horae_interface.get_standard_processor_tree_async(user.id, tree_id)
+            result = horae_interface.get_standard_processor_tree_async(user.id, tree_id,type)
         else:
-            result = horae_interface.get_processor_tree_async(user.id, tree_id)
+            result = horae_interface.get_processor_tree_async(user.id, tree_id, type)
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('get_processor_tree_async  error:<%s>, trace[%s]' % (

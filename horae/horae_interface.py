@@ -635,7 +635,7 @@ class HoraeInterface(tools_util.Singleton):
                 "ret: %s[use_time:%s]" % (owner_id, task_id, ret, use_time))
         return ret
 
-    def get_processor_tree_async(self, user_id, tree_id):
+    def get_processor_tree_async(self, user_id, tree_id, type=1):
         """
             获取流程分类树，异步获取
 
@@ -653,7 +653,7 @@ class HoraeInterface(tools_util.Singleton):
                 No.
         """
         beign_time = time.time()
-        ret = self.__processor_mgr.get_processor_tree_async(user_id, tree_id)
+        ret = self.__processor_mgr.get_processor_tree_async(user_id, tree_id, type)
         use_time = time.time() - beign_time
         self.__log.info("get_project_tree_async user_id: %s, tree_id: %s,"
                         " ret: %s[use_time:%s]"
@@ -1180,7 +1180,7 @@ class HoraeInterface(tools_util.Singleton):
                         % (user_id, type, ret, use_time))
         return ret
 
-    def get_shared_processor_tree_async(self, user_id, tree_id):
+    def get_shared_processor_tree_async(self, user_id, tree_id,type=1):
         """
             获取共享给用户的算子，包括子分类
 
@@ -1198,14 +1198,14 @@ class HoraeInterface(tools_util.Singleton):
                 No.
         """
         beign_time = time.time()
-        ret = self.__processor_mgr.get_shared_processor_tree_async(user_id, tree_id)
+        ret = self.__processor_mgr.get_shared_processor_tree_async(user_id, tree_id,type)
         use_time = time.time() - beign_time
         self.__log.info("get_shared_processor_tree_async user_id: %s,"
                         " tree_id: %s, ret: %s[use_time:%s]"
                         % (user_id, tree_id, ret, use_time))
         return ret
 
-    def get_standard_processor_tree_async(self, user_id, tree_id):
+    def get_standard_processor_tree_async(self, user_id, tree_id,type=1):
         """
             获取共享给用户的算子，包括子分类
 
@@ -1223,7 +1223,7 @@ class HoraeInterface(tools_util.Singleton):
                 No.
         """
         beign_time = time.time()
-        ret = self.__processor_mgr.get_standard_processor_tree_async(user_id, tree_id)
+        ret = self.__processor_mgr.get_standard_processor_tree_async(user_id, tree_id,type)
         use_time = time.time() - beign_time
         self.__log.info("get_standard_processor_tree_async user_id: %s,"
                         " tree_id: %s, ret: %s[use_time:%s]"

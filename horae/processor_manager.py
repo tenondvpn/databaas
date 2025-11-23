@@ -102,8 +102,8 @@ class ProcessorManager(object):
             return self.__get_default_ret_map(1, "db error!")
 
         history_list = []
+        processor = self.__sql_manager.get_proessor_info(history[0])
         for history in upload_historys:
-            processor = self.__sql_manager.get_proessor_info(history[0])
             tmp_map = {}
             tmp_map["id"] = history[0]
             tmp_map["upload_time"] = history[1].strftime("%Y-%m-%d %H:%M:%S")

@@ -102,7 +102,7 @@ class ProcessorManager(object):
             return self.__get_default_ret_map(1, "db error!")
 
         history_list = []
-        processor = self.__sql_manager.get_proessor_info(history[0])
+        processor = self.__sql_manager.get_proessor_info(processor_id)
         for history in upload_historys:
             tmp_map = {}
             tmp_map["id"] = history[0]

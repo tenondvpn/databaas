@@ -103,6 +103,7 @@ class ProcessorManager(object):
 
         history_list = []
         for history in upload_historys:
+            processor = self.__sql_manager.get_proessor_info(history[0])
             tmp_map = {}
             tmp_map["id"] = history[0]
             tmp_map["upload_time"] = history[1].strftime("%Y-%m-%d %H:%M:%S")
@@ -113,7 +114,7 @@ class ProcessorManager(object):
             tmp_map["description"] = history[6]
             tmp_map["update_time"] = history[7].strftime("%Y-%m-%d %H:%M:%S")
             tmp_map["name"] = history[8]
-            tmp_map["type"] = history[9]
+            tmp_map["type"] = processor.type
             tmp_map["git_url"] = history[10]
             history_list.append(tmp_map)
         ret_map = {}

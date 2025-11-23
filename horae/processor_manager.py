@@ -116,6 +116,8 @@ class ProcessorManager(object):
             tmp_map["name"] = history[8]
             tmp_map["type"] = processor.type
             tmp_map["git_url"] = history[10]
+            tmp_map["config"] = processor.config
+            tmp_map["template"] = processor.template
             history_list.append(tmp_map)
         ret_map = {}
         ret_map["status"] = 0

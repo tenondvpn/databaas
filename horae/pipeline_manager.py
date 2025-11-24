@@ -1654,13 +1654,18 @@ class PipelineManager(object):
         ret_map["status"] = 0
         ret_map["info"] = "OK"
         try:
-            ret_map["all_failes_count"] = horae.models.RunHistory.objects.filter(type=type, status=3).count()
-            ret_map["all_count"] = horae.models.RunHistory.objects.filter(type=type).count()
+            pipelines = horae.models.Pipeline.objects.filter(type=type).values("id")
+            tmp_list = []
+            for pipeline in pipelines:
+                tmp_list.append(str(pipeline["id"]))
+
+            ret_map["all_failes_count"] = horae.models.RunHistory.objects.filter(pl_id__in=tmp_list, status=3).count()
+            ret_map["all_count"] = horae.models.RunHistory.objects.filter(pl_id__in=tmp_list).count()
             _, pl_ids = self.__sql_manager.get_pipeline_id_list_by_owner_id(user_id)
-            ret_map["all_my_count"] =  horae.models.Pipeline.objects.filter(type=type, id__in=pl_ids).count()
             ret_map["my_create_count"] = horae.models.Pipeline.objects.filter(type=type, owner_id=user_id).count()
-            ret_map["runing_count"] = horae.models.RunHistory.objects.filter(type=type, status__in=(0, 1, 5)).count()
-            ret_map["handled_count"] = horae.models.RunHistory.objects.filter(type=type, status=2).count()
+            ret_map["all_my_count"] =  horae.models.Pipeline.objects.filter(type=type, id__in=pl_ids).count() + ret_map["my_create_count"]
+            ret_map["runing_count"] = horae.models.RunHistory.objects.filter(pl_id__in=tmp_list, status__in=(0, 1, 5)).count()
+            ret_map["handled_count"] = horae.models.RunHistory.objects.filter(pl_id__in=tmp_list, status=2).count()
         except Exception as ex:
             ret_map["status"] = 1
             ret_map["msg"] = str(ex)

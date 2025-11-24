@@ -2022,3 +2022,6 @@ class HoraeInterface(tools_util.Singleton):
                  "dest_pl_id: %s, ret: %s[use_time:%s]"
                  % (owner_id, src_task_id, dest_pl_id, ret, use_time))
         return ret
+
+    def get_statistics(self, user_id, type):
+        return self.__pipeline_mgr.get_statistics(user_id, type)

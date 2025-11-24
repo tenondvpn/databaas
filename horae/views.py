@@ -3089,3 +3089,21 @@ def get_power_nodes(request):
         logger.error('update pipeline fail: <%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_statistics(request):
+    user = request.user
+    try:
+        type = request.GET.get('type')
+        
+        result = horae_interface.get_statistics(user.id)
+        result = json.loads(result)
+        status = result['status']
+        info = result['info']
+    except Exception as ex:
+        logger.error('run pipeline error:<%s>' % str(ex))
+        return JsonHttpResponse(
+            {'status': 1, 'msg': str(ex)})
+    return JsonHttpResponse(
+        {'status': status, 'msg': info})

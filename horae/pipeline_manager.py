@@ -1648,3 +1648,20 @@ class PipelineManager(object):
         ret_map["info"] = "OK"
         ret_map["task"] = task_map
         return json.dumps(ret_map)
+
+    def get_statistics(self, user_id, type):
+        ret_map = {}
+        ret_map["status"] = 0
+        ret_map["info"] = "OK"
+        try:
+            ret_map["all_failes_count"] = horae.models.RunHistory.objects.filter(type=type, status=3).count()
+            ret_map["all_count"] = horae.models.RunHistory.objects.filter(type=type).count()
+            _, pl_ids = self.__sql_manager.get_pipeline_id_list_by_owner_id(user_id)
+            ret_map["all_my_count"] =  horae.models.Pipeline.objects.filter(type=type, id__in=pl_ids).count()
+            ret_map["my_create_count"] = horae.models.Pipeline.objects.filter(type=type, owner_id=user_id).count()
+            ret_map["runing_count"] = horae.models.RunHistory.objects.filter(type=type, status__in=(0, 1, 5)).count()
+            ret_map["handled_count"] = horae.models.RunHistory.objects.filter(type=type, status=2).count()
+        except:
+            pass
+
+        return json.dumps(ret_map)

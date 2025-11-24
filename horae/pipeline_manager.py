@@ -1616,23 +1616,6 @@ class PipelineManager(object):
             on_line)
         return self.__get_default_ret_map(status, info)
 
-    def copy_pipeline(self, owner_id, src_pl_id, new_pl_name, project_id, use_type_src):
-        if new_pl_name.strip() == '':
-            return self.__get_default_ret_map(1, "DAG流名不能为空！")
-        status, pl_id = self.__sql_manager.copy_pipeline(
-            owner_id,
-            src_pl_id,
-            new_pl_name,
-            project_id,
-            use_type_src)
-        if status != 0:
-            return self.__get_default_ret_map(1, pl_id)
-        ret_map = {}
-        ret_map["status"] = 0
-        ret_map["info"] = "OK"
-        ret_map["pl_id"] = pl_id
-        return json.dumps(ret_map)
-
     def copy_task(self, owner_id, src_task_id, dest_pl_id):
         status, task = self.__sql_manager.copy_task(
             owner_id,

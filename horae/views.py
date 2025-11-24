@@ -415,30 +415,6 @@ def update(request, pipe_id):
 # @login_required(login_url='/login/')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def copy_pipeline(request):
-    if request.method == 'POST':
-        user = request.user
-
-        pl_id = request.POST.get('pl_id')
-        pl_name = request.POST.get('pl_name')
-        project_id = request.POST.get('project_id')
-        try:
-            result = horae_interface.copy_pipeline(
-                int(user.id),
-                int(pl_id),
-                pl_name,
-                int(project_id))
-            res = json.loads(result)
-            if int(res["status"]) != 0:
-                return JsonHttpResponse({'status': 1, 'msg': res["info"]})
-            return JsonHttpResponse({'status': 0, 'msg': "OK", 'pl_id': res["pl_id"]})
-        except Exception as ex:
-            logger.error('get graph  error:<%s>' % str(ex))
-            return JsonHttpResponse({'status': 1, 'msg': str(ex)})
-
-# @login_required(login_url='/login/')
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
 @add_visit_record
 def delete(request, pipe_id):
     if request.method == 'POST':
@@ -3015,12 +2991,19 @@ def copy_pipeline(request):
         pl_id = request.POST.get('pl_id')
         pl_name = request.POST.get('pl_name')
         project_id = request.POST.get('project_id')
+        use_src_type = False
+        try:
+            if request.POST.get('use_src_type') != 0:
+                use_src_type = True
+        except:
+            pass
         try:
             result = horae_interface.copy_pipeline(
                 int(user.id),
                 int(pl_id),
                 pl_name,
-                int(project_id))
+                int(project_id),
+                use_type_src=use_src_type)
             res = json.loads(result)
             if int(res["status"]) != 0:
                 return JsonHttpResponse({'status': 1, 'msg': res["info"]})

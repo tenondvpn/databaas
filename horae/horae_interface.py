@@ -330,47 +330,6 @@ class HoraeInterface(tools_util.Singleton):
                 project_id, ret, use_time))
         return ret
 
-    def copy_pipeline(
-            self,
-            owner_id,
-            src_pl_id,
-            new_pl_name,
-            project_id,
-            use_type_src=False):
-        """
-        拷贝流程
-
-        Args:
-            owner_id: int 用户id
-            src_pl_id： int 被拷贝流程id
-            new_pl_name：string 新流程名
-            project_id：int 项目id
-            use_type_src: bool True流程类型使用被拷贝流程的类型,False使用0
-
-        Returns:
-            {
-                "status": 0,  # 0 成功，其他失败
-                "info": "OK",  # 失败原因
-                "pl_id": 1,  # 新建的流程id
-            }
-
-        Raises:
-            No.
-        """
-        beign_time = time.time()
-        ret = self.__pipeline_mgr.copy_pipeline(
-                owner_id,
-                src_pl_id,
-                new_pl_name,
-                project_id,
-                use_type_src)
-        use_time = time.time() - beign_time
-        self.__log.info("copy_pipeline owner_id: %s, src_pl_id: %s, "
-                 "new_pl_name: %s, use_type_src: %s, ret: %s[use_time:%s]"
-                 % (owner_id, src_pl_id, new_pl_name,
-                 use_type_src, ret, use_time))
-        return ret
-
     def delete_pipeline(self, owner_id, pipeline_id):
         """
         删除一个pipeline

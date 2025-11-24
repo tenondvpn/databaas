@@ -1661,7 +1661,8 @@ class PipelineManager(object):
             ret_map["my_create_count"] = horae.models.Pipeline.objects.filter(type=type, owner_id=user_id).count()
             ret_map["runing_count"] = horae.models.RunHistory.objects.filter(type=type, status__in=(0, 1, 5)).count()
             ret_map["handled_count"] = horae.models.RunHistory.objects.filter(type=type, status=2).count()
-        except:
-            pass
+        except Exception as ex:
+            ret_map["status"] = 1
+            ret_map["msg"] = str(ex)
 
         return json.dumps(ret_map)

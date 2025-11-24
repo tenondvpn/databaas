@@ -17,6 +17,7 @@ import horae.models
 import django.db.models
 import django.core.exceptions
 import django.contrib.auth.models
+from django.db.models import Q
 
 from horae import models
 from horae import tools_util
@@ -1469,16 +1470,33 @@ class SqlManager(object):
             order_field,
             sort_order,
             where_content,
-            type=None):
+            type=None,
+            owner_type=0):
         try:
             tmp_list = []
             cursor = django.db.connection.cursor()
             is_super = is_admin(owner_id)
-            if type is not None:
-                pipelines = horae.models.Pipeline.objects.filter(type=type).values("id")
-            else:
-                pipelines = horae.models.Pipeline.objects.all().values("id")
 
+            if status:
+                conditions &= Q(status=status)
+            if user:
+                conditions &= Q(created_by=user)
+            if search:
+                conditions &= Q(name__icontains=search) | Q(id__icontains=search)
+
+            pipelines = Pipeline.objects.filter(conditions)
+
+            conditions = Q()
+            if type is not None:
+                conditions &= Q(type=type)
+
+            if owner_type == 1:
+                conditions &= Q(owner_id=owner_id)
+            elif owner_type == 2:
+                _, pl_ids = self.get_pipeline_id_list_by_owner_id(owner_id)
+                conditions &= Q(id__in=pl_ids)
+
+            pipelines = horae.models.Pipeline.objects.filter(conditions).values("id")
             for pipeline in pipelines:
                 tmp_list.append(str(pipeline["id"]))
             '''

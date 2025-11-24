@@ -974,7 +974,8 @@ class HoraeInterface(tools_util.Singleton):
             sort_order,
             search_map=None,
             search_list=None,
-            type=None):
+            type=None,
+            owner_type=0):
         """
         查看任务
         从horae_runhistory中获取执行状态信息，支持排序，翻页，搜索功能
@@ -1037,7 +1038,8 @@ class HoraeInterface(tools_util.Singleton):
                 order_field,
                 sort_order,
                 search_list,
-                type)
+                type,
+                owner_type=owner_type)
         use_time = time.time() - beign_time
         self.__log.info("show_run_history "
                  "show_tag： %s, owner_id: %s, page_min: %s, page_max: %s, "

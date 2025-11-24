@@ -1665,8 +1665,15 @@ def run_history(request):
     except:
         get_type = None
 
+    owner_type = 0
+    try:
+        owner_type = request.POST.get('just_owner')
+    except:
+        owner_type = 0
+
     pipelines = horae_interface.show_run_history(
-        0, user.id, page_min, page_max, order_name, order_type, condition, type=get_type)
+        0, user.id, page_min, page_max, order_name, 
+        order_type, condition, type=get_type, owner_type=owner_type)
     pipelines = json.loads(pipelines)
     pipe_list = pipelines["runhistory_list"]
     pipe_count = pipelines["count"]

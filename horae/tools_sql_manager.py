@@ -1476,7 +1476,7 @@ class SqlManager(object):
             tmp_list = []
             cursor = django.db.connection.cursor()
             is_super = is_admin(owner_id)
-            
+
             conditions = Q()
             if type is not None:
                 conditions &= Q(type=type)
@@ -1487,6 +1487,7 @@ class SqlManager(object):
                 _, pl_ids = self.get_pipeline_id_list_by_owner_id(owner_id)
                 conditions &= Q(id__in=pl_ids)
 
+            print(conditions)
             pipelines = horae.models.Pipeline.objects.filter(conditions).values("id")
             for pipeline in pipelines:
                 tmp_list.append(str(pipeline["id"]))

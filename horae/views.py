@@ -3097,7 +3097,7 @@ def get_statistics(request):
     try:
         type = request.GET.get('type')
         
-        result = horae_interface.get_statistics(user.id)
+        result = horae_interface.get_statistics(user.id, type)
         result = json.loads(result)
         status = result['status']
         info = result['info']

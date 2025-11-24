@@ -1665,4 +1665,4 @@ class PipelineManager(object):
             ret_map["status"] = 1
             ret_map["msg"] = str(ex)
 
-        return json.dumps(ret_map)
+        return ret_map

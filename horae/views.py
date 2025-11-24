@@ -3096,14 +3096,9 @@ def get_statistics(request):
     user = request.user
     try:
         type = request.GET.get('type')
-        
         result = horae_interface.get_statistics(user.id, type)
-        result = json.loads(result)
-        status = result['status']
-        info = result['info']
+        return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('run pipeline error:<%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
-    return JsonHttpResponse(
-        {'status': status, 'msg': info})

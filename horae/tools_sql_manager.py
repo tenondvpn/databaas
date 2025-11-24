@@ -1476,16 +1476,7 @@ class SqlManager(object):
             tmp_list = []
             cursor = django.db.connection.cursor()
             is_super = is_admin(owner_id)
-
-            if status:
-                conditions &= Q(status=status)
-            if user:
-                conditions &= Q(created_by=user)
-            if search:
-                conditions &= Q(name__icontains=search) | Q(id__icontains=search)
-
-            pipelines = Pipeline.objects.filter(conditions)
-
+            
             conditions = Q()
             if type is not None:
                 conditions &= Q(type=type)

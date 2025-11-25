@@ -1166,8 +1166,8 @@ class SqlManager(object):
                 # else:
 
                 if template is not None:
-                    task_count = horae.models.Task.objects.filter(pid=task.pid).count()
-                    if task_count == 1:
+                    # task_count = horae.models.Task.objects.filter(pid=task.pid).count()
+                    # if task_count == 1:
                         proc = horae.models.Processor.objects.get(id=task.pid)
                         proc.template = template
                         proc.save()

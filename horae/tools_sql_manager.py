@@ -1481,11 +1481,12 @@ class SqlManager(object):
             if type is not None:
                 conditions &= Q(type=type)
 
-            if owner_type == 1:
+            if owner_type == 2:
                 conditions &= Q(owner_id=owner_id)
-            elif owner_type == 2:
+            elif owner_type == 1:
                 _, pl_ids = self.get_pipeline_id_list_by_owner_id(owner_id)
                 conditions &= Q(id__in=pl_ids)
+                conditions |= Q(owner_id=owner_id)
 
             print(conditions)
             pipelines = horae.models.Pipeline.objects.filter(conditions).values("id")

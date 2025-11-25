@@ -1986,3 +1986,6 @@ class HoraeInterface(tools_util.Singleton):
 
     def get_statistics(self, user_id, type):
         return self.__pipeline_mgr.get_statistics(user_id, type)
+    
+    def set_pipeline_server_tag(self, user_id,  pl_id, server_tag):
+        return self.__pipeline_mgr.set_pipeline_server_tag(user_id,  pl_id, server_tag)

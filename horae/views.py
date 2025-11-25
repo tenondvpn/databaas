@@ -3092,3 +3092,18 @@ def get_statistics(request):
         logger.error('run pipeline error:<%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def set_pipeline_server_tag(request):
+    user = request.user
+    try:
+        pl_id = request.POST.get('pipe_id')
+        server_tag = request.POST.get('server_tag')
+        result = horae_interface.set_pipeline_server_tag(user.id, pl_id, server_tag)
+        return JsonHttpResponse(result)
+    except Exception as ex:
+        logger.error('update pipeline fail: <%s>' % str(ex))
+        return JsonHttpResponse(
+            {'status': 1, 'msg': str(ex)})
+

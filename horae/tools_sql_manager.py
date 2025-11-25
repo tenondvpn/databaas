@@ -2288,3 +2288,19 @@ class SqlManager(object):
             self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
                     str(ex), traceback.format_exc()))
             return 1, str(ex)
+
+    def set_pipeline_server_tag(self, user_id,  pl_id, server_tag):
+        if self.check_pipeline_auth_valid(
+                pl_id,
+                user_id) != tools_util.UserPermissionType.WRITE:
+            return 1, "对不起，你没有权限对这个流程进行上下线操作!"
+        
+        try:
+            sql = f"update horae_task set server_tag='{server_tag}' where pl_id={pl_id}"
+            cursor = django.db.connection.cursor()
+            _ = cursor.execute(sql)
+            return 0, "ok"
+        except Exception as ex:
+            self.__log.error("execute sql failed![ex:%s][trace:%s]!" % (
+                    str(ex), traceback.format_exc()))
+            return 1, str(ex)

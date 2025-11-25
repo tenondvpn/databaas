@@ -1654,3 +1654,16 @@ class PipelineManager(object):
             ret_map["msg"] = str(ex)
 
         return ret_map
+    
+    def set_pipeline_server_tag(self, user_id,  pl_id, server_tag):
+        status, msg = self.__sql_manager.set_pipeline_server_tag(
+            user_id,  pl_id, server_tag)
+        if status != 0:
+            return self.__get_default_ret_map(
+                status,
+                "设置失败, reason[%s]" % msg)
+        
+        ret_map = {}
+        ret_map["status"] = 0
+        ret_map["info"] = "OK"
+        return ret_map

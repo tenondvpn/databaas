@@ -110,9 +110,10 @@ def get_project_tree(request):
             type = int(request.GET.get('type'))
 
         result = horae_interface.get_project_tree(user.id, type)
+        logger.info(f"user {user.id}, name: {user.username} now call get_project_tree, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
-        logger.error('get_project_tree  error:<%s>' % str(ex))
+        logger.error(f'user {user.id}, name: {user.username} get_project_tree  error: {str(ex)}')
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
@@ -132,9 +133,11 @@ def search_pipeline(request):
             limit = int(request.POST.get("limit"))
 
         result = horae_interface.search_pipeline(user.id, word, with_project, limit)
+        logger.info(f"user {user.id}, name: {user.username} now call search_pipeline, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('search_pipeline  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
+        logger.error(f'user {user.id}, name: {user.username} search_pipeline  error: {str(ex)}')
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
@@ -162,9 +165,11 @@ def get_project_tree_async(request):
     print(f"get pipe: {get_pipe}")
     try:
         result = horae_interface.get_project_tree_async(user.id, tree_id, type, get_pipe)
+        logger.info(f"user {user.id}, name: {user.username} now call get_project_tree_async, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('get_project_tree_async  error:<%s>' % str(ex))
+        logger.error(f'user {user.id}, name: {user.username} get_project_tree_async  error: {str(ex)}')
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 
@@ -201,10 +206,12 @@ def get_pipeline_detail(request):
         pipe_info = get_pipeline_info(pipe_id)
         pipe_info['is_super'] = is_admin(user.id)
         pipe_info['user_id'] = user.id
+        logger.info(f"user {user.id}, name: {user.username} now call get_pipeline_detail, res: {pipe_info}")
         return JsonHttpResponse(pipe_info)
     except Exception as ex:
         logger.error('get_project_tree_async  error:<%s> trace[%s]' % (
             str(ex), traceback.format_exc()))
+        logger.error(f'user {user.id}, name: {user.username} get_pipeline_detail  error: {str(ex)}')
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
@@ -222,7 +229,9 @@ def get_tasks(request):
             edges = json_obj['edges']
             pipe_id = json_obj["pipe_id"]
             pipe_usr_graph = json_obj["pipe_usr_graph"]
+            logger.info(f"user {user.id}, name: {user.username} now call get_tasks, res: {json_obj}")
         except Exception as ex:
+            logger.error(f'user {user.id}, name: {user.username} get_tasks  error: {str(ex)}')
             logger.error('get tasks fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': str(ex)})
@@ -411,6 +420,30 @@ def update(request, pipe_id):
     return render(request, 'update_pipeline.html',
                   {'form': form, 'pipeline': pipeline_info, 'is_super': is_super, 'page_title': '修改指数',
                    'pipeline_model': 1, 'page_index': 2})
+
+# @login_required(login_url='/login/')
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def copy_pipeline(request):
+    if request.method == 'POST':
+        user = request.user
+
+        pl_id = request.POST.get('pl_id')
+        pl_name = request.POST.get('pl_name')
+        project_id = request.POST.get('project_id')
+        try:
+            result = horae_interface.copy_pipeline(
+                int(user.id),
+                int(pl_id),
+                pl_name,
+                int(project_id))
+            res = json.loads(result)
+            if int(res["status"]) != 0:
+                return JsonHttpResponse({'status': 1, 'msg': res["info"]})
+            return JsonHttpResponse({'status': 0, 'msg': "OK", 'pl_id': res["pl_id"]})
+        except Exception as ex:
+            logger.error('get graph  error:<%s>' % str(ex))
+            return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
 # @login_required(login_url='/login/')
 @api_view(['POST'])
@@ -1641,15 +1674,8 @@ def run_history(request):
     except:
         get_type = None
 
-    owner_type = 0
-    try:
-        owner_type = request.POST.get('just_owner')
-    except:
-        owner_type = 0
-
     pipelines = horae_interface.show_run_history(
-        0, user.id, page_min, page_max, order_name, 
-        order_type, condition, type=get_type, owner_type=int(owner_type))
+        0, user.id, page_min, page_max, order_name, order_type, condition, type=get_type)
     pipelines = json.loads(pipelines)
     pipe_list = pipelines["runhistory_list"]
     pipe_count = pipelines["count"]
@@ -2991,19 +3017,12 @@ def copy_pipeline(request):
         pl_id = request.POST.get('pl_id')
         pl_name = request.POST.get('pl_name')
         project_id = request.POST.get('project_id')
-        use_src_type = False
-        try:
-            if request.POST.get('use_src_type') != 0:
-                use_src_type = True
-        except:
-            pass
         try:
             result = horae_interface.copy_pipeline(
                 int(user.id),
                 int(pl_id),
                 pl_name,
-                int(project_id),
-                use_type_src=use_src_type)
+                int(project_id))
             res = json.loads(result)
             if int(res["status"]) != 0:
                 return JsonHttpResponse({'status': 1, 'msg': res["info"]})
@@ -3079,31 +3098,3 @@ def get_power_nodes(request):
         logger.error('update pipeline fail: <%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_statistics(request):
-    user = request.user
-    try:
-        type = request.GET.get('type')
-        result = horae_interface.get_statistics(user.id, type)
-        return JsonHttpResponse(result)
-    except Exception as ex:
-        logger.error('run pipeline error:<%s>' % str(ex))
-        return JsonHttpResponse(
-            {'status': 1, 'msg': str(ex)})
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def set_pipeline_server_tag(request):
-    user = request.user
-    try:
-        pl_id = request.POST.get('pipe_id')
-        server_tag = request.POST.get('server_tag')
-        result = horae_interface.set_pipeline_server_tag(user.id, pl_id, server_tag)
-        return JsonHttpResponse(result)
-    except Exception as ex:
-        logger.error('update pipeline fail: <%s>' % str(ex))
-        return JsonHttpResponse(
-            {'status': 1, 'msg': str(ex)})
-

@@ -12,6 +12,7 @@ import pymysql
 from django.contrib.auth.decorators import login_required
 from horae.models import UserInfo
 from django.contrib.auth import authenticate
+from horae import common_logger
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -21,6 +22,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+
+logger = common_logger.get_logger(
+    "view_log",
+    "./log/view_log")
 
 def exchange(request):
     return render(request, 'vue2/index.html', {})
@@ -34,6 +39,7 @@ def rest_register(request):
     dingding = request.data.get('phone')
 
     if not username or not password:
+        logger.info("user register failed!")
         return Response({'message': '用户名和密码不能为空'}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(username=username).exists():
@@ -49,6 +55,8 @@ def rest_register(request):
                 user_info.save()
             except:
                 pass
+            
+            logger.info(f"user register success, user id: {user.id}, user name: {user.username}, email: {email}!")
             return Response({'token': token.key, 'message': '登录成功', 'created': created}, status=status.HTTP_200_OK)
         else:
             return Response({'message': '用户名或密码错误: ' + username}, status=status.HTTP_401_UNAUTHORIZED)
@@ -64,6 +72,7 @@ def rest_register(request):
     except:
         pass
     token, created = Token.objects.get_or_create(user=user)
+    logger.info(f"user register success, user id: {user.id}, user name: {user.username}, email: {email}!")
     return Response({'message': '注册成功'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
@@ -77,14 +86,17 @@ def rest_login(request):
     if user:
         user.auth_token.delete()
         token, created = Token.objects.get_or_create(user=user)
+        logger.info(f"user login success, user id: {user.id}, user name: {user.username}, email: {email}!")
         return Response({'token': token.key, 'message': '登录成功', 'created': created}, status=status.HTTP_200_OK)
     else:
+        logger.info(f"user login failed,  user name: {username}!")
         return Response({'message': '用户名或密码错误'}, status=status.HTTP_401_UNAUTHORIZED)
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def rest_logout(request):
     request.session.flush()
+    logger.info(f"user log out success,  user name: {request.user.id}!")
     return Response({'message': '成功退出'}, status=status.HTTP_200_OK)
 
 def check_owl_user_valid(username, password):

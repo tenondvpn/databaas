@@ -44,7 +44,6 @@ import json
 import argparse
 import solcx
 
-horae_interface = HoraeInterface()
 ck_client = Client(host='localhost', user='default', password='')
 
 
@@ -53,6 +52,7 @@ logger = common_logger.get_logger(
     "view_log",
     "./log/view_log")
 
+horae_interface = HoraeInterface(logger)
 config = configparser.ConfigParser()
 config.read("./conf/tools.conf")
 local_package_path = config.get("tools", "package_path").strip()

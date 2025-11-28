@@ -251,7 +251,9 @@ def unlink_task(request):
         try:
             result = horae_interface.delete_edge(user.id, int(link_from), int(link_to))
             status, msg = status_msg(result)
+            logger.info(f"user {user.id}, name: {user.username} now call unlink_task, res: {result}")
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call unlink_task, failed: {str(ex)}")
             logger.error('delete edge fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': str(ex)})
@@ -295,8 +297,10 @@ def link_task(request):
             )
 
             result = horae_interface.add_edge(user.id, int(link_from), int(link_to), edge)
+            logger.info(f"user {user.id}, name: {user.username} now call link_task, res: {result}")
             status, msg = status_msg(result)
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call link_task, failed: {str(ex)}")
             logger.error('add edge fail: <%s>, trace[%s]' % (str(ex), traceback.format_exc()))
             return JsonHttpResponse(
                 {'status': 1, 'msg': str(ex)})
@@ -385,8 +389,10 @@ def update(request, pipe_id):
                 result = horae_interface.update_pipeline(int(pipe_id), user.id,
                                                          life_cycle, name, ct_time, principal, monitor_way,
                                                          tag, description, type, project_group)
+                logger.info(f"user {user.id}, name: {user.username} now call update, res: {result}")
                 status, msg = status_msg(result)
             except Exception as ex:
+                logger.info(f"user {user.id}, name: {user.username} now call update, failed: {str(ex)}")
                 logger.error('update pipeline fail: <%s>' % str(ex))
                 return JsonHttpResponse(
                     {'status': 1, 'msg': str(ex)})
@@ -401,6 +407,7 @@ def update(request, pipe_id):
             
             error_string = "\n".join(all_errors)
             print("form error:", form.errors)
+            logger.info(f"user {user.id}, name: {user.username} now call update failed, res: {error_string}")
             return JsonHttpResponse({'status': 1, 'msg': error_string})
     else:
         user = request.user
@@ -434,7 +441,9 @@ def delete(request, pipe_id):
         try:
             result = horae_interface.delete_pipeline(user.id, int(pipe_id))
             status, msg = status_msg(result)
+            logger.info(f"user {user.id}, name: {user.username} now call delete, res: {result}")
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call delete, failed: {str(ex)}")
             logger.error('delete pipeline fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': 'error:' + str(ex)})
@@ -459,6 +468,7 @@ def server_tag_db(server_tag):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def get_datas(request):
+    user = request.user
     if request.method == 'POST':
         data_type = request.POST.get('data_type')
         try:
@@ -482,8 +492,10 @@ def get_datas(request):
             ret_map["status"] = 0
             ret_map["info"] = "OK"
             ret_map["data_list"] = data_list
+            logger.info(f"user {user.id}, name: {user.username} now call get_datas, res: {ret_map}")
         except Exception as ex:
             logger.error("get datas failed! <%s>" % str(ex))
+            logger.info(f"user {user.id}, name: {user.username} now call delete, failed: {str(ex)}")
             return JsonHttpResponse(
                     {'status':1,'msg':str(ex)})
         return JsonHttpResponse(
@@ -540,8 +552,10 @@ def get_task_detail(request, task_id):
                     'server_tag': server_tag, 'cmd': cmd,
                     'is_super': is_super, 'version_list': history_list
                     }
+        logger.info(f"user {user.id}, name: {user.username} now call get_task_detail, res: {res_map}")
         return JsonHttpResponse(res_map)
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call get_task_detail, failed: {str(ex)}")
         logger.error('update task fail: <%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
@@ -596,7 +610,9 @@ def update_task(request, task_id):
                 task = {}
                 if 'task' in res:
                     task = res['task']
+                logger.info(f"user {user.id}, name: {user.username} now call update_task, res: {result}")
             except Exception as ex:
+                logger.info(f"user {user.id}, name: {user.username} now call update_task, failed: {str(ex)}")
                 logger.error('update task fail: <%s>' % str(ex))
                 return JsonHttpResponse(
                     {'status': 1, 'msg': str(ex)})
@@ -610,6 +626,7 @@ def update_task(request, task_id):
                     all_errors.append(f"{field}: {error}")
             
             error_string = "\n".join(all_errors)
+            logger.info(f"user {user.id}, name: {user.username} now call update_task, failed: {error_string}")
             return JsonHttpResponse({'status': 1,
                                      'msg': error_string})
     else:
@@ -629,9 +646,11 @@ def update_task(request, task_id):
         history_list.append(tmp_map)
         try:
             history_list = get_processor_upload_history(task_info['pid'])
+            logger.info(f"user {user.id}, name: {user.username} now call update_task, res: {history_list}")
             print("get upload history succ: ")
             print(history_list)
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call update_task, failed: {str(ex)}")
             print("get upload history catch ex: " + str(ex))
             pass
 
@@ -732,7 +751,9 @@ def update_block(request, hash):
         for filed in fileds:
             tmp_from = filed[0]
             tmp_to = filed[1]
+        logger.info(f"user {user.id}, name: {user.username} now call update_block, res: {history_list}")
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call update_block, failed: {str(ex)}")
         logger.error('select fail: %s' % str(ex))
         print('select fail: %s' % str(ex))
         return JsonHttpResponse([])
@@ -826,13 +847,16 @@ def get_pipelines(request):
 
 # 获取机器标签
 def get_server_tags(request):
+    user = request.user
     if request.method == 'POST':
         server_tags = ''
         try:
             status = 0
             msg = 'OK'
+            logger.info(f"user {user.id}, name: {user.username} now call get_server_tags, res: {history_list}")
         except Exception as ex:
             logger.error('get server_tags fail: <%s>' % str(ex))
+            logger.info(f"user {user.id}, name: {user.username} now call get_server_tags, failed: {str(ex)}")
             return JsonHttpResponse(
                 {'status': 1, 'msg': 'error:' + str(ex)})
         return JsonHttpResponse(
@@ -864,6 +888,7 @@ def get_processor_tree_async(request):
         type = int(request.GET.get("type"))
         
     if tree_id == 0:
+        logger.info(f"user {user.id}, name: {user.username} now call get_processor_tree_async, res: {tree_id}")
         return JsonHttpResponse([
                 {"is_project": 1,
                  "text": tools_util.global_processor_top_type_map[tools_util.PROCESSOR_TOP_TYPE.USER_OWNER_PROC],
@@ -882,8 +907,10 @@ def get_processor_tree_async(request):
             result = horae_interface.get_standard_processor_tree_async(user.id, tree_id,type)
         else:
             result = horae_interface.get_processor_tree_async(user.id, tree_id, type)
+        logger.info(f"user {user.id}, name: {user.username} now call get_processor_tree_async, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call get_processor_tree_async, failed: {str(ex)}")
         logger.error('get_processor_tree_async  error:<%s>, trace[%s]' % (
             str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
@@ -905,8 +932,10 @@ def get_shared_processor_tree_async(request):
 
     try:
         result = horae_interface.get_shared_processor_tree_async(user.id, tree_id)
+        logger.info(f"user {user.id}, name: {user.username} now call get_shared_processor_tree_async, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call get_shared_processor_tree_async, failed: {str(ex)}")
         logger.error('get_shared_processor_tree_async  error:<%s>' % str(ex))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
@@ -942,8 +971,10 @@ def get_processor(request):
             'page_index': 4
         }
         print(result)
+        logger.info(f"user {user.id}, name: {user.username} now call get_processor, res: {result}")
         return HttpResponse(json.dumps(result), content_type='application/json')
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call get_processor, failed: {str(ex)}")
         logger.error('get_processor: <%s>' % str(ex))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
@@ -983,10 +1014,13 @@ def private_str(private):
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def view_processor_history(request, proc_id):
+    user = request.user
     if request.method == 'POST':
         try:
             history_list = get_processor_upload_history(int(proc_id))
+            logger.info(f"user {user.id}, name: {user.username} now call view_processor_history, res: {history_list}")
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call view_processor_history, failed: {str(ex)}")
             logger.error('view history fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': 'error:' + str(ex)})
@@ -1076,7 +1110,9 @@ def create_task(request, pipe_id):
 
                 msg = res['info']
                 task = res['task']
+                logger.info(f"user {user.id}, name: {user.username} now call create_task, res: {task}")
             except Exception as ex:
+                logger.info(f"user {user.id}, name: {user.username} now call create_task, failed: {str(ex)}")
                 logger.error('create task fail: <%s>， traceback[%s]' % (
                     str(ex), traceback.format_exc()))
                 return JsonHttpResponse(
@@ -1180,7 +1216,9 @@ def create(request):
                 if status != 0:
                     return JsonHttpResponse(
                         {'status': status, 'msg': str(msg), 'send_mail': send_mail, 'send_sms': send_sms})
+                logger.info(f"user {user.id}, name: {user.username} now call create, res: {result}")
             except Exception as ex:
+                logger.info(f"user {user.id}, name: {user.username} now call create, failed: {str(ex)}")
                 logger.error('create pipeline fail: <%s>, trace:[%s]' % (str(ex), traceback.format_exc()))
                 return JsonHttpResponse(
                     {'status': 1, 'msg': str(ex), 'send_mail': send_mail, 'send_sms': send_sms})
@@ -1217,7 +1255,9 @@ def get_user_list(request):
             user_list = []
             for user in all_users:
                 user_list.append({'id': user['id'], 'name': user['username']})
+            logger.info(f"user {user.id}, name: {user.username} now call get_user_list, res: {user_list}")
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call get_user_list, failed: {str(ex)}")
             logger.error('get user_list fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': 'error:' + str(ex)})
@@ -1233,8 +1273,10 @@ def get_pipeline_with_project_tree(request):
     try:
         id = int(request.POST.get("id"))
         result = horae_interface.get_pipeline_with_project_tree(user.id, id)
+        logger.info(f"user {user.id}, name: {user.username} now call get_pipeline_with_project_tree, res: {user_list}")
         return JsonHttpResponse(result)
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call get_pipeline_with_project_tree, failed: {str(ex)}")
         logger.error('get_pipeline_with_project_tree  error:<%s>, trace:%s' % (
             str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
@@ -1252,6 +1294,7 @@ def processor_detail(request):
     user = request.user
 
     is_super = is_admin(user)
+    logger.info(f"user {user.id}, name: {user.username} now call processor_detail, res: {is_super}")
     return render(request, 'processor_detail.html',
                   {'processor': {},
                    'type_str': '', 'private_str': '',
@@ -1276,8 +1319,10 @@ def search_processor(request):
             limit = int(request.POST.get("limit"))
 
         result = horae_interface.search_processor(user.id, word, with_project, limit)
+        logger.info(f"user {user.id}, name: {user.username} now call search_processor, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call search_processor, failed: {str(ex)}")
         logger.error('search_processor  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
@@ -1286,10 +1331,13 @@ def search_processor(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def view_quote(request, proc_id):
+    user = request.user
     if request.method == 'POST':
         try:
             quote_list = get_processor_quote_list(int(proc_id))
+            logger.info(f"user {user.id}, name: {user.username} now call view_quote, res: {quote_list}")
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call view_quote, failed: {str(ex)}")
             logger.error('view quote fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': 'error:' + str(ex)})
@@ -1314,6 +1362,7 @@ def get_upload_cmd(request):
         username = user.username
         password = '<font color=red>${password}</font>';
         cmd = upload_cmd(request, username, password, proc_name)
+        logger.info(f"user {user.id}, name: {user.username} now call get_upload_cmd, res: {proc_name}")
         return JsonHttpResponse({'cmd': cmd})
 
 # @login_required(login_url='/login/')
@@ -1360,7 +1409,9 @@ def update_processor(request, processor_id):
 
                 result = horae_interface.update_processor(int(user.id), processor, principal)
                 status, msg = status_msg(result)
+                logger.info(f"user {user.id}, name: {user.username} now call update_processor, res: {result}")
             except Exception as ex:
+                logger.info(f"user {user.id}, name: {user.username} now call update_processor, failed: {str(ex)}")
                 logger.error('update processor fail: <%s>' % str(ex))
                 return JsonHttpResponse(
                     {'status': 1, 'msg': str(ex)})
@@ -1406,7 +1457,8 @@ def history(request):
 
     pl_name = request.GET.get('pl_name')
     task_name = request.GET.get('task_name')
-    if status == "success":
+    logger.info(f"user {user.id}, name: {user.username} now call history, res: {pl_name} {task_name}")
+    if status == "success": 
         return render(request, 'pipeline_history.html',
                       {'is_super': is_super, 'page_title': '执行状态', 'user': user, 'pipename': '', 'status': '2',
                        'runtime': runtime, 'pipeline_model': 1, 'page_index': 3})
@@ -1635,6 +1687,7 @@ def history_list(request, order_info):
 
     result['data'] = pipe_list
 
+    logger.info(f"user {user.id}, name: {user.username} now call history_list, res: {result}")
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 @api_view(['POST'])
@@ -1668,6 +1721,7 @@ def run_history(request):
     result = {"draw": draw, "recordsTotal": pipeline_total_count,
               "recordsFiltered": pipeline_filter_count}
     result['data'] = pipe_list
+    logger.info(f"user {user.id}, name: {user.username} now call run_history, res: {result}")
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 # @login_required(login_url='/login/')
@@ -1681,6 +1735,7 @@ def get_task_information(request, id):
     run_log = horae_interface.get_run_history_info(id)
     run_log = json.loads(run_log)
     result = run_log['runhistory']
+    logger.info(f"user {user.id}, name: {user.username} now call get_task_information, res: {result}")
     return render(request, 'pipeline_log.html',
                   {'is_super': is_super, 'page_title': '查看日志', 'user': user, 'log': result, 'pipeline_model': 1,
                    'page_index': 3})
@@ -1701,8 +1756,10 @@ def run_tasks(request):
         task_id_list = task_id_list.split(',')
         try:
             result = horae_interface.run_tasks(user.id, task_id_list, run_time, ordered_num)
+            logger.info(f"user {user.id}, name: {user.username} now call run_tasks, res: {result}")
             status, msg = status_msg(result)
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call run_tasks, failed: {str(ex)}")
             logger.error('run task error:<%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': str(ex)})
@@ -1719,6 +1776,7 @@ def historypipe(request, pipe_id):
     is_super = is_admin(user)
     pipeline = Pipeline.objects.get(id=pipe_id)
     pipe_name = '=%s' % pipeline.name
+    logger.info(f"user {user.id}, name: {user.username} now call historypipe, res: {pipe_name}")
     return render(request, 'pipeline_history.html',
                   {'is_super': is_super, 'page_title': '执行状态',
                    'user': user, 'pipename': pipe_name, 'status': '',
@@ -1734,6 +1792,7 @@ def in_historypipe(request, pipe_id):
     is_super = is_admin(user)
     pipeline = Pipeline.objects.get(id=pipe_id)
     pipe_name = '=%s' % pipeline.name
+    logger.info(f"user {user.id}, name: {user.username} now call in_historypipe, res: {pipeline}")
     return render(request, 'in_pipeline_history.html',
                   {'is_super': is_super, 'page_title': '执行状态',
                    'user': user, 'pipename': pipe_name, 'status': '',
@@ -1792,8 +1851,10 @@ def create_processor(request):
                 if status != 0:
                     raise Exception(msg)
 
+                logger.info(f"user {user.id}, name: {user.username} now call create_processor, res: {result}")
                 return JsonHttpResponse({'status': status, 'msg': msg, "pid": processor.id})
             except Exception as ex:
+                logger.info(f"user {user.id}, name: {user.username} now call create_processor, failed: {str(ex)}")
                 logger.error('create processor fail: <%s>' % str(ex))
                 return JsonHttpResponse(
                     {'status': 1, 'msg': str(ex)})
@@ -1825,8 +1886,10 @@ def get_proc_project_tree(request):
             type = int(request.GET.get('type'))
 
         result = horae_interface.get_proc_project_tree(user.id, type)
+        logger.info(f"user {user.id}, name: {user.username} now call get_proc_project_tree, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call get_proc_project_tree, failed: {str(ex)}")
         logger.error('get_proc_project_tree  error:<%s>, trace[%s]' % (
             str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
@@ -1848,8 +1911,10 @@ def update_project(request):
             project.name = project_name
             project.description = description
             project.save()
+            logger.info(f"user {user.id}, name: {user.username} now call update_project, res: {project}")
             return JsonHttpResponse({'status': 0, 'msg': 'ok'})
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call update_project, failed: {str(ex)}")
             logger.error('create project failed:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': "修改项目失败"})
 # @login_required(login_url='/login/')
@@ -1872,10 +1937,12 @@ def add_new_project(request):
         try:
             result = horae_interface.add_new_project(user.id, project_name, '', description, parent_id, type)
             res = json.loads(result)
+            logger.info(f"user {user.id}, name: {user.username} now call add_new_project, res: {result}")
             if int(res["status"]) != 0:
                 return JsonHttpResponse({'status': 1, 'msg': res['info']})
             return JsonHttpResponse(res)
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call add_new_project, failed: {str(ex)}")
             logger.error('create project failed:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': "创建项目失败"})
 
@@ -1908,7 +1975,9 @@ def public_processor(request):
                     '查看')
            '''
 
+            logger.info(f"user {user.id}, name: {user.username} now call public_processor, res: {result}")
         except Exception as ex:
+            logger.info(f"user {user.id}, name: {user.username} now call public_processor, failed: {str(ex)}")
             logger.error('public processor fail: <%s>' % str(ex))
             return JsonHttpResponse(
                 {'status': 1, 'msg': 'error:' + str(ex)})
@@ -1964,6 +2033,7 @@ def upload_package_with_local(request):
 
             res = horae_interface.upload_package_with_local(
                 user.id, proc_id, version_name, desc, git_url=url, file_name=file_name, type=type)
+            logger.info(f"user {user.id}, name: {user.username} now call upload_package_with_local, res: {version_name}")
             return JsonHttpResponse(res)
         except Exception as ex:
             logger.error('upload_package  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
@@ -1992,6 +2062,7 @@ def get_params(request):
 
             config += processor['config']
             config_str = template_list(config)
+            logger.info(f"user {user.id}, name: {user.username} now call get_params, res: {config_str}")
         except Exception as ex:
             logger.error('get param fail: <%s>' % str(ex))
             return JsonHttpResponse(
@@ -2012,6 +2083,7 @@ def delete_task(request, pipe_id):
         try:
             result = horae_interface.delete_task_info(user.id, int(task_id))
             status, msg = status_msg(result)
+            logger.info(f"user {user.id}, name: {user.username} now call delete_task, res: {result}")
         except Exception as ex:
             logger.error('delete task fail: <%s>' % str(ex))
             return JsonHttpResponse(
@@ -2025,6 +2097,7 @@ def get_proc_with_project_tree(request):
     try:
         id = int(request.POST.get("id"))
         result = horae_interface.get_proc_with_project_tree(user.id, id)
+        logger.info(f"user {user.id}, name: {user.username} now call get_proc_with_project_tree, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('get_proc_with_project_tree  error:<%s>, trace:%s' % (
@@ -2041,6 +2114,7 @@ def delete_processor(request, proc_id):
         try:
             result = horae_interface.delete_processor(user.id, int(proc_id))
             status, msg = status_msg(result)
+            logger.info(f"user {user.id}, name: {user.username} now call delete_processor, res: {result}")
         except Exception as ex:
             logger.error('delete processor fail: <%s>' % str(ex))
             return JsonHttpResponse(
@@ -2057,6 +2131,7 @@ def delete_proc_version(request):
         proc_id = int(request.POST.get("proc_id"))
         id = int(request.POST.get("id"))
         result = horae_interface.delete_proc_version(user.id, proc_id, id)
+        logger.info(f"user {user.id}, name: {user.username} now call delete_proc_version, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('delete_proc_version  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
@@ -2073,6 +2148,7 @@ def delete_project(request):
         try:
             result = horae_interface.delete_project(user.id, int(project_id))
             res = json.loads(result)
+            logger.info(f"user {user.id}, name: {user.username} now call delete_project, res: {result}")
             if int(res["status"]) != 0:
                 return JsonHttpResponse({'status': 1, 'msg': res['info']})
             return JsonHttpResponse({'status': 0, 'msg': "OK"})
@@ -2097,6 +2173,7 @@ def get_message(request):
             boolcheck = 0
             if previnfo:
                 boolcheck = 1
+            logger.info(f"user {user.id}, name: {user.username} now call get_message, res: {message}")
         except Exception as ex:
             logger.error('get prev_info fail: <%s>' % str(ex))
             return JsonHttpResponse(
@@ -2112,6 +2189,7 @@ def get_status_graph(request):
     pl_id = request.GET.get('pl_id')
     run_time = request.GET.get('runtime')
     task_name = request.GET.get('taskname')
+    logger.info(f"user {user.id}, name: {user.username} now call get_status_graph, res: {task_name}")
     return render(request, 'status_graph.html',
                   {'is_super': is_super, 'page_title': '任务执行状态', 'user': user, 'pipelineid': pl_id,
                    'runtime': run_time, 'task_name': task_name, 'pipeline_model': 1, 'page_index': 3
@@ -2132,6 +2210,7 @@ def get_graph(request):
             list = history['runhistory_list']
             for li in list:
                 li['id'] = li['task_id']
+            logger.info(f"user {user.id}, name: {user.username} now call get_graph, res: {result}")
         except Exception as ex:
             logger.error('get graph  error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
@@ -2156,6 +2235,7 @@ def get_all_log_list(request):
             list_log_arr = list_log.split('\n')
             stat = list['status']
             info = list['info']
+            logger.info(f"user {user.id}, name: {user.username} now call get_all_log_list, res: {list}")
         except Exception as ex:
             logger.error('get log list error:<%s>, trace: %s' % (
                 str(ex), traceback.format_exc()))
@@ -2181,6 +2261,7 @@ def get_package_list(request):
         try:
             cmd = linux_file_cmd.LinuxFileCommand()
             list = cmd.ls_dir(root_path + subpath)
+            logger.info(f"user {user.id}, name: {user.username} now call get_package_list, res: {list}")
         except Exception as ex:
             logger.error('get log list error:<%s>, trace: %s' % (
                 str(ex), traceback.format_exc()))
@@ -2203,6 +2284,7 @@ def get_log_content(request):
         try:
             log_content = horae_interface.get_task_log_content(
                 schedule_id, file_name, 0, 10240, rerun_id)
+            logger.info(f"user {user.id}, name: {user.username} now call get_log_content, res: {log_content}")
             return JsonHttpResponse({
                 'file_content': log_content, 'status': 0, 'len': len(log_content)})
         except Exception as ex:
@@ -2230,6 +2312,7 @@ def get_package_content(request):
         try:
             retstatus, file_content = tools_util.StaticFunction.get_file_content_with_start_and_len(
                 root_path + subpath, 0, 1024 * 1024)
+            logger.info(f"user {user.id}, name: {user.username} now call get_package_content, res: {file_content}")
             return JsonHttpResponse({
                 'file_content': file_content, 'status': 0, 'len': len(file_content)})
         except Exception as ex:
@@ -2509,6 +2592,7 @@ def get_tail(request):
             result = horae_interface.get_log_content_tail(schedule_id, filename, rerun_id)
             history = json.loads(result)
             list = history['file_content']
+            logger.info(f"user {user.id}, name: {user.username} now call get_tail, res: {result}")
         except Exception as ex:
             logger.error('get graph  error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
@@ -2595,6 +2679,7 @@ def run_one_task(request):
             result = json.loads(result)
             status = result['status']
             info = result['info']
+            logger.info(f"user {user.id}, name: {user.username} now call run_one_task, res: {result}")
         except Exception as ex:
             logger.error('run tasks error:<%s>' % str(ex))
             return JsonHttpResponse(
@@ -2616,6 +2701,7 @@ def run_all_pipeline(request):
             result = json.loads(result)
             status = result['status']
             info = result['info']
+            logger.info(f"user {user.id}, name: {user.username} now call run_all_pipeline, res: {result}")
         except Exception as ex:
             logger.error('run pipeline error:<%s>' % str(ex))
             return JsonHttpResponse(
@@ -2636,6 +2722,7 @@ def stop_task(request):
             result = horae_interface.stop_task(user.id, task_id, run_time)
             result = json.loads(result)
             status = result['status']
+            logger.info(f"user {user.id}, name: {user.username} now call stop_task, res: {result}")
         except Exception as ex:
             logger.error('run some tasks error:<%s>' % str(ex))
             return JsonHttpResponse(
@@ -2657,6 +2744,7 @@ def run_task_with_all_successors(request):
             result = json.loads(result)
             status = result['status']
             info = result['info']
+            logger.info(f"user {user.id}, name: {user.username} now call run_task_with_all_successors, res: {result}")
         except Exception as ex:
             logger.error('run task error:<%s>' % str(ex))
             return JsonHttpResponse(
@@ -2674,6 +2762,7 @@ def set_task_success(request):
         user = request.user
 
         res = horae_interface.set_task_success(user.id, task_id, run_time)
+        logger.info(f"user {user.id}, name: {user.username} now call set_task_success, res: {task_id}")
         return JsonHttpResponse(res)
     except Exception as ex:
         logger.error('set task success fail, %s' % traceback.format_exc())
@@ -2699,6 +2788,7 @@ def run_some_task(request):
             result = json.loads(result)
             status = result['status']
             info = result['info']
+            logger.info(f"user {user.id}, name: {user.username} now call run_some_task, res: {result}")
         except Exception as ex:
             logger.error('run some tasks error:<%s>' % str(ex))
             return JsonHttpResponse(
@@ -2715,6 +2805,7 @@ def get_retry_history_list(request):
             user = request.user
             schedule_id = request.POST.get("schedule_id")
             res = horae_interface.get_retry_history_list(user.id, schedule_id)
+            logger.info(f"user {user.id}, name: {user.username} now call get_retry_history_list, res: {res}")
             return JsonHttpResponse(res)
         except Exception as ex:
             logger.error('run some tasks error:<%s>' % str(ex))
@@ -2736,6 +2827,7 @@ def on_line(request):
             result = horae_interface.pipeline_off_or_on_line(
                 user.id, int(pipe_id), int(on_line), reason)
             status, msg = status_msg(result)
+            logger.info(f"user {user.id}, name: {user.username} now call on_line, res: {result}")
         except Exception as ex:
             logger.error('change status fail: <%s>' % str(ex))
             return JsonHttpResponse(
@@ -2825,6 +2917,7 @@ def upload_processor(request):
             # 调完接口，删除临时文件
             if status == 0:
                 delete_upload_files(str(processor[0].id))
+            logger.info(f"user {user.id}, name: {user.username} now call upload_processor, res: {result}")
         except Exception as ex:
             logger.error('upload processor package fail:<%s>' % str(ex))
             return JsonHttpResponse(
@@ -2854,6 +2947,7 @@ def create_edge(request):
                 return render(request, 'update_edge.html',
                     {'prev_task_id': prev_task_id, 'next_task_id': next_task_id, 'page_title': '创建任务',
                     'prev_task_name': prev_task.name, 'next_task_name': next_task.name})
+            logger.info(f"user {user.id}, name: {user.username} now call create_edge, res: {edge}")
         except Exception as ex:
             logger.info('create new edge.')
 
@@ -2873,6 +2967,7 @@ def create_edge(request):
 @permission_classes([IsAuthenticated])
 @add_visit_record
 def update_edge(request):
+    user = request.user
     print("request method: " + request.method)
     if request.method == 'POST':
         try:
@@ -2885,6 +2980,7 @@ def update_edge(request):
             edge = Edge.objects.get(prev_task_id=prev_task_id, next_task_id=next_task_id)
             edge.dispatch_tag = dispatch_tag
             edge.save()
+            logger.info(f"user {user.id}, name: {user.username} now call update_edge, res: {edge}")
             return JsonHttpResponse({'status': 0, 'msg': "success"})
         except Exception as ex:
             logger.info('create new edge.')
@@ -2897,6 +2993,7 @@ def update_edge(request):
         next_task = Task.objects.get(id=next_task_id)
         try:
             edge = Edge.objects.get(prev_task_id=prev_task_id, next_task_id=next_task_id)
+            logger.info(f"user {user.id}, name: {user.username} now call update_edge, res: {edge}")
             if edge is not None:
                 return render(request, 'update_edge.html',
                     {'prev_task_id': prev_task_id, 'next_task_id': next_task_id, 'page_title': '创建任务',
@@ -3014,6 +3111,7 @@ def copy_pipeline(request):
                 pl_name,
                 int(project_id),
                 use_type_src=use_src_type)
+            logger.info(f"user {user.id}, name: {user.username} now call copy_pipeline, res: {result}")
             res = json.loads(result)
             if int(res["status"]) != 0:
                 return JsonHttpResponse({'status': 1, 'msg': res["info"]})
@@ -3034,6 +3132,7 @@ def copy_task(request):
         try:
             result = horae_interface.copy_task(user.id, task_id, dest_pl_id)
             res = json.loads(result)
+            logger.info(f"user {user.id}, name: {user.username} now call copy_task, res: {result}")
             if int(res["status"]) != 0:
                 return JsonHttpResponse({'status': 1, 'msg': res["info"]})
             return JsonHttpResponse({'status': 0, 'msg': "OK", 'data': res["task"]})
@@ -3059,6 +3158,7 @@ def update_pipline_graph(request, pipe_id):
             ret_map["status"] = 0
             ret_map["info"] = "OK"
             ret_map["pl_id"] = pipe_id
+            logger.info(f"user {user.id}, name: {user.username} now call copy_task, res: {ret_map}")
             status, msg = status_msg(json.dumps(ret_map))
         except Exception as ex:
             logger.error('update pipeline fail: <%s>' % str(ex))
@@ -3070,6 +3170,7 @@ def update_pipline_graph(request, pipe_id):
 
 def get_power_nodes(request):
     try:
+        user = request.user
         type = request.GET.get('type')
         children = g_zk_manager.get_children('/dags/schedule_platform/online/' + type)
         child_map = {}
@@ -3084,6 +3185,7 @@ def get_power_nodes(request):
         ret_map["status"] = 0
         ret_map["info"] = "OK"
         ret_map["tags"] = child_map
+        logger.info(f"user {user.id}, name: {user.username} now call copy_task, res: {get_power_nodes}")
         return JsonHttpResponse(ret_map)
     except Exception as ex:
         logger.error('update pipeline fail: <%s>' % str(ex))
@@ -3097,6 +3199,7 @@ def get_statistics(request):
     try:
         type = request.GET.get('type')
         result = horae_interface.get_statistics(user.id, type)
+        logger.info(f"user {user.id}, name: {user.username} now call get_statistics, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('run pipeline error:<%s>' % str(ex))
@@ -3111,6 +3214,7 @@ def set_pipeline_server_tag(request):
         pl_id = request.POST.get('pipe_id')
         server_tag = request.POST.get('server_tag')
         result = horae_interface.set_pipeline_server_tag(user.id, pl_id, server_tag)
+        logger.info(f"user {user.id}, name: {user.username} now call set_pipeline_server_tag, res: {result}")
         return JsonHttpResponse(result)
     except Exception as ex:
         logger.error('update pipeline fail: <%s>' % str(ex))

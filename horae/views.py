@@ -416,8 +416,8 @@ def update(request, pipe_id):
         elif pipeline.monitor_way == 0:
             form.send_mail = True
 
-        print("DDDDDDDDDDDD: %d, %d, %d" % (pipeline.monitor_way, form.send_mail, form.send_sms))
         pipeline_info = get_pipeline_info(pipe_id)
+        logger.info(f"user {user.id}, name: {user.username} now call get_pipeline_info, res: {pipeline_info}")
     return render(request, 'update_pipeline.html',
                   {'form': form, 'pipeline': pipeline_info, 'is_super': is_super, 'page_title': '修改指数',
                    'pipeline_model': 1, 'page_index': 2})

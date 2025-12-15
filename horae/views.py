@@ -1253,8 +1253,8 @@ def get_user_list(request):
             all_users = all_users['users']
 
             user_list = []
-            for user in all_users:
-                user_list.append({'id': user['id'], 'name': user['username']})
+            for tmp_user in all_users:
+                user_list.append({'id': tmp_user['id'], 'name': tmp_user['username']})
             logger.info(f"user {user.id}, name: {user.username} now call get_user_list, res: {user_list}")
         except Exception as ex:
             logger.info(f"user {user.id}, name: {user.username} now call get_user_list, failed: {str(ex)}")

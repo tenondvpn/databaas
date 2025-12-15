@@ -51,7 +51,7 @@ class ConstantSql(object):
 
     SHOW_TASK_RUN_HISTORY_SQL = (
         "select task_id, run_time, pl_id, start_time, "
-        "end_time, status, schedule_id, pl_name, task_name, id, cpu, mem, TIMESTAMPDIFF(SECOND, start_time, end_time) as use_time "
+        "end_time, status, schedule_id, pl_name, task_name, id, cpu, mem, TIMESTAMPDIFF(SECOND, start_time, end_time) as use_time, ret_code "
         "from horae_runhistory where pl_id in(%s) %s "
         "order by %s %s limit %s, %s; ")
 

@@ -141,6 +141,7 @@ class RunHistoryManager(object):
             his_map["use_time"] = use_time.days * 24 * 3600 + use_time.seconds
             his_map["cpu"] = history[10]
             his_map["mem"] = history[11]
+            his_map["ret_code"] = history[13]
             history_list.append(his_map)
 
         ret_map = {}

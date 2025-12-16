@@ -2478,6 +2478,87 @@ def call_function_solidity(request):
         logger.error('compile solidity error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
 
+def query_function_solidity(request):
+    if request.method != 'POST':
+        return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})
+    
+    try:
+        contract_address = request.POST.get('address')
+        private_key = None
+        private_str = request.POST.get('private_key')
+        if private_str is not None and private_str != "":
+            private_key = private_str
+
+        function_name = request.POST.get('function_name')
+        function_types = []
+        function_args = []
+        function_types_str = request.POST.get('function_types')
+        if function_types_str is not None and function_types_str != "":
+            function_types = function_types_str.split(',')
+
+        function_args_str = request.POST.get('function_args')
+        if function_args_str is not None and function_args_str != "":
+            function_args = function_args_str.split(',')
+
+        if len(function_types) != len(function_args):
+            print(f"invalid function types {function_types} and function args {function_args}")
+            return JsonHttpResponse({'status': 1, 'msg': 'function types and args len not match'})
+
+        tmp_function_args = []
+        for i in range(len(function_types)):
+            arg_type = function_types[i]
+            if not arg_type.endswith('[]'):
+                if arg_type.startswith('bytes') or arg_type == 'address':
+                    tmp_function_args.append(decode_hex(function_args[i]))
+                elif arg_type == 'string':
+                    tmp_function_args.append(function_args[i])
+                elif arg_type == 'bool':
+                    if function_args[i].lower() == 'false' or function_args[i] == "0":
+                        tmp_function_args.append(False)
+                    else:
+                        tmp_function_args.append(True)
+                else:
+                    tmp_function_args.append(int(function_args[i]))
+            else:
+                if arg_type.startswith('bytes') or arg_type.startswith('address'):
+                    items = function_args[i].split('-')
+                    tmp_arr = []
+                    for item in items:
+                        tmp_arr.append(decode_hex(item))
+
+                    tmp_function_args.append(tmp_arr)
+                elif arg_type.startswith('string'):
+                    items = function_args[i].split('-')
+                    tmp_function_args.append(items)
+                elif arg_type.startswith('bool'):
+                    items = function_args[i].split('-')
+                    tmp_arr = []
+                    for item in items:
+                        if item.lower() == 'false' or item == "0":
+                            tmp_arr.append(False)
+                        else:
+                            tmp_arr.append(True)
+
+                    tmp_function_args.append(tmp_arr)
+                else:
+                    items = function_args[i].split('-')
+                    tmp_arr = []
+                    for item in items:
+                        tmp_arr.append(int(item))
+                            
+                    tmp_function_args.append(tmp_arr)
+
+        res = shardora_api.query_contract_function(
+            private_key, contract_address,
+            function_name, function_types, tmp_function_args, call_type=0)
+        if not res:
+            return JsonHttpResponse({'status': 1, 'msg': 'call function failed'})
+    
+        return JsonHttpResponse({'status': 0, 'msg': 'ok'})
+    except Exception as ex:
+        logger.error('compile solidity error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
+
 def deploy_solidity(request):
     if request.method != 'POST':
         return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})

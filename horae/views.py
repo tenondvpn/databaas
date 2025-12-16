@@ -2473,7 +2473,7 @@ def call_function_solidity(request):
         if not res:
             return JsonHttpResponse({'status': 1, 'msg': 'call function failed'})
     
-        return JsonHttpResponse({'status': 0, 'msg': 'ok', "return_value": res.text})
+        return JsonHttpResponse({'status': 0, 'msg': 'ok', "return_value": str(res)})
     except Exception as ex:
         logger.error('compile solidity error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})

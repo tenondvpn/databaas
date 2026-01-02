@@ -472,11 +472,13 @@ def _sign_message(
     tx.pubkey = frompk
     tx.gas_limit = gas_limit
     tx.gas_price = gas_price
-    tx.to = to
+    tx.to = decode_hex(to)
     tx.amount = amount
     tx.step = step
-    tx.contract_bytes = contract_bytes
-    tx.input = input
+    if contract_bytes != '':
+        tx.contract_bytes = decode_hex(contract_bytes)
+    if input != '':
+        tx.input = decode_hex(input)
     tx.prepay = prepay
     tx.key = key
     tx.val = val

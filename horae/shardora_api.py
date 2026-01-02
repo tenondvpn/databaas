@@ -479,7 +479,7 @@ def _sign_message(
         tx.contract_code = decode_hex(contract_bytes)
     if input != '':
         tx.contract_input = decode_hex(input)
-    tx.prepay = prepay
+    tx.contract_prepayment = prepay
     tx.key = key
     tx.val = val
     h = calc_tx_hash(tx)

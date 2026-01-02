@@ -7,10 +7,6 @@ import os
 import time
 import json
 
-import sys
-from Crypto.Hash import keccak
-from protos import pools_pb2
-
 from horae import linux_file_cmd
 from eth_keys import keys, datatypes
 from secp256k1 import PrivateKey, PublicKey
@@ -36,12 +32,6 @@ Keypair = namedtuple('Keypair', ['skbytes', 'pkbytes', 'account_id'])
 Sign = namedtuple('Sign', ['r', 's', 'v'])
 
 STEP_FROM = 0
-
-def calc_tx_hash(tx_message):
-    serialized_data = tx_message.SerializePartialToString(deterministic=True)
-    k = keccak.new(digest_bits=256)
-    k.update(serialized_data)
-    return k.digest()
 
 def transfer(
         str_prikey: str, 
@@ -449,64 +439,25 @@ def _sign_message(
         key:str,
         val:str):
     frompk = keypair.pkbytes
-    # b = _long_to_bytes(nonce) + \
-    #      frompk + \
-    #      decode_hex(to) + \
-    #      _long_to_bytes(amount) + \
-    #      _long_to_bytes(gas_limit) + \
-    #      _long_to_bytes(gas_price) + \
-    #      _long_to_bytes(step)
-    # if contract_bytes != '':
-    #     b += decode_hex(contract_bytes)
-    # if input != '':
-    #     b += decode_hex(input)
-    # b += _long_to_bytes(prepay)
-    # if key != "":
-    #     b += bytes(key, 'utf-8')
-    #     if val != "":
-    #         b += bytes(val, 'utf-8')
-
-    tx = pools_pb2.TxMessage()
-    # tx.version = 1
-    tx.ClearField("version")
-    tx.nonce = nonce
-    tx.pubkey = frompk
-    tx.gas_limit = gas_limit
-    tx.gas_price = gas_price
-    tx.to = decode_hex(to)
-    tx.amount = amount
-    tx.step = step
+    b = _long_to_bytes(nonce) + \
+         frompk + \
+         decode_hex(to) + \
+         _long_to_bytes(amount) + \
+         _long_to_bytes(gas_limit) + \
+         _long_to_bytes(gas_price) + \
+         _long_to_bytes(step)
     if contract_bytes != '':
-        tx.contract_code = decode_hex(contract_bytes)
-    else:
-        tx.ClearField("contract_code")
-
+        b += decode_hex(contract_bytes)
     if input != '':
-        tx.contract_input = decode_hex(input)
-    else:
-        tx.ClearField("contract_input")
-
-    if prepay > 0:
-        tx.contract_prepayment = prepay
-    else:
-        tx.ClearField("contract_prepayment")
-
+        b += decode_hex(input)
+    b += _long_to_bytes(prepay)
     if key != "":
-        tx.key = bytes(key, 'utf-8')
+        b += bytes(key, 'utf-8')
         if val != "":
-            tx.value = bytes(val, 'utf-8')
-        else:
-            tx.ClearField("value")
-    else:
-        tx.ClearField("key")
-        tx.ClearField("value")
+            b += bytes(val, 'utf-8')
 
-    tx.ClearField("sign") 
-    tx.ClearField("tx_debug") 
-    tx.ClearField("tx_debug_timeout_seconds") 
-    h = calc_tx_hash(tx)
-    print(f"sign with tx hash: {encode_hex(h)} {tx}")
-    sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(h, hasher=None)
+    h = _keccak256_bytes(b)
+    sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(bytes.fromhex(h), hasher=None)
 
     # message = encode_defunct(hexstr=h)
     # sign = Account.sign_message(message, keypair.skbytes)

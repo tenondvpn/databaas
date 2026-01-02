@@ -476,9 +476,9 @@ def _sign_message(
     tx.amount = amount
     tx.step = step
     if contract_bytes != '':
-        tx.contract_bytes = decode_hex(contract_bytes)
+        tx.contract_code = decode_hex(contract_bytes)
     if input != '':
-        tx.input = decode_hex(input)
+        tx.contract_input = decode_hex(input)
     tx.prepay = prepay
     tx.key = key
     tx.val = val

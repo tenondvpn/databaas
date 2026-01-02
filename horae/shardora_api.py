@@ -485,7 +485,7 @@ def _sign_message(
         if val != "":
             tx.value = bytes(val, 'utf-8')
     h = calc_tx_hash(tx)
-    sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(bytes.fromhex(h), hasher=None)
+    sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(h, hasher=None)
 
     # message = encode_defunct(hexstr=h)
     # sign = Account.sign_message(message, keypair.skbytes)

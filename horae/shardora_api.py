@@ -480,8 +480,10 @@ def _sign_message(
     if input != '':
         tx.contract_input = decode_hex(input)
     tx.contract_prepayment = prepay
-    tx.key = key
-    tx.val = val
+    if key != "":
+        tx.key = bytes(key, 'utf-8')
+        if val != "":
+            tx.value = bytes(val, 'utf-8')
     h = calc_tx_hash(tx)
     sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(bytes.fromhex(h), hasher=None)
 

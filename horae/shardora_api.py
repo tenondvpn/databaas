@@ -497,6 +497,8 @@ def _sign_message(
         tx.ClearField("value")
 
     tx.ClearField("sign") 
+    tx.ClearField("tx_debug") 
+    tx.ClearField("tx_debug_timeout_seconds") 
     h = calc_tx_hash(tx)
     print(f"sign with tx hash: {encode_hex(h)} {tx}")
     sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(h, hasher=None)

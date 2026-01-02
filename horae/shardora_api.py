@@ -477,13 +477,26 @@ def _sign_message(
     tx.step = step
     if contract_bytes != '':
         tx.contract_code = decode_hex(contract_bytes)
+    else:
+        tx.ClearField("contract_code")
+
     if input != '':
         tx.contract_input = decode_hex(input)
+    else:
+        tx.ClearField("contract_input")
+
     tx.contract_prepayment = prepay
     if key != "":
         tx.key = bytes(key, 'utf-8')
         if val != "":
             tx.value = bytes(val, 'utf-8')
+        else:
+            tx.ClearField("value")
+    else:
+        tx.ClearField("key")
+        tx.ClearField("value")
+
+    tx.ClearField("sign") 
     h = calc_tx_hash(tx)
     print(f"sign with tx hash: {encode_hex(h)} {tx}")
     sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(h, hasher=None)

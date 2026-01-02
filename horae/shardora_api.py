@@ -7,6 +7,10 @@ import os
 import time
 import json
 
+import sys
+from Crypto.Hash import keccak
+from protos import pools_pb2
+
 from horae import linux_file_cmd
 from eth_keys import keys, datatypes
 from secp256k1 import PrivateKey, PublicKey
@@ -32,6 +36,12 @@ Keypair = namedtuple('Keypair', ['skbytes', 'pkbytes', 'account_id'])
 Sign = namedtuple('Sign', ['r', 's', 'v'])
 
 STEP_FROM = 0
+
+def calc_tx_hash(tx_message):
+    serialized_data = tx_message.SerializePartialToString(deterministic=True)
+    k = keccak.new(digest_bits=256)
+    k.update(serialized_data)
+    return k.digest()
 
 def transfer(
         str_prikey: str, 
@@ -439,24 +449,38 @@ def _sign_message(
         key:str,
         val:str):
     frompk = keypair.pkbytes
-    b = _long_to_bytes(nonce) + \
-         frompk + \
-         decode_hex(to) + \
-         _long_to_bytes(amount) + \
-         _long_to_bytes(gas_limit) + \
-         _long_to_bytes(gas_price) + \
-         _long_to_bytes(step)
-    if contract_bytes != '':
-        b += decode_hex(contract_bytes)
-    if input != '':
-        b += decode_hex(input)
-    b += _long_to_bytes(prepay)
-    if key != "":
-        b += bytes(key, 'utf-8')
-        if val != "":
-            b += bytes(val, 'utf-8')
+    # b = _long_to_bytes(nonce) + \
+    #      frompk + \
+    #      decode_hex(to) + \
+    #      _long_to_bytes(amount) + \
+    #      _long_to_bytes(gas_limit) + \
+    #      _long_to_bytes(gas_price) + \
+    #      _long_to_bytes(step)
+    # if contract_bytes != '':
+    #     b += decode_hex(contract_bytes)
+    # if input != '':
+    #     b += decode_hex(input)
+    # b += _long_to_bytes(prepay)
+    # if key != "":
+    #     b += bytes(key, 'utf-8')
+    #     if val != "":
+    #         b += bytes(val, 'utf-8')
 
-    h = _keccak256_bytes(b)
+    tx = pools_pb2.TxMessage()
+    tx.version = 1
+    tx.nonce = nonce
+    tx.pubkey = frompk
+    tx.gas_limit = gas_limit
+    tx.gas_price = gas_price
+    tx.to = to
+    tx.amount = amount
+    tx.step = step
+    tx.contract_bytes = contract_bytes
+    tx.input = input
+    tx.prepay = prepay
+    tx.key = key
+    tx.val = val
+    h = calc_tx_hash(tx)
     sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(bytes.fromhex(h), hasher=None)
 
     # message = encode_defunct(hexstr=h)

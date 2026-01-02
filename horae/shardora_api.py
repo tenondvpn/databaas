@@ -467,7 +467,8 @@ def _sign_message(
     #         b += bytes(val, 'utf-8')
 
     tx = pools_pb2.TxMessage()
-    tx.version = 1
+    # tx.version = 1
+    tx.ClearField("version")
     tx.nonce = nonce
     tx.pubkey = frompk
     tx.gas_limit = gas_limit
@@ -485,7 +486,11 @@ def _sign_message(
     else:
         tx.ClearField("contract_input")
 
-    tx.contract_prepayment = prepay
+    if prepay > 0:
+        tx.contract_prepayment = prepay
+    else:
+        tx.ClearField("contract_prepayment")
+
     if key != "":
         tx.key = bytes(key, 'utf-8')
         if val != "":

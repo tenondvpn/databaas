@@ -485,6 +485,7 @@ def _sign_message(
         if val != "":
             tx.value = bytes(val, 'utf-8')
     h = calc_tx_hash(tx)
+    print(f"sign with tx hash: {encode_hex(h)}")
     sign_bytes = cPrivateKey(keypair.skbytes).sign_recoverable(h, hasher=None)
 
     # message = encode_defunct(hexstr=h)

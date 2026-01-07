@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'dags.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
+        'HOST': '82.156.224.174',
         'PORT': 3306,
         'NAME': 'dags',
         'OPTIONS': {
@@ -158,7 +158,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 print("BASE_DIR:", os.path.join(BASE_DIR, 'exchange'))
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR, 'exchange/static')] 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR, 'exchange/static')]
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r".*",
 ]

@@ -466,7 +466,8 @@ class PipelineManager(object):
             tag=None,
             description=None,
             type=None,
-            project_id=None):
+            project_id=None,
+            enable=0):
         if ct_time is not None:
             ct_time = self.__change_ct_time(ct_time)
             if not self.__check_ct_time_valid(ct_time):
@@ -483,7 +484,8 @@ class PipelineManager(object):
             tag,
             description,
             type,
-            project_id)
+            project_id,
+            enable)
         return self.__get_default_ret_map(status, info)
 
     def __change_ct_time(self, ct_time):
@@ -649,7 +651,8 @@ class PipelineManager(object):
             description,
             life_cycle,
             type,
-            project_id):
+            project_id,
+            enable):
         if ct_time is None \
                 or name is None \
                 or owner_id is None \
@@ -676,7 +679,8 @@ class PipelineManager(object):
             description,
             life_cycle,
             type,
-            project_id)
+            project_id,
+            enable)
         return self.__get_default_ret_map(status, info)
 
     def get_all_user_info(self):

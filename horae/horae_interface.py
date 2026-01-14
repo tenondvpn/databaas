@@ -281,7 +281,8 @@ class HoraeInterface(tools_util.Singleton):
             tag=None,
             description=None,
             type=None,
-            project_id=None):
+            project_id=None,
+            enable=0):
         """
         修改一个pipeline，如果参数为None则相关字段不做修改
 
@@ -319,7 +320,8 @@ class HoraeInterface(tools_util.Singleton):
                 tag,
                 description,
                 type,
-                project_id)
+                project_id,
+                enable)
         use_time = time.time() - beign_time
         self.__log.info("update_pipeline owner_id: %s, "
                 "pipeline_id: %s, name: %s, ct_time: %s, manager_id_list: %s,"
@@ -721,7 +723,8 @@ class HoraeInterface(tools_util.Singleton):
             description,
             life_cycle=None,
             type=0,
-            project_id=0):
+            project_id=0,
+            enable=0):
         """
         向horae_pipeline新建一个pipeline
 
@@ -757,7 +760,8 @@ class HoraeInterface(tools_util.Singleton):
                 description,
                 life_cycle,
                 type,
-                project_id)
+                project_id,
+                enable)
         use_time = time.time() - beign_time
         self.__log.info("create_new_pipeline owner_id: %s, "
                 "name: %s, ct_time: %s, manager_id_list: %s,"

@@ -437,7 +437,8 @@ class SqlManager(object):
             tag=None,
             description=None,
             type=None,
-            project_id=None):
+            project_id=None,
+            enable=0):
         try:
             with django.db.transaction.atomic():
                 pipeline = horae.models.Pipeline.objects.get(
@@ -474,6 +475,7 @@ class SqlManager(object):
                 if type is not None:
                     pipeline.type = type
 
+                pipeline.enable = enable
                 is_default_project = False
                 if pipeline.project_id is not None \
                         and pipeline.project_id != 0 and \
@@ -814,7 +816,8 @@ class SqlManager(object):
             description,
             life_cycle,
             type,
-            project_id):
+            project_id,
+            enable):
         try:
             with django.db.transaction.atomic():
                 name = name.strip()
@@ -849,7 +852,7 @@ class SqlManager(object):
                     description=description,
                     sms_to="",
                     monitor_way=monitor_way,
-                    enable=0,
+                    enable=enable,
                     tag=tag,
                     private=1,
                     type=type,

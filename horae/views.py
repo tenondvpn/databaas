@@ -357,9 +357,12 @@ def update(request, pipe_id):
                 description = form.cleaned_data['description']
                 monitor_way = form.cleaned_data['monitor_way']
                 enable = None
-                if form.cleaned_data['enable']:
-                    enable = 1
-                    
+                if 'enable' in form.cleaned_data:
+                    if form.cleaned_data['enable']:
+                        enable = 1
+                    else:
+                        enable = 0
+
                 type = 0
                 try:
                     type = form.cleaned_data['type']

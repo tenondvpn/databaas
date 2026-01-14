@@ -282,7 +282,7 @@ class HoraeInterface(tools_util.Singleton):
             description=None,
             type=None,
             project_id=None,
-            enable=0):
+            enable=None):
         """
         修改一个pipeline，如果参数为None则相关字段不做修改
 

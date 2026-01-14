@@ -467,7 +467,7 @@ class PipelineManager(object):
             description=None,
             type=None,
             project_id=None,
-            enable=0):
+            enable=None):
         if ct_time is not None:
             ct_time = self.__change_ct_time(ct_time)
             if not self.__check_ct_time_valid(ct_time):

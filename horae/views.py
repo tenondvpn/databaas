@@ -356,9 +356,10 @@ def update(request, pipe_id):
                 life_cycle = form.cleaned_data['life_cycle']
                 description = form.cleaned_data['description']
                 monitor_way = form.cleaned_data['monitor_way']
-                eanble = 0
-                if form.cleaned_data['eanble']:
-                    eanble = 1
+                enable = None
+                if form.cleaned_data['enable']:
+                    enable = 1
+                    
                 type = 0
                 try:
                     type = form.cleaned_data['type']
@@ -391,7 +392,7 @@ def update(request, pipe_id):
 
                 result = horae_interface.update_pipeline(int(pipe_id), user.id,
                                                          life_cycle, name, ct_time, principal, monitor_way,
-                                                         tag, description, type, project_group, eanble)
+                                                         tag, description, type, project_group, enable)
                 logger.info(f"user {user.id}, name: {user.username} now call update, res: {result}")
                 status, msg = status_msg(result)
             except Exception as ex:
@@ -1183,9 +1184,9 @@ def create(request):
                 life_cycle = form.cleaned_data['life_cycle']
                 description = form.cleaned_data['description']
                 monitor_way = form.cleaned_data['monitor_way']
-                eanble = 0
-                if form.cleaned_data['eanble']:
-                    eanble = 1
+                enable = 0
+                if form.cleaned_data['enable']:
+                    enable = 1
 
                 type = 0
                 try:
@@ -1216,7 +1217,7 @@ def create(request):
 
                 result = horae_interface.create_new_pipeline(name, ct_time,
                                                              user.id, principal, monitor_way, tag, description,
-                                                             life_cycle, type, project_group, eanble)
+                                                             life_cycle, type, project_group, enable)
                 status, msg = status_msg(result)
                 print(status)
                 print(msg)

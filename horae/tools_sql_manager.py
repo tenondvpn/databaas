@@ -748,7 +748,8 @@ class SqlManager(object):
                     description=pipeline.description,
                     life_cycle=pipeline.life_cycle,
                     type=pipe_type,
-                    project_id=project_id)
+                    project_id=project_id,
+                    enable=0)
                 if status != 0:
                     raise Exception(
                         "copy new pipeline failed![%s]" % info)

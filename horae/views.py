@@ -1721,9 +1721,15 @@ def run_history(request):
     except:
         owner_type = 0
 
+    end_time = request.POST.get('search_end_time')
+    search_lsit = []
+    if end_time != '':
+        end_time.encode()
+        search_lsit.append(("start_time", search_equal(end_time)))
+
     pipelines = horae_interface.show_run_history(
         0, user.id, page_min, page_max, order_name, 
-        order_type, condition, type=get_type, owner_type=int(owner_type))
+        order_type, condition, search_list=search_lsit, type=get_type, owner_type=int(owner_type))
     pipelines = json.loads(pipelines)
     pipe_list = pipelines["runhistory_list"]
     pipe_count = pipelines["count"]

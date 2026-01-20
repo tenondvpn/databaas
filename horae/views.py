@@ -1637,9 +1637,10 @@ def run_history_condition(request):
         condition['task_name'] = search_equal(task_name)
     if status != '':
         condition['status'] = 'in (' + status + ')'
-    if start_time != '':
+    if start_time != '' and len(start_time) > 8:
         start_time.encode()
         condition['start_time'] = search_equal(start_time)
+        
     if use_time != '':
         oper = '>'
         oper_val = '0'
@@ -1723,7 +1724,7 @@ def run_history(request):
 
     end_time = request.POST.get('search_end_time')
     search_lsit = []
-    if end_time != '':
+    if end_time != '' and len(end_time) > 8:
         end_time.encode()
         search_lsit.append(("start_time", search_equal(end_time)))
 

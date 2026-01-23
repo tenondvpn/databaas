@@ -1,5 +1,7 @@
 # coding=utf-8
 import sys
+
+import horae
 sys.setrecursionlimit(10000)
 import os
 import datetime
@@ -141,6 +143,53 @@ def search_pipeline(request):
         logger.error('search_pipeline  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def search_task(request):
+    user = request.user
+    try:
+        word = request.POST.get("word")
+        with_project = 0
+        limit = 100
+        if "limit" in request.POST:
+            limit = int(request.POST.get("limit"))
+
+        tasks = horae.models.Task.objects.filter(name__contains=word)[0: limit]
+        data_list = []
+        for task in tasks:
+            data_list.append(task.name)
+
+        result = {"status": 0, "msg": "ok", "data_list": data_list}
+        return JsonHttpResponse(result)
+    except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call search_pipeline, failed: {str(ex)}")
+        logger.error('search_pipeline  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def search_all_pipeline(request):
+    user = request.user
+    try:
+        word = request.POST.get("word")
+        with_project = 0
+        limit = 100
+        if "limit" in request.POST:
+            limit = int(request.POST.get("limit"))
+
+        tasks = horae.models.Pipeline.objects.filter(name__contains=word)[0: limit]
+        data_list = []
+        for task in tasks:
+            data_list.append(task.name)
+
+        result = {"status": 0, "msg": "ok", "data_list": data_list}
+        return JsonHttpResponse(result)
+    except Exception as ex:
+        logger.info(f"user {user.id}, name: {user.username} now call search_pipeline, failed: {str(ex)}")
+        logger.error('search_pipeline  error:<%s>, trace:%s' % (str(ex), traceback.format_exc()))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
 # @login_required(login_url='/login/')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

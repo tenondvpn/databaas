@@ -9,6 +9,8 @@ urlpatterns = (
     re_path(r'^(?P<pipe_id>\d+)/$', views.detail),
     re_path(r'^get_project_tree/$', views.get_project_tree),
     re_path(r'^search_pipeline/$', views.search_pipeline),
+    re_path(r'^search_all_pipeline/$', views.search_all_pipeline),
+    re_path(r'^search_task/$', views.search_task),
     re_path(r'^get_project_tree_async/$', views.get_project_tree_async),
     re_path(r'^get_pipeline_detail/$', views.get_pipeline_detail),
     re_path(r'^get_tasks/$', views.get_tasks),

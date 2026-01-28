@@ -154,7 +154,8 @@ def search_task(request):
         if "limit" in request.POST:
             limit = int(request.POST.get("limit"))
 
-        tasks = horae.models.Task.objects.filter(name__contains=word)[0: limit]
+        pl_ids = list(horae.models.Pipeline.objects.filter(type=2).values_list('id', flat=True)[0:limit])
+        tasks = horae.models.Task.objects.filter(name__contains=word,pl_id__in=pl_ids)[0: limit]
         data_list = []
         for task in tasks:
             data_list.append(task.name)
@@ -178,7 +179,7 @@ def search_all_pipeline(request):
         if "limit" in request.POST:
             limit = int(request.POST.get("limit"))
 
-        tasks = horae.models.Pipeline.objects.filter(name__contains=word)[0: limit]
+        tasks = horae.models.Pipeline.objects.filter(name__contains=word,type=2)[0: limit]
         data_list = []
         for task in tasks:
             data_list.append(task.name)

@@ -1773,7 +1773,7 @@ def run_history(request):
 
     end_time = request.POST.get('search_end_time')
     search_lsit = []
-    if end_time != '' and len(end_time) > 8:
+    if end_time is not None and end_time != '' and len(end_time) > 8:
         end_time.encode()
         search_lsit.append(("start_time", search_equal(end_time)))
 

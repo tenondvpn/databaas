@@ -24,6 +24,9 @@ from rest_framework.response import Response
 from horae.tools_util import StaticFunction
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory, Project
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
+from horae.models import RealTimeTrade, TradeVolumeTrend, DataMarketTrend, DataElementDetail, DataCategory, DataDetail, GlobalStat, GlobalTrend
+from horae.models import ComputeMarketTrend, ComputeResourceOverview, ComputeCategoryDetail, ModelMarketTrend, ModelAssetOverview
+from horae.models import ModelCategoryDetail, ModelDetail
 from horae.horae_interface import *
 from horae import common_logger
 from common.util import is_admin
@@ -3369,3 +3372,560 @@ def set_pipeline_server_tag(request):
         logger.error('update pipeline fail: <%s>' % str(ex))
         return JsonHttpResponse(
             {'status': 1, 'msg': str(ex)})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_global_overview_data(request):
+    """
+    获取总盘概览模块数据
+    参数: 无需特定 POST 参数，但遵循 POST 模式以匹配现有接口风格
+    """
+    user = request.user
+    try:
+        # 1. 获取统计卡片数据
+        stats_queryset = GlobalStat.objects.all()
+        cards = [
+            {
+                "indicator_name": s.indicator_name,
+                "current_value": s.current_value,
+                "trend_rate": float(s.trend_rate),
+                "icon": s.icon_class
+            } for s in stats_queryset
+        ]
+
+        # 2. 获取趋势图表数据
+        trends_queryset = GlobalTrend.objects.all()
+        trends = {"data": [], "compute": [], "model": []}
+        
+        for t in trends_queryset:
+            if t.metric_type in trends:
+                trends[t.metric_type].append({
+                    "label": t.label,
+                    "value": t.value
+                })
+
+        # 封装结果
+        result = {
+            'status': 0,
+            'msg': 'success',
+            'data': {
+                'cards': cards,
+                'trends': trends
+            }
+        }
+        
+        # 记录日志，匹配您提供的格式
+        logger.info(f"user {user.id}, name: {user.username} now call get_global_overview_data, res_status: {result['status']}")
+        
+        # 返回自定义的 JsonHttpResponse (假设这是您项目基类中定义的响应方法)
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('fetch global overview fail: <%s>' % str(ex))
+        return JsonHttpResponse({
+            'status': 1, 
+            'msg': f'获取数据失败: {str(ex)}'
+        })
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_realtime_trade_stats(request):
+    """
+    获取实时交易统计模块数据
+    """
+    user = request.user
+    try:
+        # 1. 获取中间大折线图数据
+        trends_qs = TradeVolumeTrend.objects.all()
+        trend_chart = {
+            "labels": [t.time_point for t in trends_qs],
+            "volumes": [t.data_volume for t in trends_qs],
+            "values": [t.trade_value for t in trends_qs],
+        }
+
+        # 2. 获取实时交易明细列表 (取最近 10 条)
+        trades_qs = RealTimeTrade.objects.all()[:10]
+        trade_list = [
+            {
+                "name": t.name,
+                "category": t.category,
+                "price": t.price_label,
+                "status": t.status_text,
+                "color": t.status_color
+            } for t in trades_qs
+        ]
+
+        # 3. 构造饼图数据 (根据分类自动聚合统计)
+        # 这里以 Data 类型为例，统计各分类出现次数
+        category_dist = RealTimeTrade.objects.values('category').annotate(count=Count('id'))
+        pie_chart = [
+            {"name": c['category'], "value": c['count']} for c in category_dist
+        ]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': {
+                'trend_chart': trend_chart,
+                'trade_list': trade_list,
+                'pie_chart': pie_chart
+            }
+        }
+
+        logger.info(f"user {user.id}, name: {user.username} call get_realtime_trade_stats, count: {len(trade_list)}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_realtime_trade_stats fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_data_market_overview(request):
+    """
+    获取数据大盘/数据总览模块相关数据
+    """
+    user = request.user
+    try:
+        # 1. 获取趋势图数据 (折线图)
+        trends = DataMarketTrend.objects.all()
+        trend_chart = {
+            "labels": [t.time_label for t in trends],
+            "volumes": [t.data_volume for t in trends],
+            "values": [t.trade_value for t in trends]
+        }
+
+        # 2. 获取行业分类统计 (饼图数据)
+        # 自动聚合统计各分类的数量
+        category_stats = DataElementDetail.objects.values('category').annotate(count=Count('id'))
+        pie_chart = [
+            {"name": item['category'], "value": item['count']} for item in category_stats
+        ]
+
+        # 3. 获取数据明细列表 (展示最近 8 条)
+        elements = DataElementDetail.objects.all().order_by('-id')[:8]
+        element_list = [
+            {
+                "name": e.name,
+                "category": e.category,
+                "price": e.price_tag,
+                "status": e.status,
+                "color": e.status_color
+            } for e in elements
+        ]
+
+        # 4. 封装结果
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': {
+                'trend_chart': trend_chart,
+                'pie_chart': pie_chart,
+                'element_list': element_list
+            }
+        }
+
+        logger.info(f"user {user.id}, name: {user.username} call get_data_market_overview")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_data_market_overview fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_data_category_stats(request):
+    """
+    获取数据大盘-分类数据统计接口（饼图/占比图）
+    """
+    user = request.user
+    try:
+        # 1. 按行业分类分组统计要素数量
+        # 对应 SQL: SELECT category_name, COUNT(*) FROM data_category_detail GROUP BY category_name
+        stats_qs = DataCategory.objects.values('category_name').annotate(
+            value=Count('id'),          # 该分类下的要素数量
+            total_size=Sum('data_size') # 该分类下的总数据容量
+        ).order_by('-value')
+
+        # 2. 格式化为前端饼图需要的格式 [ {name: '医疗', value: 10}, ... ]
+        category_data = [
+            {
+                "name": item['category_name'],
+                "value": item['value'],
+                "size": round(item['total_size'] or 0, 2)
+            } for item in stats_qs
+        ]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': category_data
+        }
+
+        logger.info(f"user {user.id}, name: {user.username} call get_data_category_stats, items: {len(category_data)}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_data_category_stats fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_data_detail_list(request):
+    """
+    获取数据明细列表接口
+    支持 POST 参数: 
+    - category: 分类过滤 (可选)
+    - limit: 返回条数 (默认10)
+    """
+    user = request.user
+    try:
+        # 1. 获取 POST 请求参数
+        category = request.POST.get('category', None)
+        limit = int(request.POST.get('limit', 10))
+
+        # 2. 构建查询集
+        queryset = DataDetail.objects.all()
+        if category:
+            queryset = queryset.filter(category=category)
+
+        # 3. 结果序列化
+        details = queryset[:limit]
+        data_list = [
+            {
+                "id": d.element_id,
+                "name": d.name,
+                "category": d.category,
+                "provider": d.provider,
+                "price": f"{d.price:,.2f}", # 格式化为 1,234.56
+                "unit": d.unit,
+                "status": d.status,
+                "status_code": d.status_code,
+                "update_time": d.last_update.strftime('%Y-%m-%d %H:%M:%S')
+            } for d in details
+        ]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': data_list
+        }
+
+        logger.info(f"user {user.id} ({user.username}) requested data detail list, count: {len(data_list)}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_data_detail_list error: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_compute_market_overview(request):
+    """
+    获取算力大盘/算力总览模块相关数据
+    """
+    user = request.user
+    try:
+        # 1. 获取算力趋势数据 (折线图)
+        trends = ComputeMarketTrend.objects.all().order_by('id')
+        trend_chart = {
+            "labels": [t.time_label for t in trends],
+            "power_values": [t.compute_power for t in trends],
+            "task_values": [t.active_tasks for t in trends]
+        }
+
+        # 2. 获取核心型号占比 (饼图/占比) - 如国产 vs 进口
+        core_stats = ComputeResourceOverview.objects.values('core_type').annotate(count=Count('id'))
+        core_pie_chart = [
+            {"name": item['core_type'], "value": item['count']} for item in core_stats
+        ]
+
+        # 3. 获取算力资源列表 (Top 5 资源)
+        resources = ComputeResourceOverview.objects.all().order_by('-utilization')[:5]
+        resource_list = [
+            {
+                "name": r.resource_name,
+                "provider": r.provider,
+                "type": r.compute_type,
+                "utilization": f"{r.utilization}%",
+                "status": r.status,
+                "color": r.status_color
+            } for r in resources
+        ]
+
+        # 4. 计算平均负载
+        avg_load = ComputeResourceOverview.objects.aggregate(Avg('utilization'))['utilization__avg'] or 0
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': {
+                'trend_chart': trend_chart,
+                'core_pie_chart': core_pie_chart,
+                'resource_list': resource_list,
+                'summary': {
+                    'average_load': f"{round(avg_load, 1)}%"
+                }
+            }
+        }
+
+        logger.info(f"user {user.id} call get_compute_market_overview, res: success")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_compute_market_overview fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_compute_category_stats(request):
+    """
+    获取算力大盘-分类统计数据
+    返回: 算力类型分布、算力来源分布
+    """
+    user = request.user
+    try:
+        # 1. 统计算力类型分布 (智算 vs 通用)
+        type_stats = ComputeCategoryDetail.objects.values('compute_type').annotate(
+            value=Count('id'),
+            total_cap=Sum('capacity')
+        )
+        type_pie = [{"name": item['compute_type'], "value": item['value']} for item in type_stats]
+
+        # 2. 统计算力来源分布 (国产 vs 进口)
+        brand_stats = ComputeCategoryDetail.objects.values('brand_type').annotate(
+            value=Count('id')
+        )
+        brand_pie = [{"name": item['brand_type'], "value": item['value']} for item in brand_stats]
+
+        # 3. 统计核心架构分布 (GPU/CPU/NPU)
+        arch_stats = ComputeCategoryDetail.objects.values('arch_type').annotate(
+            value=Count('id')
+        )
+        arch_pie = [{"name": item['arch_type'], "value": item['value']} for item in arch_stats]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': {
+                'compute_type_dist': type_pie,
+                'brand_dist': brand_pie,
+                'arch_dist': arch_pie
+            }
+        }
+
+        logger.info(f"user {user.id} call get_compute_category_stats, result: success")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_compute_category_stats fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_compute_node_details(request):
+    """
+    获取算力资源明细列表
+    支持 POST 参数:
+    - gpu_model: 核心型号过滤 (可选)
+    - provider: 供应商过滤 (可选)
+    """
+    user = request.user
+    try:
+        # 1. 获取过滤参数
+        gpu_model = request.POST.get('gpu_model', None)
+        provider = request.POST.get('provider', None)
+
+        # 2. 构建查询
+        queryset = ComputeDetail.objects.all()
+        if gpu_model:
+            queryset = queryset.filter(gpu_model=gpu_model)
+        if provider:
+            queryset = queryset.filter(provider=provider)
+
+        # 3. 构造返回列表
+        nodes = queryset[:15] # 限制返回数量，适配大屏展示
+        node_list = [
+            {
+                "id": n.node_id,
+                "name": n.node_name,
+                "provider": n.provider,
+                "specs": f"{n.gpu_model} * {n.gpu_count}",
+                "memory": f"{n.mem_size}GB",
+                "price": f"¥{n.price_per_hour}/h",
+                "load": f"{n.load_factor}%",
+                "status": n.status,
+                "color": "#4ade80" if n.status == "待机" else "#fbbf24" if n.status == "使用中" else "#f87171"
+            } for n in nodes
+        ]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': node_list
+        }
+
+        logger.info(f"user {user.id} accessed compute node details, filter: gpu_model={gpu_model}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_compute_node_details fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_model_market_overview(request):
+    """
+    获取模型大盘/模型总览模块相关数据
+    """
+    user = request.user
+    try:
+        # 1. 获取模型增长趋势数据 (折线图)
+        trends = ModelMarketTrend.objects.all().order_by('id')
+        trend_chart = {
+            "labels": [t.time_label for t in trends],
+            "counts": [t.model_count for t in trends],
+            "requests": [t.active_requests for t in trends]
+        }
+
+        # 2. 获取模型领域分布 (饼图/占比) - 如 NLP, CV
+        type_stats = ModelAssetOverview.objects.values('model_type').annotate(count=Count('id'))
+        type_pie_chart = [
+            {"name": item['model_type'], "value": item['count']} for item in type_stats
+        ]
+
+        # 3. 获取优质模型资源列表 (按热度排序 Top 5)
+        models_qs = ModelAssetOverview.objects.all().order_by('-rating')[:5]
+        model_list = [
+            {
+                "name": m.model_name,
+                "provider": m.provider,
+                "type": m.model_type,
+                "params": m.parameters,
+                "rating": m.rating,
+                "status": m.status,
+                "color": m.status_color
+            } for m in models_qs
+        ]
+
+        # 4. 计算大盘综合指标
+        total_models = ModelAssetOverview.objects.count()
+        avg_rating = ModelAssetOverview.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': {
+                'trend_chart': trend_chart,
+                'type_pie_chart': type_pie_chart,
+                'model_list': model_list,
+                'summary': {
+                    'total_count': total_models,
+                    'average_rating': round(avg_rating, 1)
+                }
+            }
+        }
+
+        logger.info(f"user {user.id} accessed model market overview, total_models: {total_models}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_model_market_overview fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_model_category_stats(request):
+    """
+    获取模型大盘-模型分类统计数据
+    返回: 各领域模型平均价格、模型技术类型分布
+    """
+    user = request.user
+    try:
+        # 1. 统计各行业分类的平均价格 (对应大屏柱状图)
+        # 对应 HTML 中 labels: ['医疗', '交通', '能源']
+        category_price_stats = ModelCategoryDetail.objects.values('category_name').annotate(
+            avg_price=Avg('price'),
+            count=Count('id')
+        ).order_by('-avg_price')
+
+        bar_chart_data = {
+            "labels": [item['category_name'] for item in category_price_stats],
+            "data": [round(float(item['avg_price']), 2) for item in category_price_stats]
+        }
+
+        # 2. 统计技术类型分布 (对应饼图/环形图)
+        tech_stats = ModelCategoryDetail.objects.values('tech_type').annotate(
+            value=Count('id')
+        )
+        tech_pie_chart = [
+            {"name": item['tech_type'], "value": item['value']} for item in tech_stats
+        ]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': {
+                'bar_chart': bar_chart_data,
+                'tech_pie_chart': tech_pie_chart
+            }
+        }
+
+        logger.info(f"user {user.id}, name: {user.username} call get_model_category_stats, categories: {len(bar_chart_data['labels'])}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_model_category_stats fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_model_asset_details(request):
+    """
+    获取模型大盘-模型详情列表接口
+    支持 POST 参数:
+    - task_type: 任务类型过滤 (可选)
+    - provider: 厂商过滤 (可选)
+    """
+    user = request.user
+    try:
+        # 1. 获取过滤参数
+        task_type = request.POST.get('task_type', None)
+        provider = request.POST.get('provider', None)
+
+        # 2. 构建查询集
+        queryset = ModelDetail.objects.all()
+        if task_type:
+            queryset = queryset.filter(task_type=task_type)
+        if provider:
+            queryset = queryset.filter(provider=provider)
+
+        # 3. 序列化数据
+        models_qs = queryset[:10]  # 大屏底部列表通常展示最新10条
+        model_list = [
+            {
+                "id": m.model_id,
+                "name": m.name,
+                "provider": m.provider,
+                "tech_info": f"{m.framework} | {m.parameter_scale}",
+                "task": m.task_type,
+                "price": m.price_tag,
+                "status": m.status,
+                "score": f"{m.health_score}%",
+                "color": "#60a5fa" if m.health_score > 90 else "#fbbf24"
+            } for m in models_qs
+        ]
+
+        result = {
+            'status': 0,
+            'msg': 'ok',
+            'data': model_list
+        }
+
+        logger.info(f"user {user.id} called get_model_asset_details, task_type: {task_type}")
+        return JsonHttpResponse(result)
+
+    except Exception as ex:
+        logger.error('get_model_asset_details fail: <%s>' % str(ex))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})

@@ -81,4 +81,21 @@ urlpatterns = (
     re_path(r'^get_statistics/$', views.get_statistics),
     re_path(r'^set_pipeline_server_tag/$', views.set_pipeline_server_tag),
 
+    re_path(r'^get_global_overview_data/$', views.get_global_overview_data),
+    re_path(r'^get_realtime_trade_stats/$', views.get_realtime_trade_stats),
+    re_path(r'^get_data_market_overview/$', views.get_data_market_overview),
+    re_path(r'^get_data_category_stats/$', views.get_data_category_stats),
+    re_path(r'^get_data_detail_list/$', views.get_data_detail_list),
+    # 算力大盘数据接口
+    re_path(r'^get_compute_market_overview/$', views.get_compute_market_overview),
+    # 算力分类统计接口
+    re_path(r'^get_compute_category_stats/$', views.get_compute_category_stats),
+    # 算力详情明细接口
+    re_path(r'^get_compute_node_details/$', views.get_compute_node_details),
+    # 模型大盘数据接口
+    re_path(r'^get_model_market_overview/$', views.get_model_market_overview),
+    # 模型分类统计接口
+    re_path(r'^get_model_category_stats/$', views.get_model_category_stats),
+    # 模型详情列表接口
+    re_path(r'^get_model_asset_details/$', views.get_model_asset_details),
 )

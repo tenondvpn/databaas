@@ -7,7 +7,7 @@ from datetime import datetime
 DB_CONFIG = {
     'host': '82.156.224.174',
     'user': 'root',
-    'password': 'Xf4aGbTaf!',
+    'password': '',
     'database': 'dags',
     'cursorclass': pymysql.cursors.DictCursor,
     'autocommit': True

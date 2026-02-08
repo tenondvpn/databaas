@@ -24,7 +24,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 
 from horae.tools_util import StaticFunction
-from django.db.models import Count
+from django.db.models import Count, Sum, Avg
 from horae.models import Pipeline, Processor, Task, Edge, RunHistory, Project
 from horae.forms import PipelineForm, ProcessorForm, TaskForm
 from horae.models import RealTimeTrade, TradeVolumeTrend, DataMarketTrend, DataElementDetail, DataCategory, DataDetail, GlobalStat, GlobalTrend

@@ -1,0 +1,237 @@
+{
+	"info": {
+		"name": "要素化交易大盘-后端全接口文档",
+		"description": "包含总盘、数据、算力、模型三大板块的完整接口定义及响应实例。",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01. 总盘概览-数据获取",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_global_overview_data/",
+					"host": ["{{base_url}}"],
+					"path": ["get_global_overview_data", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": {\n        \"cards\": [\n            { \"indicator_name\": \"数据总量\", \"current_value\": \"2.45PB\", \"trend_rate\": 12.4, \"icon\": \"fa-database\" },\n            { \"indicator_name\": \"算力总量\", \"current_value\": \"1.78EF\", \"trend_rate\": 8.2, \"icon\": \"fa-microchip\" }\n        ],\n        \"trends\": {\n            \"data\": [{ \"label\": \"1月\", \"value\": 1.8 }, { \"label\": \"2月\", \"value\": 2.1 }],\n            \"compute\": [{ \"label\": \"1月\", \"value\": 1.2 }, { \"label\": \"2月\", \"value\": 1.5 }],\n            \"model\": [{ \"label\": \"1月\", \"value\": 300 }, { \"label\": \"2月\", \"value\": 450 }]\n        }\n    }\n}"
+			}]
+		},
+		{
+			"name": "02. 实时交易-统计数据",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_realtime_trade_stats/",
+					"host": ["{{base_url}}"],
+					"path": ["get_realtime_trade_stats", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": {\n        \"trend_chart\": {\n            \"labels\": [\"09:00\", \"10:00\", \"11:00\"],\n            \"volumes\": [45, 52, 48],\n            \"values\": [120, 135, 128]\n        },\n        \"trade_list\": [\n            { \"name\": \"医疗影像数据包\", \"category\": \"医疗\", \"price\": \"¥2,450\", \"status\": \"交易中\", \"color\": \"#4ade80\" }\n        ],\n        \"pie_chart\": [\n            { \"name\": \"数据\", \"value\": 450 },\n            { \"name\": \"算力\", \"value\": 320 }\n        ]\n    }\n}"
+			}]
+		},
+		{
+			"name": "03. 数据大盘-总览趋势",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_data_market_overview/",
+					"host": ["{{base_url}}"],
+					"path": ["get_data_market_overview", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": {\n        \"trend_chart\": {\n            \"labels\": [\"周一\", \"周二\"],\n            \"volumes\": [1.2, 1.5],\n            \"values\": [10, 15]\n        }\n    }\n}"
+			}]
+		},
+		{
+			"name": "04. 数据大盘-分类统计",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_data_category_stats/",
+					"host": ["{{base_url}}"],
+					"path": ["get_data_category_stats", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": [\n        { \"name\": \"交通运输\", \"value\": 120 },\n        { \"name\": \"金融风控\", \"value\": 85 }\n    ]\n}"
+			}]
+		},
+		{
+			"name": "05. 数据大盘-详情列表",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{ "key": "category", "value": "医疗", "type": "text" },
+						{ "key": "limit", "value": "10", "type": "text" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/get_data_detail_list/",
+					"host": ["{{base_url}}"],
+					"path": ["get_data_detail_list", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": [\n        { \"id\": \"D001\", \"name\": \"脱敏电子病历\", \"category\": \"医疗\", \"price\": \"5,000.00\", \"status\": \"正常\" }\n    ]\n}"
+			}]
+		},
+		{
+			"name": "06. 算力大盘-总览负载",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_compute_market_overview/",
+					"host": ["{{base_url}}"],
+					"path": ["get_compute_market_overview", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": { \"trend_chart\": { \"power_values\": [1.2, 1.4] }, \"summary\": { \"average_load\": \"65%\" } }\n}"
+			}]
+		},
+		{
+			"name": "07. 算力大盘-分类统计",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_compute_category_stats/",
+					"host": ["{{base_url}}"],
+					"path": ["get_compute_category_stats", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": { \"brand_dist\": [{ \"name\": \"国产\", \"value\": 65 }, { \"name\": \"进口\", \"value\": 35 }] }\n}"
+			}]
+		},
+		{
+			"name": "08. 算力大盘-详情明细",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{ "key": "gpu_model", "value": "A100", "type": "text" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/get_compute_node_details/",
+					"host": ["{{base_url}}"],
+					"path": ["get_compute_node_details", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": [{ \"name\": \"智算节点-01\", \"specs\": \"A100 * 8\", \"load\": \"85%\", \"status\": \"运行中\" }]\n}"
+			}]
+		},
+		{
+			"name": "09. 模型大盘-资产总览",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_model_market_overview/",
+					"host": ["{{base_url}}"],
+					"path": ["get_model_market_overview", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": { \"summary\": { \"total_count\": 1250 } }\n}"
+			}]
+		},
+		{
+			"name": "10. 模型大盘-分类价值",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/get_model_category_stats/",
+					"host": ["{{base_url}}"],
+					"path": ["get_model_category_stats", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": { \"bar_chart\": { \"labels\": [\"医疗\", \"金融\"], \"data\": [45.5, 38.2] } }\n}"
+			}]
+		},
+		{
+			"name": "11. 模型大盘-资产详情",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{ "key": "task_type", "value": "文本生成", "type": "text" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/get_model_asset_details/",
+					"host": ["{{base_url}}"],
+					"path": ["get_model_asset_details", ""]
+				}
+			},
+			"response": [{
+				"name": "成功响应",
+				"status": "OK",
+				"code": 200,
+				"_postman_previewlanguage": "json",
+				"body": "{\n    \"status\": 0,\n    \"msg\": \"ok\",\n    \"data\": [{ \"name\": \"Llama-3-70B\", \"tech_info\": \"PyTorch | 70B\", \"score\": \"96%\" }]\n}"
+			}]
+		}
+	]
+}

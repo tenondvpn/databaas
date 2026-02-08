@@ -3375,7 +3375,7 @@ def set_pipeline_server_tag(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_global_overview_data(request):
     """
     获取总盘概览模块数据
@@ -3429,7 +3429,7 @@ def get_global_overview_data(request):
         })
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_realtime_trade_stats(request):
     """
     获取实时交易统计模块数据
@@ -3481,7 +3481,7 @@ def get_realtime_trade_stats(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_data_market_overview(request):
     """
     获取数据大盘/数据总览模块相关数据
@@ -3534,7 +3534,7 @@ def get_data_market_overview(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_data_category_stats(request):
     """
     获取数据大盘-分类数据统计接口（饼图/占比图）
@@ -3571,7 +3571,7 @@ def get_data_category_stats(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_data_detail_list(request):
     """
     获取数据明细列表接口
@@ -3620,7 +3620,7 @@ def get_data_detail_list(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_compute_market_overview(request):
     """
     获取算力大盘/算力总览模块相关数据
@@ -3678,7 +3678,7 @@ def get_compute_market_overview(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_compute_category_stats(request):
     """
     获取算力大盘-分类统计数据
@@ -3723,7 +3723,7 @@ def get_compute_category_stats(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_compute_node_details(request):
     """
     获取算力资源明细列表
@@ -3774,7 +3774,7 @@ def get_compute_node_details(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_model_market_overview(request):
     """
     获取模型大盘/模型总览模块相关数据
@@ -3835,7 +3835,7 @@ def get_model_market_overview(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_model_category_stats(request):
     """
     获取模型大盘-模型分类统计数据
@@ -3880,7 +3880,7 @@ def get_model_category_stats(request):
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_model_asset_details(request):
     """
     获取模型大盘-模型详情列表接口

@@ -23,7 +23,7 @@ def test_api(name, endpoint, data=None):
         if response.status_code == 200:
             res_json = response.json()
             if res_json.get('status') == 0:
-                print(f"✅ 成功 | 返回数据条数: {len(str(res_json.get('data')))}")
+                print(f"✅ 成功 | 返回数据: {res_json}")
             else:
                 print(f"❌ 业务逻辑错误 | {res_json.get('msg')}")
         else:

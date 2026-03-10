@@ -214,7 +214,7 @@ def calc_create2_address(sender, salt, bytecode):
     bytecode_hash = keccak(bytes.fromhex(bytecode))
     
     raw_address = keccak(prefix + sender_bytes + salt_bytes + bytecode_hash)
-    return to_checksum_address(raw_address[12:].hex())
+    return to_checksum_address(raw_address[12:].hex())[2:].lower()
 
 def deploy_contract_with_bytes(
         private_key: str,

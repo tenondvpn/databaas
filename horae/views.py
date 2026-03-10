@@ -2433,11 +2433,18 @@ def compile_solidity(request):
                 "via-ir": True,
             }
             
+            compiler_params = {
+                "evm_version": "shanghai",    # 针对你之前的需求
+                "optimize": True,
+                "optimize_runs": 200,
+                # "via_ir": True,           # 如果有需要可开启
+            }
+            
             install_solc_versions()
             compiled_sol = solcx.compile_source(
                 source_code,
                 output_values=['abi', 'bin'],
-                **compiler_settings
+                **compiler_params
             )
             contract_id, contract_interface = compiled_sol.popitem()
             abi = contract_interface['abi']

@@ -26,7 +26,7 @@ from coincurve import PrivateKey as cPrivateKey
 
 w3 = Web3(Web3.IPCProvider('/Users/myuser/Library/Ethereum/geth.ipc'))
 
-http_ip = "127.0.0.1"
+http_ip = "35.197.170.240"
 http_port = 23001
 
 Keypair = namedtuple('Keypair', ['skbytes', 'pkbytes', 'account_id'])
@@ -231,7 +231,7 @@ def deploy_contract_with_bytes(
     if len(constructor_types) > 0 and len(constructor_types) == len(constructor_params):
         func_param = encode_hex(encode(constructor_types, constructor_params))[2:]
 
-    if bytes_codes is None:
+    if bytes_codes is None or len(bytes_codes) <= 128:
         print("get sol bytes code failed!")
         return None
 
@@ -313,7 +313,7 @@ def deploy_contract(
                 bytes_codes = f.read()
             break
 
-    if bytes_codes is None:
+    if bytes_codes is None or len(bytes_codes) <= 128:
         print("get sol bytes code failed!")
         return None
 

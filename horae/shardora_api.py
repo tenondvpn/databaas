@@ -236,10 +236,8 @@ def deploy_contract_with_bytes(
         return None
 
     call_str = bytes_codes + func_param
-    if contract_address is None:
-        keypair = get_keypair(bytes.fromhex(private_key))
-        contract_address = calc_create2_address(keypair.account_id, salt, call_str)
-
+    keypair = get_keypair(bytes.fromhex(private_key))
+    contract_address = calc_create2_address(keypair.account_id, salt, call_str)
     step = 6
     if is_library:
         step = 14

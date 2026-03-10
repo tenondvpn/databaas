@@ -2649,7 +2649,6 @@ def deploy_solidity(request):
         if code_type != 0:
             create_library = True
 
-        to = None
         amount = int(request.POST.get('amount'))
         prepayment = int(request.POST.get('gas_prepayment'))
         function_types = []
@@ -2720,7 +2719,7 @@ def deploy_solidity(request):
             prepayment=prepayment,
             check_tx_valid=True,
             is_library=create_library,
-            contract_address=to)
+            salt="00")
         if contract_address is None:
             print(f"contract create failed!")
             return JsonHttpResponse({'status': 1, 'msg': 'create contract failed'})

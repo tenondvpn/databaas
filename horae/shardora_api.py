@@ -15,6 +15,7 @@ from ecdsa import SigningKey, SECP256k1
 from web3 import Web3, AsyncWeb3, eth, utils
 from eth_keys import keys, datatypes
 from eth_utils import decode_hex, encode_hex
+from eth_utils import keccak, to_checksum_address
 from eth_abi import encode
 from urllib.parse import urlencode
 from eth_account.datastructures import SignedMessage
@@ -206,6 +207,15 @@ def get_keypair(skbytes: bytes) -> Keypair:
     account_id = addr[len(addr)-40:len(addr)]
     return Keypair(skbytes=skbytes, pkbytes=decode_hex('04'+pkbytes.hex()), account_id=account_id)
 
+def calc_create2_address(sender, salt, bytecode):
+    prefix = bytes.fromhex("ff")
+    sender_bytes = bytes.fromhex(sender)
+    salt_bytes = bytes.fromhex(salt)
+    bytecode_hash = keccak(bytes.fromhex(bytecode))
+    
+    raw_address = keccak(prefix + sender_bytes + salt_bytes + bytecode_hash)
+    return to_checksum_address(raw_address[12:].hex())
+
 def deploy_contract_with_bytes(
         private_key: str,
         amount: int,
@@ -216,7 +226,7 @@ def deploy_contract_with_bytes(
         prepayment=0,
         check_tx_valid=False,
         is_library=False,
-        contract_address=None):
+        salt="00"):
     func_param = ""
     if len(constructor_types) > 0 and len(constructor_types) == len(constructor_params):
         func_param = encode_hex(encode(constructor_types, constructor_params))[2:]
@@ -227,8 +237,8 @@ def deploy_contract_with_bytes(
 
     call_str = bytes_codes + func_param
     if contract_address is None:
-        contract_address_hash = keccak256_str(call_str+gen_gid())
-        contract_address = contract_address_hash[len(contract_address_hash)-40: len(contract_address_hash)]
+        keypair = get_keypair(bytes.fromhex(private_key))
+        contract_address = calc_create2_address(keypair.account_id, salt, call_str)
 
     step = 6
     if is_library:

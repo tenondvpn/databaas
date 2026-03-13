@@ -2434,10 +2434,10 @@ def compile_solidity(request):
             }
             
             compiler_params = {
-                "evm_version": "shanghai",    # 针对你之前的需求
+                "evm_version": 'shanghai',
                 "optimize": True,
                 "optimize_runs": 200,
-                # "via_ir": True,           # 如果有需要可开启
+                "via_ir": True,           # 如果有需要可开启
             }
             
             install_solc_versions()
@@ -2446,6 +2446,9 @@ def compile_solidity(request):
                 output_values=['abi', 'bin'],
                 **compiler_params
             )
+
+            #compiled_sol = solcx.compile_source(source_code, output_values=['abi', 'bin'], solc_version='0.8.30', 
+            #                 via_ir=True, optimize=True, optimize_runs=200) 
             contract_id, contract_interface = compiled_sol.popitem()
             abi = contract_interface['abi']
             bytecode = contract_interface['bin']
@@ -2646,6 +2649,7 @@ def deploy_solidity(request):
     
     try:
         source_code = request.POST.get('bytecode')
+        to = request.POST.get('to')
         private_key = None
         private_str = request.POST.get('private_key')
         if private_str is not None and private_str != "":
@@ -2726,7 +2730,8 @@ def deploy_solidity(request):
             prepayment=prepayment,
             check_tx_valid=True,
             is_library=create_library,
-            salt="00")
+            salt="00",
+            to=to)
         if contract_address is None:
             print(f"contract create failed!")
             return JsonHttpResponse({'status': 1, 'msg': 'create contract failed'})

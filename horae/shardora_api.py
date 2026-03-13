@@ -226,7 +226,8 @@ def deploy_contract_with_bytes(
         prepayment=0,
         check_tx_valid=False,
         is_library=False,
-        salt="00"):
+        salt="00",
+        to=""):
     func_param = ""
     if len(constructor_types) > 0 and len(constructor_types) == len(constructor_params):
         func_param = encode_hex(encode(constructor_types, constructor_params))[2:]
@@ -237,7 +238,10 @@ def deploy_contract_with_bytes(
 
     call_str = bytes_codes + func_param
     keypair = get_keypair(bytes.fromhex(private_key))
-    contract_address = calc_create2_address(keypair.account_id, salt, call_str)
+    if to is not None and to != "":
+        contract_address = to
+    else:
+        contract_address = calc_create2_address(keypair.account_id, salt, call_str)
     step = 6
     if is_library:
         step = 14

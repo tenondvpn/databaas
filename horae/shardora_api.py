@@ -82,8 +82,11 @@ def get_account_info(address):
     res = _post_data("http://{}:{}/query_account".format(http_ip, http_port), {'address': address})
     if res.status_code != 200:
         return None
-
-    json_res = json.loads(res.text)
+    try:
+        json_res = json.loads(res.text)
+    except:
+        print(f"get account failed: {res.text}")
+        return None
     return json_res
 
 def call_tx(nonce, to, amount, gas_limit, sign_r, sign_s, sign_v, pkbytes_str, key, value):

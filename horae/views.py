@@ -2479,6 +2479,21 @@ def set_gas_prepayment(request):
         logger.error('set gas prepayment error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
     
+def get_contract_info(request):
+    if request.method != 'POST':
+        return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})
+    
+    try:
+        contract_address = request.POST.get('address')
+        res = shardora_api.get_account_info(contract_address)
+        if not res:
+            return JsonHttpResponse({'status': 1, 'msg': 'contract not exits'})
+    
+        return JsonHttpResponse({'status': 0, 'data': res})
+    except Exception as ex:
+        logger.error('compile solidity error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
+    
 def call_function_solidity(request):
     if request.method != 'POST':
         return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})

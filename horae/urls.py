@@ -75,6 +75,7 @@ urlpatterns = (
 
     re_path(r'^compile_solidity/$', views.compile_solidity),
     re_path(r'^deploy_solidity/$', views.deploy_solidity),
+    re_path(r'^get_contract_info/$', views.get_contract_info),
     re_path(r'^set_gas_prepayment/$', views.set_gas_prepayment),
     re_path(r'^call_function_solidity/$', views.call_function_solidity),
     re_path(r'^query_function_solidity/$', views.query_function_solidity),

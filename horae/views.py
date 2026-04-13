@@ -2457,26 +2457,26 @@ def compile_solidity(request):
             logger.error('compile solidity error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
       
-def set_gas_prepayment(request):
+def set_gas_prefund(request):
     if request.method != 'POST':
         return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})
     
     try:
-        prepayment = int(request.POST.get('gas_prepayment'))
+        prefund = int(request.POST.get('gas_prefund'))
         private_str = request.POST.get('private_key')
         address_str = request.POST.get('address')
-        res = shardora_api.contract_prepayment(
+        res = shardora_api.contract_prefund(
             private_key=private_str, 
             contract_address=address_str, 
-            prepayment=prepayment, 
+            prefund=prefund, 
             check_res=True, 
             nonce=-1)
         if not res:
-            return JsonHttpResponse({'status': 1, 'msg': 'set gas prepayment failed'})
+            return JsonHttpResponse({'status': 1, 'msg': 'set gas prefund failed'})
         
         return JsonHttpResponse({'status': 0, 'msg': 'ok'})
     except Exception as ex:
-        logger.error('set gas prepayment error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
+        logger.error('set gas prefund error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
     
 def get_contract_info(request):
@@ -2676,7 +2676,7 @@ def deploy_solidity(request):
             create_library = True
 
         amount = int(request.POST.get('amount'))
-        prepayment = int(request.POST.get('gas_prepayment'))
+        prefund = int(request.POST.get('gas_prefund'))
         function_types = []
         function_args = []
         function_types_str = request.POST.get('function_types')
@@ -2742,7 +2742,7 @@ def deploy_solidity(request):
             function_types,
             tmp_function_args,
             nonce=-1,
-            prepayment=prepayment,
+            prefund=prefund,
             check_tx_valid=True,
             is_library=create_library,
             salt="00",

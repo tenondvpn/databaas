@@ -26,7 +26,7 @@ from coincurve import PrivateKey as cPrivateKey
 
 w3 = Web3(Web3.IPCProvider('/Users/myuser/Library/Ethereum/geth.ipc'))
 
-http_ip = "35.197.170.240"
+http_ip = "10.152.0.12"
 http_port = 23001
 
 Keypair = namedtuple('Keypair', ['skbytes', 'pkbytes', 'account_id'])
@@ -44,7 +44,7 @@ def transfer(
         input="",
         key="",
         val="",
-        prepayment=0,
+        prefund=0,
         check_tx_valid=True,
         gas_limit=999999):
     keypair = get_keypair(bytes.fromhex(str_prikey))
@@ -64,7 +64,7 @@ def transfer(
     param = get_transfer_params(
         nonce, to, amount, gas_limit, 1,
         keypair, 3, contract_bytes, input,
-        prepayment, step, key, val)
+        prefund, step, key, val)
     json_str = json.dumps(param)
     print(f"tx size: {len(json_str)}")
     res = _call_tx(param)
@@ -79,7 +79,9 @@ def transfer(
     return check_addr_nonce_valid(addr, nonce)
 
 def get_account_info(address):
+    print(f"now call get address {address}")
     res = _post_data("http://{}:{}/query_account".format(http_ip, http_port), {'address': address})
+    print(f"now call get address {address} {res}")
     if res.status_code != 200:
         return None
     try:
@@ -133,8 +135,8 @@ def check_address_valid(address, balance=0):
 def check_accounts_valid(post_data: dict):
     return _post_data("http://{}:{}/accounts_valid".format(http_ip, http_port), post_data)
 
-def check_prepayments_valid(post_data: dict):
-    return _post_data("http://{}:{}/prepayment_valid".format(http_ip, http_port), post_data)
+def check_prefunds_valid(post_data: dict):
+    return _post_data("http://{}:{}/prefund_valid".format(http_ip, http_port), post_data)
 
 def get_transfer_params(
         nonce: int,
@@ -226,7 +228,7 @@ def deploy_contract_with_bytes(
         constructor_types: list,
         constructor_params: list,
         nonce = -1,
-        prepayment=0,
+        prefund=0,
         check_tx_valid=False,
         is_library=False,
         salt="00",
@@ -256,16 +258,16 @@ def deploy_contract_with_bytes(
         step=step,
         nonce=nonce,
         contract_bytes=call_str,
-        prepayment=prepayment,
+        prefund=prefund,
         check_tx_valid=check_tx_valid)
     if not res:
         return None
 
     if check_tx_valid:
         for i in range(0, 30):
-            if prepayment > 0:
+            if prefund > 0:
                 keypair = get_keypair(bytes.fromhex(private_key))
-                if check_address_valid(contract_address + keypair.account_id, prepayment):
+                if check_address_valid(contract_address + keypair.account_id, prefund):
                     return contract_address
 
             elif check_address_valid(contract_address):
@@ -282,7 +284,7 @@ def deploy_contract(
         constructor_types: list,
         constructor_params: list,
         nonce = -1,
-        prepayment=0,
+        prefund=0,
         check_tx_valid=False,
         is_library=False,
         in_libraries="",
@@ -339,16 +341,16 @@ def deploy_contract(
         step=step,
         nonce=nonce,
         contract_bytes=call_str,
-        prepayment=prepayment,
+        prefund=prefund,
         check_tx_valid=check_tx_valid)
     if not res:
         return None
 
     if check_tx_valid:
         for i in range(0, 30):
-            if prepayment > 0:
+            if prefund > 0:
                 keypair = get_keypair(bytes.fromhex(private_key))
-                if check_address_valid(contract_address + keypair.account_id, prepayment):
+                if check_address_valid(contract_address + keypair.account_id, prefund):
                     return contract_address
 
             elif check_address_valid(contract_address):
@@ -358,7 +360,7 @@ def deploy_contract(
 
     return None
 
-def contract_prepayment(private_key: str, contract_address: str, prepayment: int, check_res: bool, nonce: int):
+def contract_prefund(private_key: str, contract_address: str, prefund: int, check_res: bool, nonce: int):
     if not transfer(
             str_prikey=private_key,
             to=contract_address,
@@ -366,7 +368,7 @@ def contract_prepayment(private_key: str, contract_address: str, prepayment: int
             check_tx_valid=check_res,
             nonce=nonce,
             step=7,
-            prepayment=prepayment):
+            prefund=prefund):
         return False
 
     return True
@@ -519,7 +521,7 @@ def _get_tx_params(sign, pkbytes: bytes, nonce: int, gas_limit: int, gas_price: 
         'shard_id': des_shard_id,
         'key': key,
         'val': val,
-        "pepay": prepay,
+        "prefund": prepay,
         'sign_r': sign.r,
         'sign_s': sign.s,
         'sign_v': sign.v,

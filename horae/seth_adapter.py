@@ -183,16 +183,30 @@ def get_account_info(address):
     Returns:
         dict: 包含 balance, nonce 等信息的字典
     """
+    print(f"\n[DEBUG] get_account_info 开始")
+    print(f"  - address: {address}")
+    
     try:
+        print(f"  - 查询余额...")
         balance = w3.client.get_balance(address)
+        print(f"  - 余额: {balance}")
+        
+        print(f"  - 查询 nonce...")
         nonce = w3.client.get_nonce(address)
-        return {
+        print(f"  - nonce: {nonce}")
+        
+        result = {
             'balance': str(balance),
             'nonce': str(nonce),
             'address': address
         }
+        print(f"  ✓ 账户信息获取成功")
+        return result
+        
     except Exception as e:
-        print(f"get_account_info error: {e}")
+        print(f"  ✗ get_account_info error: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
@@ -210,8 +224,14 @@ def contract_prefund(private_key, contract_address, prefund, check_res=True, non
     Returns:
         bool: 是否成功
     """
+    print(f"\n[DEBUG] contract_prefund 开始")
+    print(f"  - contract_address: {contract_address}")
+    print(f"  - prefund: {prefund}")
+    print(f"  - check_res: {check_res}")
+    
     try:
         # 使用 seth_sdk 的 send_transaction_auto 发送 prefund 交易
+        print(f"  - 发送 Gas Prefund 交易...")
         tx_hash = w3.client.send_transaction_auto(
             private_key,
             contract_address,
@@ -219,15 +239,29 @@ def contract_prefund(private_key, contract_address, prefund, check_res=True, non
             amount=0,
             prefund=prefund
         )
+        print(f"  - 交易哈希: {tx_hash}")
         
         if check_res:
+            print(f"  - 等待交易确认...")
             # 使用 WebSocket 订阅等待交易确认
             receipt = subscribe_txhash(tx_hash, timeout=120)
-            return receipt.get('status') == 0
+            status = receipt.get('status')
+            print(f"  - 交易状态: {status}")
+            
+            if status == 0:
+                print(f"  ✓ Gas Prefund 成功")
+                return True
+            else:
+                print(f"  ✗ Gas Prefund 失败: {receipt.get('msg', 'Unknown error')}")
+                return False
         
+        print(f"  ✓ Gas Prefund 交易已发送（未等待确认）")
         return True
+        
     except Exception as e:
-        print(f"contract_prefund error: {e}")
+        print(f"  ✗ contract_prefund error: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -247,22 +281,38 @@ def call_contract_function(private_key, contract_address, amount,
     Returns:
         bool: 是否成功
     """
+    print(f"\n[DEBUG] call_contract_function 开始")
+    print(f"  - contract_address: {contract_address}")
+    print(f"  - function_name: {function_name}")
+    print(f"  - types_list: {types_list}")
+    print(f"  - params_list: {params_list}")
+    print(f"  - amount: {amount}")
+    
     try:
         from Crypto.Hash import keccak
         import eth_abi
         
         # 构造函数调用数据
+        print(f"  - 构造函数签名...")
         sig = f"{function_name}({','.join(types_list)})"
+        print(f"  - 函数签名: {sig}")
+        
         selector = keccak.new(digest_bits=256).update(sig.encode()).digest()[:4].hex()
+        print(f"  - 函数选择器: {selector}")
         
         if types_list and params_list:
+            print(f"  - 编码参数...")
             encoded_params = eth_abi.encode(types_list, params_list).hex()
+            print(f"  - 编码后参数长度: {len(encoded_params)} 字符")
         else:
             encoded_params = ""
+            print(f"  - 无参数")
             
         input_hex = selector + encoded_params
+        print(f"  - 完整 input 长度: {len(input_hex)} 字符")
         
         # 发送交易
+        print(f"  - 发送交易...")
         tx_hash = w3.client.send_transaction_auto(
             private_key,
             contract_address,
@@ -270,13 +320,26 @@ def call_contract_function(private_key, contract_address, amount,
             amount=amount,
             input_hex=input_hex
         )
+        print(f"  - 交易哈希: {tx_hash}")
         
         # 使用 WebSocket 订阅等待交易确认
+        print(f"  - 等待交易确认...")
         receipt = subscribe_txhash(tx_hash, timeout=120)
-        return receipt.get('status') == 0
+        status = receipt.get('status')
+        print(f"  - 交易状态: {status}")
+        
+        if status == 0:
+            print(f"  ✓ 合约函数调用成功")
+            return True
+        else:
+            print(f"  ✗ 合约函数调用失败: {receipt.get('msg', 'Unknown error')}")
+            print(f"  - 完整回执: {receipt}")
+            return False
         
     except Exception as e:
-        print(f"call_contract_function error: {e}")
+        print(f"  ✗ call_contract_function error: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -296,26 +359,45 @@ def query_contract_function(private_key, contract_address,
     Returns:
         Response对象，包含 .text 属性
     """
+    print(f"\n[DEBUG] query_contract_function 开始")
+    print(f"  - contract_address: {contract_address}")
+    print(f"  - function_name: {function_name}")
+    print(f"  - types_list: {types_list}")
+    print(f"  - params_list: {params_list}")
+    print(f"  - call_type: {call_type}")
+    
     try:
         from Crypto.Hash import keccak
         import eth_abi
         
         # 构造函数调用数据
+        print(f"  - 构造函数签名...")
         sig = f"{function_name}({','.join(types_list)})"
+        print(f"  - 函数签名: {sig}")
+        
         selector = keccak.new(digest_bits=256).update(sig.encode()).digest()[:4].hex()
+        print(f"  - 函数选择器: {selector}")
         
         if types_list and params_list:
+            print(f"  - 编码参数...")
             encoded_params = eth_abi.encode(types_list, params_list).hex()
+            print(f"  - 编码后参数长度: {len(encoded_params)} 字符")
         else:
             encoded_params = ""
+            print(f"  - 无参数")
             
         input_hex = selector + encoded_params
+        print(f"  - 完整 input 长度: {len(input_hex)} 字符")
         
         # 获取调用者地址
         from_address = w3.client.get_address(private_key)
+        print(f"  - 调用者地址: {from_address}")
         
         # 调用合约查询（只读，不需要 WebSocket）
+        print(f"  - 发送查询请求...")
         result = w3.client.query_contract(from_address, contract_address, input_hex)
+        print(f"  - 查询结果: {result[:100] if len(str(result)) > 100 else result}...")
+        print(f"  ✓ 合约查询成功")
         
         # 创建一个类似 requests.Response 的对象
         class MockResponse:
@@ -326,7 +408,9 @@ def query_contract_function(private_key, contract_address,
         return MockResponse(result)
         
     except Exception as e:
-        print(f"query_contract_function error: {e}")
+        print(f"  ✗ query_contract_function error: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
@@ -353,62 +437,190 @@ def deploy_contract_with_bytes(private_key, amount, bytes_codes,
     Returns:
         str: 合约地址，失败返回 None
     """
+    print("\n" + "="*80)
+    print("DEBUG: deploy_contract_with_bytes 开始")
+    print("="*80)
+    
     try:
         import eth_abi
         from horae.seth_sdk import calc_create2_address
         
-        # 构造完整的字节码（包含构造函数参数）
+        # 1. 打印输入参数
+        print(f"[DEBUG] 输入参数:")
+        print(f"  - private_key: {'*' * 10}...{private_key[-10:] if len(private_key) > 10 else '***'}")
+        print(f"  - amount: {amount}")
+        print(f"  - bytes_codes 长度: {len(bytes_codes)} 字符")
+        print(f"  - bytes_codes 前缀: {bytes_codes[:20]}...")
+        print(f"  - constructor_types: {constructor_types}")
+        print(f"  - constructor_params: {constructor_params}")
+        print(f"  - nonce: {nonce}")
+        print(f"  - prefund: {prefund}")
+        print(f"  - check_tx_valid: {check_tx_valid}")
+        print(f"  - is_library: {is_library}")
+        print(f"  - salt: {salt}")
+        print(f"  - to: {to}")
+        
+        # 2. 构造完整的字节码（包含构造函数参数）
+        print(f"\n[DEBUG] 步骤 1: 构造完整字节码")
         full_bytecode = bytes_codes
+        
         if constructor_types and constructor_params:
-            encoded_params = eth_abi.encode(constructor_types, constructor_params).hex()
-            full_bytecode += encoded_params
+            print(f"  - 检测到构造函数参数，开始编码...")
+            print(f"  - 参数类型: {constructor_types}")
+            print(f"  - 参数值: {constructor_params}")
+            
+            try:
+                encoded_params = eth_abi.encode(constructor_types, constructor_params).hex()
+                print(f"  - 编码后的参数长度: {len(encoded_params)} 字符")
+                print(f"  - 编码后的参数: {encoded_params[:40]}...")
+                full_bytecode += encoded_params
+                print(f"  ✓ 构造函数参数编码成功")
+            except Exception as e:
+                print(f"  ✗ 构造函数参数编码失败: {e}")
+                raise
+        else:
+            print(f"  - 无构造函数参数")
         
-        # 获取发送者地址
-        sender = w3.client.get_address(private_key)
+        print(f"  - 完整字节码长度: {len(full_bytecode)} 字符")
         
-        # 计算合约地址
+        # 3. 获取发送者地址
+        print(f"\n[DEBUG] 步骤 2: 获取发送者地址")
+        try:
+            sender = w3.client.get_address(private_key)
+            print(f"  - 发送者地址: {sender}")
+            print(f"  ✓ 发送者地址获取成功")
+        except Exception as e:
+            print(f"  ✗ 获取发送者地址失败: {e}")
+            raise
+        
+        # 4. 计算合约地址
+        print(f"\n[DEBUG] 步骤 3: 计算合约地址")
         if to:
             contract_address = to
+            print(f"  - 使用指定的合约地址: {contract_address}")
         else:
-            contract_address = calc_create2_address(sender, salt, full_bytecode)
+            try:
+                print(f"  - 使用 CREATE2 计算地址")
+                print(f"  - sender: {sender}")
+                print(f"  - salt: {salt}")
+                print(f"  - bytecode 长度: {len(full_bytecode)}")
+                contract_address = calc_create2_address(sender, salt, full_bytecode)
+                print(f"  - 计算出的合约地址: {contract_address}")
+                print(f"  ✓ CREATE2 地址计算成功")
+            except Exception as e:
+                print(f"  ✗ CREATE2 地址计算失败: {e}")
+                raise
         
-        # 确定步骤类型
+        # 5. 确定步骤类型
+        print(f"\n[DEBUG] 步骤 4: 确定交易类型")
         step = StepType.kCreateLibrary if is_library else StepType.kCreateContract
+        step_name = "kCreateLibrary" if is_library else "kCreateContract"
+        print(f"  - 交易类型: {step_name} (值: {step})")
         
-        # 发送部署交易
-        tx_hash = w3.client.send_transaction_auto(
-            private_key,
-            contract_address,
-            step,
-            amount=amount,
-            contract_code=full_bytecode,
-            prefund=prefund if prefund > 0 else 10000000
-        )
+        # 6. 计算实际的 prefund
+        actual_prefund = prefund if prefund > 0 else 10000000
+        print(f"  - 实际 prefund: {actual_prefund}")
         
+        # 7. 发送部署交易
+        print(f"\n[DEBUG] 步骤 5: 发送部署交易")
+        print(f"  - 目标地址: {contract_address}")
+        print(f"  - 交易类型: {step_name}")
+        print(f"  - 转账金额: {amount}")
+        print(f"  - Gas prefund: {actual_prefund}")
+        print(f"  - 字节码长度: {len(full_bytecode)}")
+        
+        try:
+            tx_hash = w3.client.send_transaction_auto(
+                private_key,
+                contract_address,
+                step,
+                amount=amount,
+                contract_code=full_bytecode,
+                prefund=actual_prefund
+            )
+            print(f"  - 交易哈希: {tx_hash}")
+            print(f"  ✓ 交易发送成功")
+        except Exception as e:
+            print(f"  ✗ 交易发送失败: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
+        
+        # 8. 检查交易有效性
         if check_tx_valid:
-            # 使用 WebSocket 订阅等待交易确认
-            receipt = subscribe_txhash(tx_hash, timeout=120)
-            if receipt.get('status') != 0:
-                print(f"Contract deployment failed: {receipt.get('msg', 'Unknown error')}")
-                return None
+            print(f"\n[DEBUG] 步骤 6: 等待交易确认")
+            print(f"  - 使用 WebSocket 订阅交易: {tx_hash}")
             
-            # 等待合约地址可用
+            try:
+                receipt = subscribe_txhash(tx_hash, timeout=120)
+                print(f"  - 收到交易回执")
+                print(f"  - 回执状态: {receipt.get('status')}")
+                print(f"  - 回执内容: {json.dumps(receipt, indent=2)}")
+                
+                if receipt.get('status') != 0:
+                    error_msg = receipt.get('msg', 'Unknown error')
+                    print(f"  ✗ 合约部署失败: {error_msg}")
+                    print(f"  - 完整回执: {receipt}")
+                    return None
+                
+                print(f"  ✓ 交易确认成功")
+                
+            except Exception as e:
+                print(f"  ✗ 等待交易确认失败: {e}")
+                import traceback
+                traceback.print_exc()
+                raise
+            
+            # 9. 等待合约地址可用
+            print(f"\n[DEBUG] 步骤 7: 验证合约地址")
+            print(f"  - 检查地址: {contract_address}")
+            
             for i in range(30):
-                balance = w3.client.get_balance(contract_address)
-                if balance >= 0:  # 地址存在
-                    print(f"Contract deployed successfully at: {contract_address}")
-                    return contract_address
+                try:
+                    balance = w3.client.get_balance(contract_address)
+                    print(f"  - 尝试 {i+1}/30: 余额 = {balance}")
+                    
+                    if balance >= 0:  # 地址存在
+                        print(f"  ✓ 合约地址已可用")
+                        print(f"\n" + "="*80)
+                        print(f"SUCCESS: 合约部署成功!")
+                        print(f"合约地址: {contract_address}")
+                        print(f"交易哈希: {tx_hash}")
+                        print("="*80 + "\n")
+                        return contract_address
+                        
+                except Exception as e:
+                    print(f"  - 尝试 {i+1}/30: 查询失败 - {e}")
+                
                 time.sleep(3)
             
-            print(f"Contract address not available after deployment")
+            print(f"  ✗ 合约地址在 90 秒后仍不可用")
+            print(f"\n" + "="*80)
+            print(f"FAILURE: 合约部署超时")
+            print(f"合约地址: {contract_address}")
+            print(f"交易哈希: {tx_hash}")
+            print("="*80 + "\n")
             return None
         
+        # 不检查有效性，直接返回地址
+        print(f"\n[DEBUG] 跳过交易确认检查")
+        print(f"\n" + "="*80)
+        print(f"INFO: 合约部署交易已发送（未等待确认）")
+        print(f"合约地址: {contract_address}")
+        print(f"交易哈希: {tx_hash}")
+        print("="*80 + "\n")
         return contract_address
         
     except Exception as e:
-        print(f"deploy_contract_with_bytes error: {e}")
+        print(f"\n" + "="*80)
+        print(f"ERROR: deploy_contract_with_bytes 异常")
+        print(f"异常类型: {type(e).__name__}")
+        print(f"异常信息: {e}")
+        print("="*80)
         import traceback
+        print("\n完整堆栈跟踪:")
         traceback.print_exc()
+        print("="*80 + "\n")
         return None
 
 

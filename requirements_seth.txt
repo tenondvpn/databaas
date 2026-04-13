@@ -1,0 +1,25 @@
+# Seth SDK 依赖包
+# 安装命令: pip install -r requirements_seth.txt
+
+# 核心依赖
+web3>=6.0.0
+eth-abi>=4.0.0
+eth-utils>=2.0.0
+pycryptodome>=3.18.0
+ecdsa>=0.18.0
+py-solc-x>=2.0.0
+
+# HTTP 请求
+requests>=2.31.0
+
+# WebSocket 支持（必需）
+websocket-client>=1.6.0
+
+# 可选依赖（高级功能）
+# gmssl>=3.2.2              # 国密支持
+# liboqs-python>=0.8.0      # 后量子密码学
+
+# Django 相关（如果还没安装）
+# Django>=3.2.0
+# djangorestframework>=3.14.0
+# djangorestframework-simplejwt>=5.2.0

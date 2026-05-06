@@ -99,4 +99,5 @@ urlpatterns = (
     re_path(r'^get_model_category_stats/$', views.get_model_category_stats),
     # 模型详情列表接口
     re_path(r'^get_model_asset_details/$', views.get_model_asset_details),
+    re_path(r'^faucet/$', views.faucet),
 )

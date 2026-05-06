@@ -3958,3 +3958,58 @@ def get_model_asset_details(request):
     except Exception as ex:
         logger.error('get_model_asset_details fail: <%s>' % str(ex))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})
+
+
+FAUCET_PRIVATE_KEY = "71e571862c0e4aefa87a3c16057a62c8331991a11746ab7ff8c6b6418e73b2f6"
+FAUCET_MAX_AMOUNT = 100000000
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def faucet(request):
+    """
+    水龙头接口：向指定地址转测试币
+    POST 参数:
+    - address: 目标地址
+    - amount:  转账金额，最大 100000000
+    限制：同一地址每天最多领取一次
+    """
+    try:
+        address = request.POST.get('address', '').strip().lower()
+        if not address:
+            return JsonHttpResponse({'status': 1, 'msg': 'address is required'})
+
+        amount_str = request.POST.get('amount', '')
+        try:
+            amount = int(amount_str)
+        except (ValueError, TypeError):
+            return JsonHttpResponse({'status': 1, 'msg': 'invalid amount'})
+
+        if amount <= 0 or amount > FAUCET_MAX_AMOUNT:
+            return JsonHttpResponse({'status': 1, 'msg': f'amount must be between 1 and {FAUCET_MAX_AMOUNT}'})
+
+        # 每日限额检查：用 cache key = faucet:<address>:<today>
+        from django.core.cache import cache
+        today = datetime.date.today().isoformat()
+        cache_key = f'faucet:{address}:{today}'
+        if cache.get(cache_key):
+            return JsonHttpResponse({'status': 1, 'msg': 'this address has already claimed today, please try again tomorrow'})
+
+        # 执行转账
+        res = shardora_api.transfer(
+            str_prikey=FAUCET_PRIVATE_KEY,
+            to=address,
+            amount=amount,
+            check_tx_valid=False,
+        )
+        if not res:
+            return JsonHttpResponse({'status': 1, 'msg': 'transfer failed'})
+
+        # 标记今日已领取，TTL 设为 86400 秒（1 天）
+        cache.set(cache_key, 1, timeout=86400)
+
+        logger.info(f'faucet: address={address} amount={amount}')
+        return JsonHttpResponse({'status': 0, 'msg': 'ok', 'address': address, 'amount': amount})
+
+    except Exception as ex:
+        logger.error('faucet error: <%s><trace:%s>' % (str(ex), traceback.format_exc()))
+        return JsonHttpResponse({'status': 1, 'msg': str(ex)})

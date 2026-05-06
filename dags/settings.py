@@ -168,7 +168,7 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
 
 # Seth SDK Configuration
-SETH_HTTP_IP = os.environ.get('SETH_HTTP_IP', '35.197.170.240')
+SETH_HTTP_IP = os.environ.get('SETH_HTTP_IP', '100.26.60.71')
 SETH_HTTP_PORT = int(os.environ.get('SETH_HTTP_PORT', '23001'))
 SETH_WS_PORT = int(os.environ.get('SETH_WS_PORT', '33001'))  # WebSocket 端口
 

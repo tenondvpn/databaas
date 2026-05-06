@@ -18,7 +18,7 @@ except ImportError:
     print("Warning: websocket-client not installed. Falling back to HTTP polling.")
 
 # 从 Django settings 获取配置，如果没有则使用默认值
-http_ip = getattr(dags_settings, 'SETH_HTTP_IP', '35.197.170.240')
+http_ip = getattr(dags_settings, 'SETH_HTTP_IP', '100.26.60.71')
 http_port = getattr(dags_settings, 'SETH_HTTP_PORT', 23001)
 ws_port = getattr(dags_settings, 'SETH_WS_PORT', 33001)  # WebSocket 端口
 

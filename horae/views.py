@@ -38,7 +38,7 @@ from clickhouse_driver import Client
 from horae import zk_manager
 from dags import settings
 from horae import linux_file_cmd
-from horae import seth_adapter as shardora_api
+from horae import shardora_api
 
 import json
 import sys
@@ -58,7 +58,11 @@ logger = common_logger.get_logger(
     "./log/view_log")
 
 horae_interface = HoraeInterface(logger)
-ck_client = Client(host='localhost', user='default', password='')
+ck_client = Client(
+    host=os.environ.get('CLICKHOUSE_HOST', 'host.docker.internal'),
+    user=os.environ.get('CLICKHOUSE_USER', 'default'),
+    password=os.environ.get('CLICKHOUSE_PASSWORD', ''),
+)
 
 
 config = configparser.ConfigParser()
@@ -2360,7 +2364,7 @@ def get_log_content(request):
                 schedule_id, file_name, 0, 10240, rerun_id)
             logger.info(f"user {user.id}, name: {user.username} now call get_log_content, res: {log_content}")
             return JsonHttpResponse({
-                'file_content': log_content, 'status': 0, 'len': len(log_content)})
+                'file_content': log_content or '', 'status': 0, 'len': len(log_content or '')})
         except Exception as ex:
             logger.error('get log content fail: <%s> trace<%s>' % (
                 str(ex), traceback.format_exc()))
@@ -2433,22 +2437,12 @@ def compile_solidity(request):
                 "via-ir": True,
             }
             
-            compiler_params = {
-                "evm_version": 'shanghai',
-                "optimize": True,
-                "optimize_runs": 200,
-                "via_ir": True,           # 如果有需要可开启
-            }
-            
             install_solc_versions()
             compiled_sol = solcx.compile_source(
                 source_code,
                 output_values=['abi', 'bin'],
-                **compiler_params
+                **compiler_settings
             )
-
-            #compiled_sol = solcx.compile_source(source_code, output_values=['abi', 'bin'], solc_version='0.8.30', 
-            #                 via_ir=True, optimize=True, optimize_runs=200) 
             contract_id, contract_interface = compiled_sol.popitem()
             abi = contract_interface['abi']
             bytecode = contract_interface['bin']
@@ -2457,41 +2451,26 @@ def compile_solidity(request):
             logger.error('compile solidity error:<%s>' % str(ex))
             return JsonHttpResponse({'status': 1, 'msg': str(ex)})
       
-def set_gas_prefund(request):
+def set_gas_prepayment(request):
     if request.method != 'POST':
         return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})
     
     try:
-        prefund = int(request.POST.get('gas_prefund'))
+        prepayment = int(request.POST.get('gas_prepayment'))
         private_str = request.POST.get('private_key')
         address_str = request.POST.get('address')
-        res = shardora_api.contract_prefund(
+        res = shardora_api.contract_prepayment(
             private_key=private_str, 
             contract_address=address_str, 
-            prefund=prefund, 
+            prepayment=prepayment, 
             check_res=True, 
             nonce=-1)
         if not res:
-            return JsonHttpResponse({'status': 1, 'msg': 'set gas prefund failed'})
+            return JsonHttpResponse({'status': 1, 'msg': 'set gas prepayment failed'})
         
         return JsonHttpResponse({'status': 0, 'msg': 'ok'})
     except Exception as ex:
-        logger.error('set gas prefund error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
-        return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
-    
-def get_contract_info(request):
-    if request.method != 'POST':
-        return JsonHttpResponse({'status': 1, 'msg': 'only post method supported'})
-    
-    try:
-        contract_address = request.POST.get('address')
-        res = shardora_api.get_account_info(contract_address)
-        if not res:
-            return JsonHttpResponse({'status': 1, 'msg': 'contract not exits'})
-    
-        return JsonHttpResponse({'status': 0, 'data': res})
-    except Exception as ex:
-        logger.error('compile solidity error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
+        logger.error('set gas prepayment error:<%s><trace:%s>' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex) + traceback.format_exc()})
     
 def call_function_solidity(request):
@@ -2664,7 +2643,6 @@ def deploy_solidity(request):
     
     try:
         source_code = request.POST.get('bytecode')
-        to = request.POST.get('to')
         private_key = None
         private_str = request.POST.get('private_key')
         if private_str is not None and private_str != "":
@@ -2675,8 +2653,9 @@ def deploy_solidity(request):
         if code_type != 0:
             create_library = True
 
+        to = None
         amount = int(request.POST.get('amount'))
-        prefund = int(request.POST.get('gas_prefund'))
+        prepayment = int(request.POST.get('gas_prepayment'))
         function_types = []
         function_args = []
         function_types_str = request.POST.get('function_types')
@@ -2742,11 +2721,10 @@ def deploy_solidity(request):
             function_types,
             tmp_function_args,
             nonce=-1,
-            prefund=prefund,
+            prepayment=prepayment,
             check_tx_valid=True,
             is_library=create_library,
-            salt="00",
-            to=to)
+            contract_address=to)
         if contract_address is None:
             print(f"contract create failed!")
             return JsonHttpResponse({'status': 1, 'msg': 'create contract failed'})
@@ -3957,59 +3935,4 @@ def get_model_asset_details(request):
 
     except Exception as ex:
         logger.error('get_model_asset_details fail: <%s>' % str(ex))
-        return JsonHttpResponse({'status': 1, 'msg': str(ex)})
-
-
-FAUCET_PRIVATE_KEY = "71e571862c0e4aefa87a3c16057a62c8331991a11746ab7ff8c6b6418e73b2f6"
-FAUCET_MAX_AMOUNT = 100000000
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def faucet(request):
-    """
-    水龙头接口：向指定地址转测试币
-    POST 参数:
-    - address: 目标地址
-    - amount:  转账金额，最大 100000000
-    限制：同一地址每天最多领取一次
-    """
-    try:
-        address = request.POST.get('address', '').strip().lower()
-        if not address:
-            return JsonHttpResponse({'status': 1, 'msg': 'address is required'})
-
-        amount_str = request.POST.get('amount', '')
-        try:
-            amount = int(amount_str)
-        except (ValueError, TypeError):
-            return JsonHttpResponse({'status': 1, 'msg': 'invalid amount'})
-
-        if amount <= 0 or amount > FAUCET_MAX_AMOUNT:
-            return JsonHttpResponse({'status': 1, 'msg': f'amount must be between 1 and {FAUCET_MAX_AMOUNT}'})
-
-        # 每日限额检查：用 cache key = faucet:<address>:<today>
-        from django.core.cache import cache
-        today = datetime.date.today().isoformat()
-        cache_key = f'faucet:{address}:{today}'
-        if cache.get(cache_key):
-            return JsonHttpResponse({'status': 1, 'msg': 'this address has already claimed today, please try again tomorrow'})
-
-        # 执行转账
-        res = shardora_api.transfer(
-            str_prikey=FAUCET_PRIVATE_KEY,
-            to=address,
-            amount=amount,
-            check_tx_valid=False,
-        )
-        if not res:
-            return JsonHttpResponse({'status': 1, 'msg': 'transfer failed'})
-
-        # 标记今日已领取，TTL 设为 86400 秒（1 天）
-        cache.set(cache_key, 1, timeout=86400)
-
-        logger.info(f'faucet: address={address} amount={amount}')
-        return JsonHttpResponse({'status': 0, 'msg': 'ok', 'address': address, 'amount': amount})
-
-    except Exception as ex:
-        logger.error('faucet error: <%s><trace:%s>' % (str(ex), traceback.format_exc()))
         return JsonHttpResponse({'status': 1, 'msg': str(ex)})

@@ -105,14 +105,14 @@ WSGI_APPLICATION = 'dags.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-        'NAME': 'dags',
+        'HOST': os.environ.get('DB_HOST', 'ubuntu-mariadb'),
+        'PORT': int(os.environ.get('DB_PORT', '3306')),
+        'NAME': os.environ.get('DB_NAME', 'dags'),
         'OPTIONS': {
             'init_command': 'SET default_storage_engine=INNODB;',
         },
-        'USER': 'root',
-        'PASSWORD': 'Xf4aGbTaf!',
+        'USER': os.environ.get('DB_USER', 'root'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'localroot'),
         'TEST_CHARSET': "utf8",
         'TEST_COLLATION': "utf8_general_ci",
         'CONN_MAX_AGE': 0
@@ -166,9 +166,4 @@ CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS=True
 X_FRAME_OPTIONS = 'ALLOWALL'
 XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
-
-# Seth SDK Configuration
-SETH_HTTP_IP = os.environ.get('SETH_HTTP_IP', '100.26.60.71')
-SETH_HTTP_PORT = int(os.environ.get('SETH_HTTP_PORT', '23001'))
-SETH_WS_PORT = int(os.environ.get('SETH_WS_PORT', '33001'))  # WebSocket 端口
 

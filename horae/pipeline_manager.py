@@ -27,7 +27,7 @@ from horae import tools_util
 from horae import zk_manager
 from horae import graph_manager
 from kafka import KafkaConsumer
-from kafka import KafkaProducer
+from kafka import KafkaProducer, KafkaConsumer  # _direct_consumer_fix
 
 global_queue_lock = threading.Lock()
 class KafkaRequestManager(threading.Thread):
@@ -81,9 +81,8 @@ class KafkaRequestManager(threading.Thread):
                             res_map = json.loads(data[key][0].value)
                             self.__msg_map[res_map["msg_id"]] = res_map["data"]
                             self.__log.info("get data: %s" % (data[key][0].value))
-                            global_queue_lock.release()
-                        except:
-                            pass
+                        except Exception as _e:
+                            self.__log.error("kafka parse error: %s" % str(_e))
                         finally:
                             global_queue_lock.release()
             except:
@@ -133,7 +132,8 @@ class PipelineManager(object):
         if self.__zk_manager.watch_children(
                 self.__admin_ip_dir,
                 self.__watch_admin_ip_dir) is None:
-            raise Exception("watch children error!")
+            self.__log.warning(
+                "zookeeper watch unavailable; continuing without admin ip discovery")
 
     def __watch_admin_ip_dir(self, children):
         min_index = None
@@ -1084,21 +1084,31 @@ class PipelineManager(object):
             data["schedule_id"] = str(schedule_id)
             data["rerun_id"] = str(rerun_id)
             data["response"] = False
+            _lc = KafkaConsumer('all_message', bootstrap_servers=self.__kafka_servers, auto_offset_reset='latest')
+            _lc.poll(timeout_ms=500)
             producer = KafkaProducer(bootstrap_servers=self.__kafka_servers, api_version=(0, 10, 1), value_serializer=lambda m: json.dumps(m).encode())
             producer.send(run_history.run_server, data)
+            producer.flush()
             print("send data: ")
             print(data)
-            try_times = 0
             res_data = None
-            while try_times < 20:
-                res_data = self.__kafka_manager.get_data(msg_id)
+            for _t in range(50):
+                _msgs = _lc.poll(timeout_ms=100, max_records=10)
+                for _tp, _recs in _msgs.items():
+                    for _rec in _recs:
+                        try:
+                            _v = json.loads(_rec.value) if isinstance(_rec.value, (str, bytes)) else _rec.value
+                            if isinstance(_v, dict) and _v.get('msg_id') == msg_id:
+                                res_data = _v.get('data')
+                        except Exception:
+                            pass
                 if res_data is not None:
-                    self.__log.info("success get res data: %s" % res_data)
                     break
-                
-                self.__log.info(f"waiting get res data: {run_history.run_server} data: {data}")    
-                time.sleep(0.1)
-                try_times += 1
+            try:
+                _lc.close()
+                producer.close()
+            except Exception:
+                pass
             if res_data is None: 
                 ret_map = {}
                 ret_map["status"] = 1
@@ -1174,22 +1184,37 @@ class PipelineManager(object):
             data["start"] = str(file_offset)
             data["len"] = str(str_len)
             data["response"] = False
+            _lc = KafkaConsumer('all_message', bootstrap_servers=self.__kafka_servers, auto_offset_reset='latest')  # _direct_consumer_fix_lc
+            _lc.poll(timeout_ms=500)
             producer = KafkaProducer(bootstrap_servers=self.__kafka_servers, api_version=(0, 10, 1), value_serializer=lambda m: json.dumps(m).encode())
             producer.send(run_history.run_server, data)
+            producer.flush()
             print("send data: ")
             print(data)
-            try_times = 0
             res_data = None
-            while try_times < 20:
-                res_data = self.__kafka_manager.get_data(msg_id)
+            for _t in range(50):
+                _msgs = _lc.poll(timeout_ms=100, max_records=10)
+                for _tp, _recs in _msgs.items():
+                    for _rec in _recs:
+                        try:
+                            _v = json.loads(_rec.value) if isinstance(_rec.value, (str, bytes)) else _rec.value
+                            if isinstance(_v, dict) and _v.get('msg_id') == msg_id:
+                                res_data = _v.get('data')
+                        except Exception:
+                            pass
                 if res_data is not None:
-                    self.__log.info("success get res data: %s" % res_data)
                     break
-                    
-                self.__log.info("waiting get res data: %s" % "0")
-                time.sleep(0.1)
-                try_times += 1
+            try:
+                _lc.close()
+                producer.close()
+            except Exception:
+                pass
+            if res_data is not None:
+                self.__log.info("success get res data: %s" % res_data)
+            if res_data is None:
+                return ''
             return res_data
+
         else:
             node_req_url = ("http://%s:%s/get_file_content?schedule_id=%s"
                         "&file=%s&start=%d&len=%d&rerun_id=%s" % (
@@ -1242,19 +1267,32 @@ class PipelineManager(object):
             data["schedule_id"] = str(schedule_id)
             data["rerun_id"] = str(rerun_id)
             data["response"] = False
+            _lc = KafkaConsumer('all_message', bootstrap_servers=self.__kafka_servers, auto_offset_reset='latest')  # _direct_consumer_fix_lc
+            _lc.poll(timeout_ms=500)
             producer = KafkaProducer(bootstrap_servers=self.__kafka_servers, api_version=(0, 10, 1), value_serializer=lambda m: json.dumps(m).encode())
             producer.send(run_history.run_server, data)
-            try_times = 0
+            producer.flush()
             res_data = None
-            while try_times < 20:
-                res_data = self.__kafka_manager.get_data(msg_id)
+            for _t in range(20):
+                _msgs = _lc.poll(timeout_ms=100, max_records=10)
+                for _tp, _recs in _msgs.items():
+                    for _rec in _recs:
+                        try:
+                            _v = json.loads(_rec.value) if isinstance(_rec.value, (str, bytes)) else _rec.value
+                            if isinstance(_v, dict) and _v.get('msg_id') == msg_id:
+                                res_data = _v.get('data')
+                        except Exception:
+                            pass
                 if res_data is not None:
-                    self.__log.info("success get res data: %s" % res_data)
                     break
-                    
-                self.__log.info("waiting get res data: %s" % "0")
-                time.sleep(0.1)
-                try_times += 1
+            try:
+                _lc.close()
+                producer.close()
+            except Exception:
+                pass
+            if res_data is not None:
+                self.__log.info("success get res data: %s" % res_data)
+
             ret_map = {}
             ret_map["status"] = 0
             ret_map["info"] = "OK"

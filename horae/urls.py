@@ -75,8 +75,7 @@ urlpatterns = (
 
     re_path(r'^compile_solidity/$', views.compile_solidity),
     re_path(r'^deploy_solidity/$', views.deploy_solidity),
-    re_path(r'^get_contract_info/$', views.get_contract_info),
-    re_path(r'^set_gas_prefund/$', views.set_gas_prefund),
+    re_path(r'^set_gas_prepayment/$', views.set_gas_prepayment),
     re_path(r'^call_function_solidity/$', views.call_function_solidity),
     re_path(r'^query_function_solidity/$', views.query_function_solidity),
     re_path(r'^get_statistics/$', views.get_statistics),
@@ -99,5 +98,4 @@ urlpatterns = (
     re_path(r'^get_model_category_stats/$', views.get_model_category_stats),
     # 模型详情列表接口
     re_path(r'^get_model_asset_details/$', views.get_model_asset_details),
-    re_path(r'^faucet/$', views.faucet),
 )

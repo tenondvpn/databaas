@@ -76,7 +76,11 @@ class ZookeeperManager(tools_util.Singleton):
                 command_retry=self.__command_retry, 
                 logger=self.__log)
         self.__zk.add_listener(self.__connect_state_listener)
-        self.__zk.start()     
+        try:
+            self.__zk.start()
+        except Exception as ex:
+            self.__log.error("zookeeper connection failed: %s" % str(ex))
+            self.__zk = None
 
     def __connect_state_listener(self, state):
         if state in (
@@ -210,6 +214,9 @@ class ZookeeperManager(tools_util.Singleton):
             return None
 
     def watch_children(self, path, watch_func):
+        if self.__zk is None:
+            self.__log.error("zookeeper client unavailable, skip watch_children")
+            return None
         try:
             return kazoo.recipe.watchers.ChildrenWatch(
                     self.__zk, 

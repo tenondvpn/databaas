@@ -15,7 +15,6 @@ from ecdsa import SigningKey, SECP256k1
 from web3 import Web3, AsyncWeb3, eth, utils
 from eth_keys import keys, datatypes
 from eth_utils import decode_hex, encode_hex
-from eth_utils import keccak, to_checksum_address
 from eth_abi import encode
 from urllib.parse import urlencode
 from eth_account.datastructures import SignedMessage
@@ -26,8 +25,8 @@ from coincurve import PrivateKey as cPrivateKey
 
 w3 = Web3(Web3.IPCProvider('/Users/myuser/Library/Ethereum/geth.ipc'))
 
-http_ip = "10.152.0.12"
-http_port = 23001
+http_ip = os.environ.get('SETH_NODE_IP', '192.168.26.142')
+http_port = int(os.environ.get('SETH_NODE_HTTP_PORT', '23001'))
 
 Keypair = namedtuple('Keypair', ['skbytes', 'pkbytes', 'account_id'])
 Sign = namedtuple('Sign', ['r', 's', 'v'])
@@ -44,7 +43,7 @@ def transfer(
         input="",
         key="",
         val="",
-        prefund=0,
+        prepayment=0,
         check_tx_valid=True,
         gas_limit=999999):
     keypair = get_keypair(bytes.fromhex(str_prikey))
@@ -64,7 +63,7 @@ def transfer(
     param = get_transfer_params(
         nonce, to, amount, gas_limit, 1,
         keypair, 3, contract_bytes, input,
-        prefund, step, key, val)
+        prepayment, step, key, val)
     json_str = json.dumps(param)
     print(f"tx size: {len(json_str)}")
     res = _call_tx(param)
@@ -79,16 +78,11 @@ def transfer(
     return check_addr_nonce_valid(addr, nonce)
 
 def get_account_info(address):
-    print(f"now call get address {address}")
-    res = _post_data("http://{}:{}/query_account".format(http_ip, http_port), {'address': address})
-    print(f"now call get address {address} {res}")
+    res = _post_data("https://{}:{}/query_account".format(http_ip, http_port), {'address': address})
     if res.status_code != 200:
         return None
-    try:
-        json_res = json.loads(res.text)
-    except:
-        print(f"get account failed: {res.text}")
-        return None
+
+    json_res = json.loads(res.text)
     return json_res
 
 def call_tx(nonce, to, amount, gas_limit, sign_r, sign_s, sign_v, pkbytes_str, key, value):
@@ -119,7 +113,7 @@ def keccak256_str(s: str) -> str:
 
 def check_address_valid(address, balance=0):
     post_data = {"addrs":[address], "balance": balance}
-    res = _post_data("http://{}:{}/accounts_valid".format(http_ip, http_port), post_data)
+    res = _post_data("https://{}:{}/accounts_valid".format(http_ip, http_port), post_data)
     if res.status_code != 200:
         return False
 
@@ -133,10 +127,10 @@ def check_address_valid(address, balance=0):
 
 
 def check_accounts_valid(post_data: dict):
-    return _post_data("http://{}:{}/accounts_valid".format(http_ip, http_port), post_data)
+    return _post_data("https://{}:{}/accounts_valid".format(http_ip, http_port), post_data)
 
-def check_prefunds_valid(post_data: dict):
-    return _post_data("http://{}:{}/prefund_valid".format(http_ip, http_port), post_data)
+def check_prepayments_valid(post_data: dict):
+    return _post_data("https://{}:{}/prepayment_valid".format(http_ip, http_port), post_data)
 
 def get_transfer_params(
         nonce: int,
@@ -212,15 +206,6 @@ def get_keypair(skbytes: bytes) -> Keypair:
     account_id = addr[len(addr)-40:len(addr)]
     return Keypair(skbytes=skbytes, pkbytes=decode_hex('04'+pkbytes.hex()), account_id=account_id)
 
-def calc_create2_address(sender, salt, bytecode):
-    prefix = bytes.fromhex("ff")
-    sender_bytes = bytes.fromhex(sender)
-    salt_bytes = bytes.fromhex(salt)
-    bytecode_hash = keccak(bytes.fromhex(bytecode))
-    
-    raw_address = keccak(prefix + sender_bytes + salt_bytes + bytecode_hash)
-    return to_checksum_address(raw_address[12:].hex())[2:].lower()
-
 def deploy_contract_with_bytes(
         private_key: str,
         amount: int,
@@ -228,25 +213,23 @@ def deploy_contract_with_bytes(
         constructor_types: list,
         constructor_params: list,
         nonce = -1,
-        prefund=0,
+        prepayment=0,
         check_tx_valid=False,
         is_library=False,
-        salt="00",
-        to=""):
+        contract_address=None):
     func_param = ""
     if len(constructor_types) > 0 and len(constructor_types) == len(constructor_params):
         func_param = encode_hex(encode(constructor_types, constructor_params))[2:]
 
-    if bytes_codes is None or len(bytes_codes) <= 128:
+    if bytes_codes is None:
         print("get sol bytes code failed!")
         return None
 
     call_str = bytes_codes + func_param
-    keypair = get_keypair(bytes.fromhex(private_key))
-    if to is not None and to != "":
-        contract_address = to
-    else:
-        contract_address = calc_create2_address(keypair.account_id, salt, call_str)
+    if contract_address is None:
+        contract_address_hash = keccak256_str(call_str+gen_gid())
+        contract_address = contract_address_hash[len(contract_address_hash)-40: len(contract_address_hash)]
+
     step = 6
     if is_library:
         step = 14
@@ -258,16 +241,16 @@ def deploy_contract_with_bytes(
         step=step,
         nonce=nonce,
         contract_bytes=call_str,
-        prefund=prefund,
+        prepayment=prepayment,
         check_tx_valid=check_tx_valid)
     if not res:
         return None
 
     if check_tx_valid:
         for i in range(0, 30):
-            if prefund > 0:
+            if prepayment > 0:
                 keypair = get_keypair(bytes.fromhex(private_key))
-                if check_address_valid(contract_address + keypair.account_id, prefund):
+                if check_address_valid(contract_address + keypair.account_id, prepayment):
                     return contract_address
 
             elif check_address_valid(contract_address):
@@ -284,7 +267,7 @@ def deploy_contract(
         constructor_types: list,
         constructor_params: list,
         nonce = -1,
-        prefund=0,
+        prepayment=0,
         check_tx_valid=False,
         is_library=False,
         in_libraries="",
@@ -320,7 +303,7 @@ def deploy_contract(
                 bytes_codes = f.read()
             break
 
-    if bytes_codes is None or len(bytes_codes) <= 128:
+    if bytes_codes is None:
         print("get sol bytes code failed!")
         return None
 
@@ -341,16 +324,16 @@ def deploy_contract(
         step=step,
         nonce=nonce,
         contract_bytes=call_str,
-        prefund=prefund,
+        prepayment=prepayment,
         check_tx_valid=check_tx_valid)
     if not res:
         return None
 
     if check_tx_valid:
         for i in range(0, 30):
-            if prefund > 0:
+            if prepayment > 0:
                 keypair = get_keypair(bytes.fromhex(private_key))
-                if check_address_valid(contract_address + keypair.account_id, prefund):
+                if check_address_valid(contract_address + keypair.account_id, prepayment):
                     return contract_address
 
             elif check_address_valid(contract_address):
@@ -360,7 +343,7 @@ def deploy_contract(
 
     return None
 
-def contract_prefund(private_key: str, contract_address: str, prefund: int, check_res: bool, nonce: int):
+def contract_prepayment(private_key: str, contract_address: str, prepayment: int, check_res: bool, nonce: int):
     if not transfer(
             str_prikey=private_key,
             to=contract_address,
@@ -368,7 +351,7 @@ def contract_prefund(private_key: str, contract_address: str, prefund: int, chec
             check_tx_valid=check_res,
             nonce=nonce,
             step=7,
-            prefund=prefund):
+            prepayment=prepayment):
         return False
 
     return True
@@ -521,7 +504,7 @@ def _get_tx_params(sign, pkbytes: bytes, nonce: int, gas_limit: int, gas_price: 
         'shard_id': des_shard_id,
         'key': key,
         'val': val,
-        "prefund": prepay,
+        "pepay": prepay,
         'sign_r': sign.r,
         'sign_s': sign.s,
         'sign_v': sign.v,
@@ -537,14 +520,14 @@ def _get_tx_params(sign, pkbytes: bytes, nonce: int, gas_limit: int, gas_price: 
 
 
 def _call_tx(post_data: dict):
-    return _post_data("http://{}:{}/transaction".format(http_ip, http_port), post_data)
+    return _post_data("https://{}:{}/transaction".format(http_ip, http_port), post_data)
 
 
 def _post_data(path: str, data: dict):
     querystr = urlencode(data)
     # print(path)
     # print(data)
-    res = requests.post(path, data=data, headers={
+    res = requests.post(path, data=data, verify=False, headers={
         'Content-Type': 'application/x-www-form-urlencoded',
         'Content-Length': str(len(bytes(querystr, 'utf-8'))),
     })

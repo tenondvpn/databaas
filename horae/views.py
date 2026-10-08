@@ -2364,7 +2364,7 @@ def get_log_content(request):
                 schedule_id, file_name, 0, 10240, rerun_id)
             logger.info(f"user {user.id}, name: {user.username} now call get_log_content, res: {log_content}")
             return JsonHttpResponse({
-                'file_content': log_content or '', 'status': 0, 'len': len(log_content or '')})
+                'file_content': log_content, 'status': 0, 'len': len(log_content)})
         except Exception as ex:
             logger.error('get log content fail: <%s> trace<%s>' % (
                 str(ex), traceback.format_exc()))

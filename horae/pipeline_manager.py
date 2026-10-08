@@ -1075,6 +1075,8 @@ class PipelineManager(object):
             return self.__get_default_ret_map(1, 'error: has no ready_task info with'
                        ' schedule_id:%s' % schedule_id)
         print(f"now get task run logs si lan {run_history.run_server} {self.is_lan(run_history.run_server)}, __kafka_servers: ${self.__kafka_servers}")
+        if sub_path is None:  # _subpath_none_fix
+            sub_path = ''
         if self.is_lan(run_history.run_server) and self.__kafka_servers != "":
             msg_id = int(round(time.time() * 100000))
             data = {}
@@ -1084,7 +1086,7 @@ class PipelineManager(object):
             data["schedule_id"] = str(schedule_id)
             data["rerun_id"] = str(rerun_id)
             data["response"] = False
-            _lc = KafkaConsumer('all_message', bootstrap_servers=self.__kafka_servers, auto_offset_reset='latest')
+            _lc = KafkaConsumer('all_message', bootstrap_servers=self.__kafka_servers, auto_offset_reset='latest')  # _direct_consumer_fix_rtl
             _lc.poll(timeout_ms=500)
             producer = KafkaProducer(bootstrap_servers=self.__kafka_servers, api_version=(0, 10, 1), value_serializer=lambda m: json.dumps(m).encode())
             producer.send(run_history.run_server, data)
@@ -1092,6 +1094,7 @@ class PipelineManager(object):
             print("send data: ")
             print(data)
             res_data = None
+            _hit = False
             for _t in range(50):
                 _msgs = _lc.poll(timeout_ms=100, max_records=10)
                 for _tp, _recs in _msgs.items():
@@ -1100,15 +1103,19 @@ class PipelineManager(object):
                             _v = json.loads(_rec.value) if isinstance(_rec.value, (str, bytes)) else _rec.value
                             if isinstance(_v, dict) and _v.get('msg_id') == msg_id:
                                 res_data = _v.get('data')
+                                _hit = True
                         except Exception:
                             pass
-                if res_data is not None:
+                if _hit:
                     break
             try:
                 _lc.close()
                 producer.close()
             except Exception:
                 pass
+            if res_data is not None:
+                self.__log.info("success get res data: %s" % res_data)
+
             if res_data is None: 
                 ret_map = {}
                 ret_map["status"] = 1
@@ -1192,6 +1199,7 @@ class PipelineManager(object):
             print("send data: ")
             print(data)
             res_data = None
+            _hit = False
             for _t in range(50):
                 _msgs = _lc.poll(timeout_ms=100, max_records=10)
                 for _tp, _recs in _msgs.items():
@@ -1200,9 +1208,10 @@ class PipelineManager(object):
                             _v = json.loads(_rec.value) if isinstance(_rec.value, (str, bytes)) else _rec.value
                             if isinstance(_v, dict) and _v.get('msg_id') == msg_id:
                                 res_data = _v.get('data')
+                                _hit = True
                         except Exception:
                             pass
-                if res_data is not None:
+                if _hit:
                     break
             try:
                 _lc.close()
@@ -1273,6 +1282,7 @@ class PipelineManager(object):
             producer.send(run_history.run_server, data)
             producer.flush()
             res_data = None
+            _hit = False
             for _t in range(20):
                 _msgs = _lc.poll(timeout_ms=100, max_records=10)
                 for _tp, _recs in _msgs.items():
@@ -1281,9 +1291,10 @@ class PipelineManager(object):
                             _v = json.loads(_rec.value) if isinstance(_rec.value, (str, bytes)) else _rec.value
                             if isinstance(_v, dict) and _v.get('msg_id') == msg_id:
                                 res_data = _v.get('data')
+                                _hit = True
                         except Exception:
                             pass
-                if res_data is not None:
+                if _hit:
                     break
             try:
                 _lc.close()
